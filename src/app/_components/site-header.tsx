@@ -22,6 +22,17 @@ export function SiteHeader() {
 		<header className={styles.header}>
 			<div className={`wrap ${styles.bar}`}>
 				<Link className={styles.brand} href="/">
+					{/* A plain <img> on purpose: this is an 809-byte SVG mark, which next/image
+					    does not optimise. It is committed (unlike public/products), so nothing
+					    here couples the build to gitignored files. */}
+					{/* eslint-disable-next-line @next/next/no-img-element */}
+					<img
+						className={styles.logo}
+						src="/logo.svg"
+						alt=""
+						width={20}
+						height={20}
+					/>
 					iTech Store
 				</Link>
 

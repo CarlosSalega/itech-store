@@ -203,6 +203,15 @@ a {
 	}
 }
 
+/* At 320px the header needs the room: brand with logo, two icon buttons and the
+   menu trigger do not fit beside a 24px gutter. The gutter gives way, not the
+   touch targets. */
+@media (max-width: 479px) {
+	.wrap {
+		padding: 0 var(--s-4);
+	}
+}
+
 /* The full-bleed hairline below is computed with viewport units, and those
    include the width of the vertical scrollbar. Without this, the page grows a
    horizontal scrollbar the moment the vertical one appears. `clip` rather than
