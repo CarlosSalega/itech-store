@@ -1,19 +1,57 @@
+/* Floating bar: detached from the top edge, narrower than the page, rounded, and
+   edged by a hairline ring instead of a bottom border so it reads as a surface
+   rather than as a page division. Its width tracks the `.wrap` content column on
+   wide screens, which is what keeps the brand aligned with the hero text below.
+
+   No `overflow: hidden` here on purpose: the mobile menu panel hangs below the
+   bar and would be clipped by it. */
 .header {
 	position: sticky;
-	top: 0;
+	top: var(--s-3);
 	z-index: 20;
-	background: rgba(255, 255, 255, 0.72);
+	width: min(1200px, calc(100% - 2 * var(--s-4)));
+	margin-top: var(--s-3);
+	margin-inline: auto;
+	/* Higher than the previous 72%: the bar now floats over content, and links
+	   over a product photo at 72% do not hold 4.5:1. */
+	background: rgb(255 255 255 / 82%);
 	backdrop-filter: blur(20px) saturate(180%);
 	-webkit-backdrop-filter: blur(20px) saturate(180%);
-	border-bottom: 1px solid var(--hairline);
+	border-radius: var(--r-lg);
+	box-shadow:
+		var(--e-hairline),
+		var(--e-float);
+	isolation: isolate;
 }
 
+/* Without backdrop-filter the translucency would leave the text unreadable, so
+   the fallback is nearly opaque instead of pretty and broken. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.header {
+		background: var(--white);
+	}
+}
+
+/* The bar no longer uses the global `.wrap`: the pill is already narrower than
+   the page, so it owns its own inset. The horizontal padding is the page gutter
+   MINUS the pill's inset, which is what keeps the brand on the same axis as the
+   hero text at every width instead of drifting by the inset amount. */
 .bar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--s-5);
 	min-height: 48px;
+	max-width: 1200px;
+	margin-inline: auto;
+	padding-inline: calc(var(--s-5) - var(--s-4));
+}
+
+@media (min-width: 900px) {
+	.bar {
+		min-height: 64px;
+		padding-inline: calc(var(--s-8) - var(--s-4));
+	}
 }
 
 @media (min-width: 900px) {
@@ -131,6 +169,9 @@
 @media (max-width: 479px) {
 	.bar {
 		gap: var(--s-3);
+		/* The page gutter is 16px here and the pill is inset 16px, so the inner
+		   padding that keeps the axes aligned is zero. */
+		padding-inline: 0;
 	}
 
 	.tools {

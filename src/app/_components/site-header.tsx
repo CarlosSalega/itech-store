@@ -24,7 +24,7 @@ import styles from "./site-header.module.css";
 export function SiteHeader() {
 	return (
 		<header className={styles.header}>
-			<div className={`wrap ${styles.bar}`}>
+			<div className={styles.bar}>
 				<Link className={styles.brand} href="/">
 					{/* A plain <img> on purpose: this is an 809-byte SVG mark, which next/image
 					    does not optimise. It is committed (unlike public/products), so nothing
