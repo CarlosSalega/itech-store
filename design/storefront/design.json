@@ -6,23 +6,27 @@
     {
       "file": "01-galeria.html",
       "title": "Galería",
-      "tradeoff": "Centred, quiet, most faithful to Apple's product pages; type and whitespace carry the page, but it is the least information-dense and a six-item grid hides the other 58 products",
+      "tradeoff": "White gallery wall with no tiles under the photos: works hang at different heights, each with a hairline wall label whose tick extends on hover, and the monumental iMac is captioned at numeral scale. Faithful to Apple and the quietest of the three; six works still hide the other 58 and it carries the least information per screen.",
       "width": 1440,
-      "height": 900
+      "height": 900,
+      "signature": "The wall label: a 1px tick that is short until you hover the work, then draws to the full caption width."
     },
     {
       "file": "02-indice.html",
       "title": "Índice",
-      "tradeoff": "A readable catalog with a numbered family index and wide rows that compare at a glance, and the capacity price ladder outside the PDP; less dramatic, reads closer to an editorial catalog than to Apple",
+      "tradeoff": "A printed index: the family list is a ruled numeral spine (01–06) and the catalogue heading carries the real count of products as a figure that counts up as it enters. The hero photograph crosses the full-bleed rule instead of sitting in its own panel. Dense and readable; reads closer to an editorial catalogue than to Apple, and the capacity ladder lives outside the product page.",
       "width": 1440,
-      "height": 900
+      "height": 900,
+      "signature": "The counted figure: 64 set inside the sentence, counting from 0 as it scrolls into view, above a numeral spine that draws itself."
     },
     {
       "file": "03-vitrina.html",
       "title": "Vitrina",
-      "tradeoff": "Dark floor with each product in a lit case and a segmented capacity configurator in the detail; the strongest premium pull, the hardest place to keep retail prices legible and the furthest from a familiar Argentine store",
+      "tradeoff": "A black floor with lit cases: the hero case leaves the content column and is cropped by the viewport, the price is the second display line of the title, and the catalogue puts one case at 2x2 against five at 1x1. The strongest premium pull; the darkest and the furthest from a familiar Argentine store.",
       "width": 1440,
-      "height": 900
+      "height": 900,
+      "signature": "The case that leaves the page: the lit case runs off the right edge of the window, so the product sits in light that keeps going."
     }
-  ]
+  ],
+  "note": "Revision 2 (bolder pass): same palette, same three bets, larger display scale, one monument and one signature detail per direction."
 }

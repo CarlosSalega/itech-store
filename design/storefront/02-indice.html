@@ -7,46 +7,60 @@
 <title>iTech Store — el catálogo, en orden</title>
 <!--
   Direction 02 · Índice — the catalog as a printed index.
-  Left-aligned editorial grid, numbered families, wide reading rows, and the
-  capacity ladder printed next to the price instead of hidden in the PDP.
+  Bolder pass: the family index becomes a numeral spine (01–06 set at display scale in a
+  ruled margin), the noisy stat strip is gone, and the catalogue heading carries the real
+  count of products as a figure that counts in as it enters the viewport. The hero
+  photograph crosses the full-bleed hairline instead of sitting inside a panel.
   Product photos: 640px webp on white; panels are --surface with multiply blending.
   Files resolve from the repository root: run the canvas from there.
 -->
 <style>
+  @property --n{syntax:"<integer>";inherits:false;initial-value:0}
   :root{
     --white:#fff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
     --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
-    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:88px; --s-10:120px;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+    --s-9:88px; --s-10:120px; --s-11:160px;
     --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
     --e-hairline:inset 0 0 0 1px var(--hairline);
     --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
-    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms;
+    --e-lift:0 12px 32px rgba(0,0,0,.10);
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms; --dur-4:720ms;
     --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
     --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     --mono:ui-monospace,"SF Mono",Menlo,monospace;
-    --t-display:clamp(2.25rem,4.6vw,4rem);
-    --t-display-s:clamp(1.75rem,3.1vw,2.625rem);
-    --t-title:clamp(1.375rem,2.1vw,1.75rem);
+    --t-display:clamp(2.75rem,7vw,6rem);
+    --t-display-s:clamp(2rem,4.6vw,3.75rem);
+    --t-numeral:clamp(2.25rem,4.2vw,3.25rem);
+    --t-title:clamp(1.375rem,2.2vw,1.875rem);
     --t-headline:1.3125rem;
     --t-body:1.0625rem; --t-body-s:.9375rem; --t-label:.8125rem; --t-caption:.75rem;
+    --section-tall:clamp(88px,12vw,176px);
     --section:clamp(64px,9vw,112px);
+    --section-tight:clamp(40px,5vw,64px);
     color-scheme:light;
   }
   *,*::before,*::after{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
+  html{-webkit-text-size-adjust:100%;scrollbar-color:var(--hairline) var(--white)}
   body{margin:0;background:var(--white);color:var(--ink);font:400 var(--t-body)/1.47 var(--font);
-    -webkit-font-smoothing:antialiased}
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:var(--ink);color:var(--white)}
   img{max-width:100%;display:block}
   a{color:var(--link);text-decoration:none}
   h1,h2,h3,h4{margin:0;font-weight:600;text-wrap:balance}
-  p{margin:0}
+  p{margin:0;text-wrap:pretty}
   ul,ol{margin:0;padding:0;list-style:none}
-  :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
-  .skip{position:absolute;left:12px;top:-56px;z-index:50;background:var(--ink);color:#fff;padding:12px 20px;
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
+  .skip{position:absolute;left:12px;top:-56px;z-index:50;background:var(--ink);color:var(--white);padding:12px 20px;
     border-radius:var(--r-pill);min-height:44px;display:inline-flex;align-items:center;transition:top var(--dur-1) var(--ease-std)}
   .skip:focus{top:12px}
   .wrap{max-width:1200px;margin:0 auto;padding:0 var(--s-5)}
   @media (min-width:900px){.wrap{padding:0 var(--s-8)}}
+  .rule{position:relative;z-index:1;height:1px;background:var(--hairline);
+    margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
 
   /* header */
   .site-head{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.72);
@@ -73,21 +87,21 @@
     gap:var(--s-2);font-size:var(--t-body-s);border-radius:var(--r-pill)}
   .menu summary::-webkit-details-marker{display:none}
   .menu[open] summary{border:1px solid var(--hairline)}
-  .menu nav{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:#fff;border-radius:var(--r-lg);
+  .menu nav{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:var(--white);border-radius:var(--r-lg);
     box-shadow:var(--e-hairline),var(--e-float);padding:var(--s-3);display:grid}
   .menu nav a{color:var(--ink);padding:0 var(--s-4);min-height:44px;display:flex;align-items:center;border-radius:var(--r-sm)}
   .menu nav a:hover{background:var(--surface)}
 
-  /* hero: asymmetric split, text first */
-  .hero{padding:clamp(32px,5vw,64px) 0 var(--section)}
-  .hero-grid{display:grid;gap:var(--s-7);align-items:end}
-  @media (min-width:900px){.hero-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--s-8)}}
-  .hero-eyebrow{font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;font-weight:500;color:var(--muted);
-    display:flex;align-items:center;gap:var(--s-3)}
-  .hero-eyebrow::before{content:"";width:32px;height:1px;background:var(--hairline)}
-  .hero h1{font-size:var(--t-display);line-height:1.04;letter-spacing:-.028em;margin-top:var(--s-5);max-width:16ch}
-  .hero-sub{margin-top:var(--s-5);font-size:var(--t-body);color:var(--muted);max-width:46ch}
-  .hero-actions{display:flex;flex-wrap:wrap;gap:var(--s-4) var(--s-5);margin-top:var(--s-6)}
+  /* hero: display title page, the photograph crossing the rule */
+  .hero{position:relative;padding:clamp(40px,6vw,96px) 0 var(--section-tall);overflow:visible}
+  .hero .wrap{position:relative}
+  .hero-copy{position:relative;z-index:2}
+  @media (min-width:900px){.hero-copy{max-width:58%}}
+  .hero h1{font-size:var(--t-display);line-height:.93;letter-spacing:-.038em;max-width:12ch}
+  .hero h1 .line2{display:block;margin-left:.75ch}
+  .hero-deck{margin-top:var(--s-6);font-size:clamp(1rem,1.5vw,1.3125rem);line-height:1.45;color:var(--muted);
+    max-width:44ch}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:var(--s-4) var(--s-5);margin-top:var(--s-7)}
   .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 var(--s-5);
     border-radius:var(--r-pill);border:0;background:var(--accent);color:#fff;font:500 var(--t-body-s)/1 var(--font);
     cursor:pointer;transition:transform var(--dur-1) var(--ease-std),background var(--dur-1) linear}
@@ -96,106 +110,135 @@
   .btn-2{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:var(--t-body-s);font-weight:500}
   .btn-2 .chev{transition:transform var(--dur-2) var(--ease-std)}
   .btn-2:hover .chev{transform:translateX(2px)}
-  .fact-strip{margin-top:var(--s-7);padding-top:var(--s-5);border-top:1px solid var(--hairline);display:flex;
-    flex-wrap:wrap;gap:var(--s-3) var(--s-7)}
-  .fact-strip div{display:grid;gap:2px}
-  .fact-strip dt{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);order:2}
-  .fact-strip dd{margin:0;font-size:1.375rem;line-height:1.1;letter-spacing:-.016em;font-weight:500;
-    font-variant-numeric:tabular-nums;order:1}
-  .hero-panel{position:relative;border-radius:var(--r-xl);background:var(--surface);overflow:hidden;
-    display:grid;place-items:center;padding:var(--s-5);aspect-ratio:4/5;box-shadow:var(--e-hairline)}
-  @media (min-width:900px){.hero-panel{aspect-ratio:auto;min-height:520px}}
-  .hero-panel img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+  .hero-note{margin-top:var(--s-6);font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);
+    font-variant-numeric:tabular-nums}
+  .hero-panel{margin-top:var(--s-8);position:relative;background:var(--surface);border-radius:var(--r-xl);
+    padding:var(--s-5);z-index:2}
+  @media (min-width:900px){
+    .hero-panel{position:absolute;right:0;top:clamp(0px,1.5vw,24px);
+      bottom:calc(-1 * var(--section-tall) - 24px);
+      width:min(44%,520px);margin-top:0;display:grid;place-items:center}
+  }
+  .hero-panel img{width:100%;height:auto;max-width:640px;object-fit:contain;mix-blend-mode:multiply}
 
   /* sections */
   section{padding:var(--section) 0}
   .band{background:var(--surface)}
   .sec-head{max-width:52ch}
-  .sec-head h2{font-size:var(--t-display-s);line-height:1.06;letter-spacing:-.022em}
-  .sec-head p{margin-top:var(--s-4);font-size:var(--t-body);color:var(--muted)}
-  .sec-top{display:flex;flex-wrap:wrap;gap:var(--s-4);align-items:baseline;justify-content:space-between;
-    border-bottom:1px solid var(--hairline);padding-bottom:var(--s-5)}
+  .sec-head h2{font-size:var(--t-display-s);line-height:1.02;letter-spacing:-.03em}
+  .sec-head p{margin-top:var(--s-4);font-size:var(--t-body);color:var(--muted);max-width:52ch}
+  /* the figure set inside the sentence, counted as it enters the viewport */
+  .figure{font-variant-numeric:tabular-nums;letter-spacing:-.045em;font-size:1.12em;line-height:1}
+  .figure-num{--n:64;counter-reset:n var(--n)}
+  .figure-num::after{content:counter(n)}
 
-  /* index list */
-  .index{margin-top:var(--s-2);display:grid}
-  @media (min-width:760px){.index{grid-template-columns:1fr 1fr;column-gap:var(--s-9)}}
-  .index li{border-bottom:1px solid var(--hairline)}
-  .index a,.index .row-static{display:grid;grid-template-columns:3rem 1fr auto;align-items:center;gap:var(--s-4);
-    padding:var(--s-4) 0;min-height:64px;color:var(--ink);transition:padding-left var(--dur-2) var(--ease-std)}
-  .index a:hover{padding-left:var(--s-2)}
-  .index .num{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-variant-numeric:tabular-nums}
-  .index .label{font-size:var(--t-title);line-height:1.1;letter-spacing:-.016em;font-weight:500}
-  .index .label small{display:block;margin-top:2px;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-weight:400}
-  .index .count{font-size:var(--t-body-s);color:var(--muted);font-variant-numeric:tabular-nums;display:flex;
-    align-items:center;gap:var(--s-3)}
+  /* family index: numeral spine */
+  .index{position:relative;margin-top:var(--section-tight);padding-left:var(--s-5)}
+  @media (min-width:760px){.index{padding-left:var(--s-6)}}
+  .spine{position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--hairline);transform-origin:top}
+  .index-row{display:grid;grid-template-columns:clamp(56px,7vw,104px) minmax(0,1fr) auto;align-items:baseline;
+    gap:var(--s-4);padding:var(--s-5) 0;border-bottom:1px solid var(--hairline);color:var(--ink)}
+  .index li:first-child .index-row{border-top:1px solid var(--hairline)}
+  .index .num{font-size:var(--t-numeral);line-height:.9;letter-spacing:-.045em;color:var(--muted);
+    font-variant-numeric:tabular-nums;transition:color var(--dur-2) linear}
+  .index .label{font-size:var(--t-title);line-height:1.1;letter-spacing:-.02em;font-weight:500}
+  .index .label small{display:block;margin-top:var(--s-1);font-size:var(--t-label);letter-spacing:.01em;
+    color:var(--muted);font-weight:400}
+  .index .count{font-size:var(--t-body-s);color:var(--muted);font-variant-numeric:tabular-nums;
+    display:inline-flex;align-items:center;gap:var(--s-3)}
   .index .count .chev{transition:transform var(--dur-2) var(--ease-std)}
-  .index a:hover .chev{transform:translateX(3px)}
-  .index .empty .label{color:var(--muted)}
-  .index .empty .count{font-style:normal}
-  .index-note{margin-top:var(--s-6);font-size:var(--t-body-s);color:var(--muted);max-width:56ch}
+  .index-row:hover .num{color:var(--ink)}
+  .index-row:hover .count{color:var(--ink)}
+  .index-row:hover .chev{transform:translateX(3px)}
+  @media (max-width:599px){
+    /* on a phone the numeral holds the margin and the count steps under the name */
+    .index-row{grid-template-columns:auto minmax(0,1fr);column-gap:var(--s-4);row-gap:var(--s-2);
+      align-items:start}
+    .index .num{grid-row:span 2}
+    .index .label{grid-column:2}
+    .index .count{grid-column:2;justify-self:start}
+  }
+  .index-row--empty{cursor:default}
+  .index-row--empty .label{color:var(--muted)}
+  .index-note{margin-top:var(--s-6);font-size:var(--t-body-s);color:var(--muted);max-width:52ch}
+  .index-note a{text-decoration:underline;text-underline-offset:.18em}
 
-  /* wide reading rows */
-  .rows{display:grid;gap:var(--s-3);margin-top:var(--s-7)}
-  @media (min-width:860px){.rows{grid-template-columns:1fr 1fr;gap:var(--s-3) var(--s-4)}}
-  .row{display:grid;grid-template-columns:88px minmax(0,1fr);gap:var(--s-4);align-items:center;
-    padding:var(--s-4);border-radius:var(--r-lg);background:var(--white);box-shadow:var(--e-hairline);
-    transition:transform var(--dur-2) var(--ease-std),box-shadow var(--dur-2) var(--ease-std)}
-  @media (min-width:520px){.row{grid-template-columns:120px minmax(0,1fr)}}
-  .row:hover{transform:translateY(-2px);box-shadow:var(--e-hairline),var(--e-lift)}
-  .row-media{border-radius:var(--r-md);background:var(--surface);overflow:hidden;aspect-ratio:1;display:grid;place-items:center}
+  /* wide reading rows: dense, price column aligned on the right */
+  .rows{display:grid;gap:0 var(--s-8);margin-top:var(--section-tight)}
+  @media (min-width:860px){.rows{grid-template-columns:1fr 1fr}}
+  .row{display:grid;grid-template-columns:88px minmax(0,1fr);gap:var(--s-4);align-items:start;
+    padding:var(--s-5) 0;border-bottom:1px solid var(--hairline);transition:background var(--dur-2) linear}
+  @media (min-width:520px){.row{grid-template-columns:104px minmax(0,1fr)}}
+  .row:hover{background:rgba(255,255,255,.9)}
+  .row-media{background:var(--white);border-radius:var(--r-md);overflow:hidden;aspect-ratio:1;
+    display:grid;place-items:center;padding:var(--s-2)}
   .row-media img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;
     transition:transform var(--dur-2) var(--ease-std)}
-  .row:hover .row-media img{transform:scale(1.02)}
-  .row-media.placeholder{background:var(--surface)}
-  .row-media.placeholder img{width:56px;height:56px;mix-blend-mode:normal;opacity:.5}
-  .state-line{margin-top:2px;font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
-  .row-body{min-width:0;display:grid;gap:2px}
-  .row-body .cat{font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-  .row-body h3{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.01em}
+  .row:hover .row-media img{transform:scale(1.03)}
+  .row-media.is-empty{background:var(--surface)}
+  .row-media.is-empty img{width:56px;height:56px;mix-blend-mode:normal;opacity:.5}
+  .row-body{min-width:0;display:grid;gap:var(--s-2)}
+  .row-body h3{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.012em;max-width:34ch}
   .row-body h3 a{color:inherit}
   .row-body h3 a:hover{color:var(--link)}
-  .row-price{display:flex;align-items:baseline;gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-1);
-    font-size:var(--t-body);font-weight:500;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+  .row-price{display:flex;align-items:baseline;gap:var(--s-2);flex-wrap:wrap;font-size:var(--t-body);
+    font-weight:500;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
   .row-price .cur{color:var(--muted);font-size:.85em}
   .row-price .from{color:var(--muted);font-size:var(--t-label);font-weight:400;letter-spacing:.01em}
-  .ladder{margin-top:var(--s-2);display:grid;gap:1px;font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted);
-    font-variant-numeric:tabular-nums}
-  .ladder span{display:flex;justify-content:space-between;gap:var(--s-4);max-width:220px;padding:2px 0}
+  .ladder{display:grid;gap:0;font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted);
+    font-variant-numeric:tabular-nums;max-width:240px}
+  .ladder span{display:flex;justify-content:space-between;gap:var(--s-4);padding:3px 0}
   .ladder b{font-weight:400;color:var(--ink)}
-  .cap-line{margin-top:2px;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-variant-numeric:tabular-nums}
+  .state-line{font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+  .rows-foot{grid-column:1/-1;margin-top:var(--s-7);display:flex;gap:var(--s-4);flex-wrap:wrap;
+    align-items:baseline;justify-content:space-between;padding-top:var(--s-5);border-top:1px solid var(--ink)}
 
-  /* price explainer */
-  .how{display:grid;gap:var(--s-6);margin-top:var(--s-7);counter-reset:step}
+  /* price explainer: numerals set inside the heading, not above it */
+  .how{display:grid;gap:var(--s-6);margin-top:var(--section-tight)}
   @media (min-width:760px){.how{grid-template-columns:repeat(3,1fr);gap:var(--s-7)}}
   .how div{padding-top:var(--s-4);border-top:1px solid var(--hairline)}
-  .how h3{font-size:var(--t-body);font-weight:600;letter-spacing:-.01em;display:flex;gap:var(--s-3);align-items:baseline}
-  .how h3::before{counter-increment:step;content:"0" counter(step);font-size:var(--t-label);letter-spacing:.01em;
-    color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums}
+  .how h3{font-size:var(--t-body);font-weight:600;letter-spacing:-.01em}
+  .how h3 .n{font-variant-numeric:tabular-nums;letter-spacing:-.04em;font-size:1.5em;line-height:1;
+    margin-right:var(--s-2);color:var(--muted)}
   .how p{margin-top:var(--s-2);font-size:var(--t-body-s);color:var(--muted)}
   .how code{font-family:var(--mono);font-size:.75rem;color:var(--ink);background:var(--white);padding:1px 6px;
     border-radius:var(--r-sm);box-shadow:var(--e-hairline)}
 
   /* footer */
-  .site-foot{background:var(--surface);border-top:1px solid var(--hairline);padding:var(--s-9) 0 var(--s-7)}
+  .site-foot{background:var(--surface);border-top:1px solid var(--hairline);padding:var(--section) 0 var(--s-7)}
   .foot-grid{display:grid;grid-template-columns:1fr;gap:var(--s-7)}
   @media (min-width:700px){.foot-grid{grid-template-columns:1.4fr repeat(3,1fr);gap:var(--s-6)}}
-  .foot-col h2{font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+  .foot-col h2{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-weight:500}
   .foot-col ul{margin-top:var(--s-3);display:grid}
   .foot-col a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;min-height:36px}
   .foot-col a:hover{color:var(--link)}
-  .foot-col p{margin-top:0;font-size:var(--t-body-s);color:var(--muted);max-width:28ch}
+  .foot-col p{font-size:var(--t-body-s);color:var(--muted);max-width:28ch}
   .notice{max-width:56ch;margin-top:var(--s-8);padding-top:var(--s-5);border-top:1px solid var(--hairline);
     font-size:var(--t-caption);line-height:1.35;letter-spacing:.015em;color:var(--muted)}
   .foot-base{margin-top:var(--s-4);display:flex;gap:var(--s-4);flex-wrap:wrap;justify-content:space-between;
     font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
 
-  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .enter{animation:rise var(--dur-3) var(--ease-out) both}
-  .enter:nth-child(2){animation-delay:60ms}
-  .enter:nth-child(3){animation-delay:110ms}
+  /* motion */
+  @keyframes rise{from{opacity:0;transform:translateY(20px);filter:blur(6px)}
+    to{opacity:1;transform:none;filter:blur(0)}}
+  .enter{animation:rise var(--dur-4) var(--ease-out-expo) both;animation-delay:calc(var(--i,0) * 90ms)}
+  @keyframes count{from{--n:0}to{--n:64}}
+  @keyframes draw{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  /* the count and the spine rule are scroll-driven where the browser supports it; the
+     static state is the finished state, so nothing is missing without the animation. */
+  @supports (animation-timeline:view()){
+    @media (prefers-reduced-motion:no-preference){
+      .figure-num{animation:count linear both;animation-timeline:view(block);
+        animation-range:entry 10% entry 85%}
+      .spine{animation:draw linear both;animation-timeline:view(block);
+        animation-range:entry 5% entry 45%}
+    }
+  }
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition-duration:0ms!important}
-    .enter{opacity:1;transform:none}
+    .enter{opacity:1;transform:none;filter:none}
+    .figure-num{--n:64}
+    .spine{transform:none}
   }
 </style>
 </head>
@@ -234,28 +277,25 @@
   <div id="top"></div>
 
   <section class="hero" aria-labelledby="hero-title">
-    <div class="wrap hero-grid">
-      <div>
-        <p class="hero-eyebrow enter">Catálogo Apple · pesos argentinos</p>
-        <h1 id="hero-title" class="enter">Apple, ordenado para elegir.</h1>
-        <p class="hero-sub enter">Cinco familias con productos, 64 modelos y el precio de cada capacidad
+    <div class="wrap">
+      <div class="hero-copy">
+        <h1 id="hero-title" class="enter">Apple,<span class="line2">en orden.</span></h1>
+        <p class="hero-deck enter" style="--i:1">Cinco familias con productos y el precio de cada capacidad
           impreso al lado del nombre. Sin abrir la ficha para saber cuánto sale.</p>
-        <div class="hero-actions enter">
+        <div class="hero-actions enter" style="--i:2">
           <a class="btn" href="#catalogo">Recorrer el catálogo</a>
           <a class="btn-2" href="#precio">Cómo leemos el precio <span class="chev" aria-hidden="true">›</span></a>
         </div>
-        <dl class="fact-strip enter">
-          <div><dt>productos cargados</dt><dd>64</dd></div>
-          <div><dt>variantes con SKU propio</dt><dd>68</dd></div>
-          <div><dt>familias con productos</dt><dd>5 de 6</dd></div>
-        </dl>
+        <p class="hero-note enter" style="--i:3">64 productos · 68 variantes con SKU propio · 5 de 6 familias con stock</p>
       </div>
-      <div class="hero-panel">
+      <div class="hero-panel enter" style="--i:2">
         <img src="../../public/products/apple-13-macbook-air-chip-m5-1.webp"
           alt="Apple MacBook Air de 13 pulgadas en gris espacial, abierta y de frente." width="640" height="640">
       </div>
     </div>
   </section>
+
+  <div class="rule" role="presentation"></div>
 
   <section id="familias" aria-labelledby="fam-title">
     <div class="wrap">
@@ -264,62 +304,64 @@
         <p>El índice del catálogo, con la cantidad real de productos de cada familia. iPhone aparece
           con cero y no lo escondemos detrás de una foto de stock.</p>
       </div>
-      <ol class="index">
-        <li>
-          <a href="#catalogo">
-            <span class="num">01</span>
-            <span class="label">Mac<small>MacBook Air, MacBook Pro, iMac, Mac Mini</small></span>
-            <span class="count">27 productos <span class="chev" aria-hidden="true">›</span></span>
-          </a>
-        </li>
-        <li>
-          <a href="#catalogo">
-            <span class="num">02</span>
-            <span class="label">iPad<small>iPad, iPad Air, iPad Pro, iPad Mini</small></span>
-            <span class="count">14 productos <span class="chev" aria-hidden="true">›</span></span>
-          </a>
-        </li>
-        <li>
-          <a href="#catalogo">
-            <span class="num">03</span>
-            <span class="label">Watch<small>Series 11 y Ultra 3</small></span>
-            <span class="count">9 productos <span class="chev" aria-hidden="true">›</span></span>
-          </a>
-        </li>
-        <li>
-          <a href="#catalogo">
-            <span class="num">04</span>
-            <span class="label">AirPods<small>AirPods, AirPods Pro y AirPods Max</small></span>
-            <span class="count">5 productos <span class="chev" aria-hidden="true">›</span></span>
-          </a>
-        </li>
-        <li>
-          <a href="#catalogo">
-            <span class="num">05</span>
-            <span class="label">Accesorios<small>AirTag, HomePod, Apple TV, soportes y cables</small></span>
-            <span class="count">9 productos <span class="chev" aria-hidden="true">›</span></span>
-          </a>
-        </li>
-        <li class="empty">
-          <div class="row-static">
-            <span class="num">06</span>
-            <span class="label">iPhone<small>Sin modelos cargados</small></span>
-            <span class="count">0 productos</span>
-          </div>
-        </li>
-      </ol>
-      <p class="index-note">iPhone todavía no está en el catálogo. Si lo necesitás, escribinos y lo buscamos.</p>
+      <div class="index">
+        <div class="spine" aria-hidden="true"></div>
+        <ol>
+          <li>
+            <a class="index-row" href="#catalogo">
+              <span class="num" aria-hidden="true">01</span>
+              <span class="label">Mac<small>MacBook Air, MacBook Pro, iMac, Mac Mini</small></span>
+              <span class="count">27 productos <span class="chev" aria-hidden="true">›</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="index-row" href="#catalogo">
+              <span class="num" aria-hidden="true">02</span>
+              <span class="label">iPad<small>iPad, iPad Air, iPad Pro, iPad Mini</small></span>
+              <span class="count">14 productos <span class="chev" aria-hidden="true">›</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="index-row" href="#catalogo">
+              <span class="num" aria-hidden="true">03</span>
+              <span class="label">Watch<small>Series 11 y Ultra 3</small></span>
+              <span class="count">9 productos <span class="chev" aria-hidden="true">›</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="index-row" href="#catalogo">
+              <span class="num" aria-hidden="true">04</span>
+              <span class="label">AirPods<small>AirPods, AirPods Pro y AirPods Max</small></span>
+              <span class="count">5 productos <span class="chev" aria-hidden="true">›</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="index-row" href="#catalogo">
+              <span class="num" aria-hidden="true">05</span>
+              <span class="label">Accesorios<small>AirTag, HomePod, Apple TV, soportes y cables</small></span>
+              <span class="count">9 productos <span class="chev" aria-hidden="true">›</span></span>
+            </a>
+          </li>
+          <li>
+            <div class="index-row index-row--empty">
+              <span class="num" aria-hidden="true">06</span>
+              <span class="label">iPhone<small>Sin modelos cargados</small></span>
+              <span class="count">0 productos</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <p class="index-note">iPhone todavía no está en el catálogo. Si lo necesitás,
+        <a href="#contacto">escribinos</a> y lo buscamos.</p>
     </div>
   </section>
 
   <section id="catalogo" class="band" aria-labelledby="cat-title">
     <div class="wrap">
-      <div class="sec-top">
-        <div class="sec-head">
-          <h2 id="cat-title">El catálogo, en filas largas.</h2>
-          <p>Nombre, categoría y precio en la misma línea de lectura: se compara mirando hacia abajo,
-            no abriendo y cerrando fichas.</p>
-        </div>
+      <div class="sec-head">
+        <h2 id="cat-title">Seis de los <span class="figure"><span class="figure-num" aria-hidden="true"></span><span class="sr-only">64</span></span> productos.</h2>
+        <p>Nombre, categoría y precio en la misma línea de lectura: se compara mirando hacia abajo,
+          no abriendo y cerrando fichas.</p>
       </div>
       <div class="rows">
         <article class="row">
@@ -328,7 +370,6 @@
               alt="Apple iPad Pro de 11 pulgadas en space black, de frente y de espaldas." width="640" height="640">
           </div>
           <div class="row-body">
-            <p class="cat">iPad</p>
             <h3><a href="#catalogo">Apple 11" iPad Pro M5 Space Black</a></h3>
             <p class="row-price"><span class="cur">$</span>900.000</p>
           </div>
@@ -340,7 +381,6 @@
               alt="Apple Watch Ultra 3 de titanio negro con correa Ocean Black." width="640" height="640">
           </div>
           <div class="row-body">
-            <p class="cat">Watch</p>
             <h3><a href="#catalogo">Apple Watch Ultra 3 - 49mm GPS-CELL - Caja Titanio Black - Correa Ocean Black</a></h3>
             <p class="row-price"><span class="cur">$</span>600.000</p>
           </div>
@@ -352,7 +392,6 @@
               alt="Auriculares AirPods Max con almohadillas negras, vistos de frente." width="640" height="640">
           </div>
           <div class="row-body">
-            <p class="cat">AirPods</p>
             <h3><a href="#catalogo">Auriculares AirPods Max USB-C</a></h3>
             <p class="row-price"><span class="cur">$</span>250.000</p>
           </div>
@@ -364,7 +403,6 @@
               alt="Apple iMac de 24 pulgadas en azul, con su teclado y su mouse." width="640" height="640">
           </div>
           <div class="row-body">
-            <p class="cat">Mac</p>
             <h3><a href="#catalogo">Apple iMac 24" M4 Chip Azul</a></h3>
             <p class="row-price"><span class="cur">$</span>2.000.000</p>
           </div>
@@ -376,7 +414,6 @@
               alt="Cuatro Apple iPad de 11 pulgadas, en blanco, amarillo, rosa y azul, superpuestos." width="640" height="640">
           </div>
           <div class="row-body">
-            <p class="cat">iPad</p>
             <h3><a href="#catalogo">Apple iPad 11" A16 Chip WI-FI</a></h3>
             <p class="row-price"><span class="from">Desde</span><span class="cur">$</span>900.000</p>
             <div class="ladder">
@@ -388,16 +425,20 @@
         </article>
 
         <article class="row">
-          <div class="row-media placeholder">
+          <div class="row-media is-empty">
             <img src="../../public/placeholder.webp" alt="" width="56" height="56">
           </div>
           <div class="row-body">
-            <p class="cat">Accesorios</p>
             <h3><a href="#catalogo">Apple TV 4K (2022)</a></h3>
             <p class="row-price"><span class="cur">$</span>30.000</p>
             <p class="state-line">64 GB · imagen no disponible</p>
           </div>
         </article>
+
+        <div class="rows-foot">
+          <p class="state-line">Los 58 restantes están en el catálogo completo, en el mismo orden.</p>
+          <a class="btn-2" href="#familias">Recorrer por familia <span class="chev" aria-hidden="true">›</span></a>
+        </div>
       </div>
     </div>
   </section>
@@ -411,15 +452,15 @@
       </div>
       <div class="how">
         <div>
-          <h3>Producto</h3>
+          <h3><span class="n" aria-hidden="true">01</span>Producto</h3>
           <p>El modelo, con su nombre y su slug. Es la fila que ves en el catálogo.</p>
         </div>
         <div>
-          <h3>Variante</h3>
+          <h3><span class="n" aria-hidden="true">02</span>Variante</h3>
           <p>Cada capacidad es una variante con su <code>SKU</code> y su precio propios.</p>
         </div>
         <div>
-          <h3>Precio</h3>
+          <h3><span class="n" aria-hidden="true">03</span>Precio</h3>
           <p>Un entero de centavos de peso que se muestra como <code>$ 1.035.000</code>. Nunca se
             muestra un promedio.</p>
         </div>

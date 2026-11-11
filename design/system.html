@@ -43,10 +43,11 @@
   .scale{display:grid;gap:24px;border-top:1px solid var(--hairline);padding-top:24px}
   .scale > div{display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:baseline}
   .tag{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:0;line-height:1.6}
-  .d1{font-size:88px;line-height:1.02;letter-spacing:-.03em;font-weight:600}
-  .d2{font-size:56px;line-height:1.05;letter-spacing:-.022em;font-weight:600}
-  .t1{font-size:36px;line-height:1.1;letter-spacing:-.016em;font-weight:600}
-  .h1s{font-size:21px;line-height:1.2;letter-spacing:-.01em;font-weight:600}
+  .d1{font-size:96px;line-height:.94;letter-spacing:-.035em;font-weight:600}
+  .d2{font-size:60px;line-height:1.02;letter-spacing:-.03em;font-weight:600}
+  .n1{font-size:52px;line-height:.95;letter-spacing:-.04em;font-weight:500;font-variant-numeric:tabular-nums}
+  .t1{font-size:30px;line-height:1.08;letter-spacing:-.022em;font-weight:500}
+  .h1s{font-size:21px;line-height:1.2;letter-spacing:-.012em;font-weight:600}
   .b1{font-size:17px;line-height:1.47}
   .b2{font-size:15px;line-height:1.5}
   .l1{font-size:13px;line-height:1.3;letter-spacing:.01em;font-weight:500;color:var(--muted)}
@@ -55,6 +56,23 @@
   .sp{display:grid;gap:10px}
   .sp div{display:flex;align-items:center;gap:16px}
   .sp i{display:block;height:14px;background:var(--accent);border-radius:2px;opacity:.85}
+  /* composition devices */
+  .bleed-rule{height:1px;background:var(--hairline);margin:32px calc(50% - 50vw)}
+  .label-demo{max-width:420px}
+  .label-demo .wall-label{position:relative;padding-top:12px}
+  .label-demo .wall-label::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;
+    background:var(--ink);transform:scaleX(.16);transform-origin:left;
+    transition:transform var(--dur-3) var(--ease-out)}
+  .label-demo:hover .wall-label::before,.label-demo:focus-within .wall-label::before{transform:scaleX(1)}
+  .label-demo .wname{display:block;font-size:21px;line-height:1.2;letter-spacing:-.012em;font-weight:600}
+  .label-demo .wmeta{display:block;margin-top:8px;font-size:13px;letter-spacing:.01em;color:var(--muted)}
+  .case-demo{display:grid;place-items:center;min-height:240px;border-radius:var(--r-xl) 0 0 var(--r-xl);
+    padding:32px;margin-right:calc(50% - 50vw);
+    background:radial-gradient(120% 100% at 50% 0%,var(--white) 0%,var(--surface) 100%)}
+  .case-demo img{width:200px;height:200px;object-fit:contain;mix-blend-mode:multiply}
+  .motion-list{display:grid;gap:12px;margin:24px 0 0;padding:0;list-style:none;max-width:70ch}
+  .motion-list li{display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:baseline}
+  .motion-list span:last-child{font-size:15px;line-height:1.5;color:var(--muted)}
   /* radius */
   .radii{display:flex;gap:24px;flex-wrap:wrap}
   .radii div{text-align:center}
@@ -130,14 +148,14 @@
   <span class="brand">iTech Store</span>
   <nav aria-label="Sistema">
     <a href="#color">Color</a><a href="#tipografia">Tipografía</a><a href="#espaciado">Espaciado</a>
-    <a href="#componentes">Componentes</a><a href="#precio">Precio</a>
+    <a href="#componentes">Componentes</a><a href="#composicion">Composición</a><a href="#precio">Precio</a>
   </nav>
 </header>
 <main class="wrap" id="main">
   <section aria-labelledby="t" style="border-top:0;padding-top:48px">
     <h1 id="t">Sistema de diseño</h1>
-    <p class="lede">Propuesta inicial derivada del scaffold del proyecto. Solo cuatro neutros y las dos
-      familias tipográficas provienen de una fuente real (<code>src/app/globals.css</code>,
+    <p class="lede">Propuesta derivada del scaffold del proyecto. Solo cuatro neutros y las dos familias
+      tipográficas vienen del scaffold (<code>src/app/globals.css</code>,
       <code>src/app/layout.tsx</code>); el resto de los tokens se propone acá y lo adoptan los tres
       artboards de <code>design/storefront/</code>.</p>
   </section>
@@ -169,20 +187,26 @@
     <p class="lede">Geist Sans en producción. Los artboards usan la pila del sistema, que es además el
       fallback correcto. El tracking se ajusta por tamaño; nunca un único valor.</p>
     <div class="scale">
-      <div><span class="tag">--t-display<br>clamp(2.5rem,6.4vw,5.5rem)<br>1.02 / -.03em / 600</span><span class="d1">Elegí la capacidad</span></div>
-      <div><span class="tag">--t-display-s<br>clamp(2rem,4.4vw,3.5rem)<br>1.05 / -.022em / 600</span><span class="d2">Cinco familias con productos</span></div>
-      <div><span class="tag">--t-title<br>clamp(1.5rem,2.6vw,2.25rem)<br>1.1 / -.016em / 600</span><span class="t1">Apple iPad 11" A16 Chip WI-FI</span></div>
-      <div><span class="tag">--t-headline<br>1.3125rem<br>1.2 / -.01em / 600</span><span class="h1s">Apple Watch Ultra 3 - 49mm</span></div>
+      <div><span class="tag">--t-display<br>clamp(2.75rem,7vw,6rem)<br>0.94 / -.035em / 600</span><span class="d1">Todo Apple,</span></div>
+      <div><span class="tag">--t-display-s<br>clamp(2rem,4.6vw,3.75rem)<br>1.02 / -.03em / 600</span><span class="d2">Cinco familias con productos</span></div>
+      <div><span class="tag">--t-numeral<br>clamp(2rem,3.4vw,3.25rem)<br>0.95 / -.04em / 500 · tabular</span><span class="n1">64</span></div>
+      <div><span class="tag">--t-title<br>clamp(1.375rem,2.2vw,1.875rem)<br>1.08 / -.022em / 500</span><span class="t1">Apple iPad 11" A16 Chip WI-FI</span></div>
+      <div><span class="tag">--t-headline<br>1.3125rem<br>1.2 / -.012em / 600</span><span class="h1s">Apple Watch Ultra 3 - 49mm</span></div>
       <div><span class="tag">--t-body<br>1.0625rem<br>1.47 / 0 / 400</span><span class="b1">64 productos cargados en el catálogo público.</span></div>
       <div><span class="tag">--t-body-s<br>.9375rem<br>1.5 / 0 / 400</span><span class="b2">Elegí modelo y capacidad: el precio se actualiza en el lugar.</span></div>
       <div><span class="tag">--t-label<br>.8125rem<br>1.3 / .01em / 500</span><span class="l1">27 productos · MAC</span></div>
       <div><span class="tag">--t-caption<br>.75rem<br>1.35 / .015em / 400</span><span class="c1">Los precios de este catálogo son de ejemplo.</span></div>
     </div>
+    <p class="c1" style="margin-top:32px;max-width:64ch">Un monumento por página, y nada entre display y --t-title para suavizar el salto. El valor máximo de
+      display es 6rem y el tracking mínimo -0.04em: más allá de esos dos límites deja de ser Apple.
+      Ninguna etiqueta de familia o categoría se pone arriba de un titular.</p>
   </section>
 
   <section id="espaciado" aria-labelledby="te">
     <h2 id="te">Espaciado y radios</h2>
-    <p class="lede">Base 4px. El ritmo vertical de sección es <code>clamp(64px, 9vw, 120px)</code>.</p>
+    <p class="lede">Base 4px. El ritmo vertical tiene tres valores y alterna a propósito:
+      <code>--section-tall</code> 88–176, <code>--section</code> 64–112 y <code>--section-tight</code>
+      40–64. Dos secciones contiguas nunca comparten ritmo.</p>
     <div class="sp">
       <div><i style="width:4px"></i><span class="tag">--s-1 · 4px</span></div>
       <div><i style="width:8px"></i><span class="tag">--s-2 · 8px</span></div>
@@ -194,6 +218,7 @@
       <div><i style="width:64px"></i><span class="tag">--s-8 · 64px</span></div>
       <div><i style="width:88px"></i><span class="tag">--s-9 · 88px</span></div>
       <div><i style="width:120px"></i><span class="tag">--s-10 · 120px</span></div>
+      <div><i style="width:160px"></i><span class="tag">--s-11 · 160px</span></div>
     </div>
     <h3>Radios</h3>
     <div class="radii">
@@ -223,7 +248,7 @@
     <div class="row" style="align-items:flex-start">
       <article class="card">
         <div class="tile"><img src="../public/products/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp" alt="Apple Watch Ultra 3 de titanio negro con correa Ocean Black."></div>
-        <h4 class="name"><a href="#precio">Apple Watch Ultra 3 - 49mm GPS-CELL</a></h4>
+        <h4 class="name"><a href="#precio">Apple Watch Ultra 3 - 49mm GPS-CELL - Caja Titanio Black - Correa Ocean Black</a></h4>
         <p class="price"><span class="cur">$</span>600.000</p>
       </article>
       <article class="card">
@@ -246,6 +271,49 @@
       <span class="fam"><a class="empty" href="#componentes" aria-describedby="iph"><b>iPhone</b><em>0 productos</em></a></span>
     </div>
     <p id="iph" class="c1" style="margin-top:12px">iPhone todavía no está en el catálogo. Podés consultarnos.</p>
+  </section>
+
+  <section id="composicion" aria-labelledby="tcomp">
+    <h2 id="tcomp">Composición y movimiento</h2>
+    <p class="lede">Cada página tiene un solo monumento, una sola ruptura de grilla y un solo gesto
+      de movimiento con intención. El estado final es el estado por defecto: con
+      <code>prefers-reduced-motion</code> se pierde la animación y no se pierde nada más.</p>
+
+    <h3>Regla a sangre — el divisor compartido</h3>
+    <div class="bleed-rule"></div>
+    <p class="tag">1px de --hairline con <code>margin-inline: calc(50% - 50vw)</code>. Ignora la columna
+      de contenido; reemplaza al cambio de fondo como límite entre secciones.</p>
+
+    <h3>Etiqueta de pared — la firma de Galería</h3>
+    <div class="label-demo" tabindex="0">
+      <div class="wall-label">
+        <span class="wname">Apple 13" MacBook Air - Chip M5</span>
+        <span class="wmeta">Mac · $ 2.000.000</span>
+      </div>
+    </div>
+    <p class="tag">El pelo de 1px arranca en <code>scaleX(.16)</code> y se extiende a todo el ancho de la
+      etiqueta al pasar el puntero o al enfocar. Pasá el puntero para verlo.</p>
+
+    <h3>Caso que sale de la columna — la firma de Vitrina</h3>
+    <div class="case-demo">
+      <img src="../public/products/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp"
+        alt="Apple Watch Ultra 3 de titanio negro con correa Ocean Black.">
+    </div>
+    <p class="tag">La caja iluminada corre hasta el borde de la ventana y la ventana la recorta. La foto
+      nunca crece: 640px es el techo y sigue siendo 640px.</p>
+
+    <h3>Movimiento</h3>
+    <ul class="motion-list">
+      <li><span class="tag">--dur-4 · 720ms</span><span>El único gesto de autor por página: entrada del
+        titular (opacity, translateY 24px, blur 6px) o una caja que se enciende con clip-path.</span></li>
+      <li><span class="tag">--ease-out-expo</span><span><code>cubic-bezier(.16,1,.3,1)</code>, solo en
+        entradas y en el gesto de autor. El resto usa --ease-std.</span></li>
+      <li><span class="tag">scroll-driven</span><span>Dentro de
+        <code>@supports (animation-timeline: view())</code>: un número que cuenta hasta su valor real
+        y un pelo que se dibuja. Sin soporte, el elemento ya está terminado.</span></li>
+      <li><span class="tag">reduce</span><span>Toda animación apagada, toda transición en 0ms, la
+        etiqueta ya extendida y el contador en su entero final. Nada queda oculto.</span></li>
+    </ul>
   </section>
 
   <section id="precio" aria-labelledby="tp">
@@ -297,7 +365,8 @@
 <footer>
   <div class="wrap">
     <p class="tag" style="margin:0">Sistema propuesto · design/system.md · adoptado por design/storefront/01-galeria.html,
-      02-indice.html y 03-vitrina.html.</p>
+      02-indice.html y 03-vitrina.html. Revisión 2 (bolder pass): escala ampliada, ritmo alternado,
+      movimiento de autor y una firma por dirección.</p>
   </div>
 </footer>
 </body>

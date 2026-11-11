@@ -7,46 +7,61 @@
 <title>iTech Store — catálogo Apple</title>
 <!--
   Direction 01 · Galería — the catalog as a white gallery wall.
-  Product photography in this repo is 640px webp on a white ground, so composition
-  and type carry the hero; the product floats at 520px on a soft radial wash and
-  blends into the page with mix-blend-mode: multiply.
+  Bolder pass: the photographs hang directly on the page with no tile under them, every
+  work carries a wall label whose hairline tick draws out to the full caption width on
+  hover, and the monumental work is labelled with its price at numeral scale. Structure
+  is carried by full-bleed rules that run past the content column.
+  Product photography in this repo is 640px webp on a white ground, so the photo is
+  shown at its own size and dissolves into the page with mix-blend-mode: multiply.
   Files resolve from the repository root: run the canvas from there.
 -->
 <style>
   :root{
     --white:#fff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
     --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
-    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:88px; --s-10:120px;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+    --s-9:88px; --s-10:120px; --s-11:160px;
     --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
     --e-hairline:inset 0 0 0 1px var(--hairline);
     --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
-    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms;
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms; --dur-4:720ms;
     --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
     --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     --mono:ui-monospace,"SF Mono",Menlo,monospace;
-    --t-display:clamp(2.5rem,6.4vw,5.5rem);
-    --t-display-s:clamp(2rem,4.4vw,3.5rem);
-    --t-title:clamp(1.5rem,2.6vw,2.25rem);
+    --t-display:clamp(2.75rem,7vw,6rem);
+    --t-display-s:clamp(2rem,4.6vw,3.75rem);
+    --t-numeral:clamp(1.75rem,3vw,2.625rem);
+    --t-title:clamp(1.375rem,2.2vw,1.875rem);
     --t-headline:1.3125rem;
     --t-body:1.0625rem; --t-body-s:.9375rem; --t-label:.8125rem; --t-caption:.75rem;
-    --section:clamp(64px,9vw,120px);
+    --section-tall:clamp(88px,12vw,176px);
+    --section:clamp(64px,9vw,112px);
+    --section-tight:clamp(40px,5vw,64px);
     color-scheme:light;
   }
   *,*::before,*::after{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
+  html{-webkit-text-size-adjust:100%;scrollbar-color:var(--hairline) var(--white)}
   body{margin:0;background:var(--white);color:var(--ink);font:400 var(--t-body)/1.47 var(--font);
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:var(--ink);color:var(--white)}
   img{max-width:100%;display:block}
   a{color:var(--link);text-decoration:none}
   h1,h2,h3,h4{margin:0;font-weight:600;text-wrap:balance}
-  p{margin:0}
-  :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
-  .skip{position:absolute;left:12px;top:-56px;z-index:50;background:var(--ink);color:#fff;
+  p{margin:0;text-wrap:pretty}
+  ol,ul{margin:0;padding:0;list-style:none}
+  dl,dd,dt{margin:0}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
+  .skip{position:absolute;left:12px;top:-56px;z-index:50;background:var(--ink);color:var(--white);
     padding:12px 20px;border-radius:var(--r-pill);min-height:44px;display:inline-flex;align-items:center;
     transition:top var(--dur-1) var(--ease-std)}
   .skip:focus{top:12px}
   .wrap{max-width:1200px;margin:0 auto;padding:0 var(--s-5)}
   @media (min-width:900px){.wrap{padding:0 var(--s-8)}}
+  /* full-bleed 1px rule: the gallery's structural device, drawn past the content column */
+  .rule{height:1px;background:var(--hairline);margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
 
   /* ---------- header ---------- */
   .site-head{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.72);
@@ -62,7 +77,7 @@
     transform:scaleX(0);transform-origin:left;transition:transform var(--dur-2) var(--ease-std)}
   .nav-main a:hover::after,.nav-main a:focus-visible::after{transform:scaleX(1)}
   .head-tools{display:flex;align-items:center;gap:var(--s-4)}
-  .head-tools a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;gap:6px;min-height:44px}
+  .head-tools a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;min-height:44px}
   @media (max-width:479px){.head-tools a{display:none}}
   .menu{position:relative}
   @media (min-width:900px){.menu{display:none}}
@@ -73,18 +88,18 @@
   .menu summary .bars::before,.menu summary .bars::after{content:"";position:absolute;left:0;width:16px;height:1.5px;background:var(--ink)}
   .menu summary .bars::before{top:-5px}.menu summary .bars::after{top:5px}
   .menu[open] summary{border:1px solid var(--hairline)}
-  .menu nav{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:#fff;
+  .menu nav{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:var(--white);
     border-radius:var(--r-lg);box-shadow:var(--e-hairline),var(--e-float);padding:var(--s-3);display:grid}
   .menu nav a{color:var(--ink);padding:0 var(--s-4);min-height:44px;display:flex;align-items:center;border-radius:var(--r-sm)}
   .menu nav a:hover{background:var(--surface)}
 
-  /* ---------- hero ---------- */
-  .hero{padding:clamp(40px,7vw,88px) 0 0;text-align:center;overflow:hidden}
-  .hero-eyebrow{font-size:var(--t-label);letter-spacing:.01em;font-weight:500;color:var(--muted);margin-bottom:var(--s-4)}
-  .hero h1{font-size:var(--t-display);line-height:1.02;letter-spacing:-.03em;max-width:18ch;margin:0 auto}
-  .hero-sub{font-size:clamp(1rem,1.6vw,1.3125rem);line-height:1.4;letter-spacing:-.005em;color:var(--muted);
-    max-width:58ch;margin:var(--s-5) auto 0}
-  .actions{display:flex;gap:var(--s-4) var(--s-5);justify-content:center;flex-wrap:wrap;margin-top:var(--s-6)}
+  /* ---------- hero: three display lines, then the monumental work hung with its label ---------- */
+  .hero{padding:clamp(48px,8vw,112px) 0 var(--section-tall);text-align:center;overflow:hidden}
+  .hero h1{font-size:var(--t-display);line-height:.94;letter-spacing:-.035em;font-weight:600;max-width:16ch;margin:0 auto}
+  .hero h1 .line{display:block}
+  .hero-deck{font-size:clamp(1rem,1.5vw,1.3125rem);line-height:1.45;letter-spacing:-.005em;color:var(--muted);
+    max-width:48ch;margin:var(--s-6) auto 0}
+  .actions{display:flex;gap:var(--s-4) var(--s-5);justify-content:center;flex-wrap:wrap;margin-top:var(--s-7)}
   .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 var(--s-5);
     border-radius:var(--r-pill);border:0;background:var(--accent);color:#fff;font:500 var(--t-body-s)/1 var(--font);
     cursor:pointer;transition:transform var(--dur-1) var(--ease-std),background var(--dur-1) linear}
@@ -94,73 +109,84 @@
     font-size:var(--t-body-s);font-weight:500}
   .btn-2 .chev{transition:transform var(--dur-2) var(--ease-std)}
   .btn-2:hover .chev{transform:translateX(2px)}
-  .hero-fact{margin-top:var(--s-5);font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
-  .hero-stage{margin-top:clamp(24px,4vw,48px);position:relative;display:grid;place-items:end center;
-    background:radial-gradient(60% 70% at 50% 62%,var(--surface) 0%,transparent 72%)}
-  .hero-stage img{width:min(520px,74vw);height:auto;mix-blend-mode:multiply}
+
+  .hero-work{margin:clamp(32px,5vw,72px) auto 0;width:min(560px,84vw);text-align:left}
+  .hero-work img{width:100%;height:auto;mix-blend-mode:multiply}
+  /* wall label: a short hairline tick, the name, then family and price on one caption line */
+  .wall-label{position:relative;margin-top:var(--s-6);padding-top:var(--s-3)}
+  .wall-label::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--hairline);
+    transform:scaleX(.16);transform-origin:left;transition:transform var(--dur-3) var(--ease-out),
+    background var(--dur-2) linear}
+  .hero-work:hover .wall-label::before,.hero-work:focus-within .wall-label::before{transform:scaleX(1);background:var(--ink)}
+  .wall-name{display:block;font-size:var(--t-headline);line-height:1.2;letter-spacing:-.012em;font-weight:600}
+  .wall-name a{color:inherit}
+  .wall-name a:hover{color:var(--link)}
+  .wall-meta{display:flex;align-items:baseline;gap:var(--s-3);flex-wrap:wrap;margin-top:var(--s-2);
+    font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .from{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .price{font-variant-numeric:tabular-nums;font-weight:500;letter-spacing:-.01em;color:var(--ink)}
+  .price .cur{color:var(--muted);font-size:.85em;margin-right:2px}
 
   /* ---------- sections ---------- */
   section{padding:var(--section) 0}
-  .sec-head{max-width:44ch}
-  .sec-head h2{font-size:var(--t-display-s);line-height:1.05;letter-spacing:-.022em}
-  .sec-head p{margin-top:var(--s-4);font-size:var(--t-body);color:var(--muted);max-width:52ch}
-  .sec-head.centre{margin:0 auto;text-align:center;max-width:52ch}
+  .sec-head{max-width:46ch}
+  .sec-head h2{font-size:var(--t-display-s);line-height:1.02;letter-spacing:-.028em}
+  .sec-head p{margin-top:var(--s-4);font-size:var(--t-body);color:var(--muted);max-width:54ch}
 
-  /* familiar */
-  .families{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s-3);margin-top:var(--s-7)}
-  @media (min-width:620px){.families{grid-template-columns:repeat(3,1fr)}}
-  @media (min-width:900px){.families{grid-template-columns:repeat(6,1fr);gap:var(--s-4)}}
-  .family{display:flex;flex-direction:column;gap:2px;padding:var(--s-4) var(--s-5);border-radius:var(--r-lg);
-    background:var(--surface);color:var(--ink);min-height:88px;justify-content:center;
-    transition:transform var(--dur-2) var(--ease-std),background var(--dur-1) linear}
-  .family:hover{transform:translateY(-2px);background:var(--white);box-shadow:var(--e-hairline)}
-  .family b{font-size:var(--t-body);font-weight:500;letter-spacing:-.01em}
-  .family em{font-style:normal;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
-  .family.is-empty{background:none;box-shadow:var(--e-hairline);border:1px dashed var(--hairline);
-    cursor:default}
-  .family.is-empty:hover{transform:none;background:none}
-  .family-note{margin-top:var(--s-5);font-size:var(--t-body-s);color:var(--muted);display:flex;gap:var(--s-2);
-    align-items:baseline;flex-wrap:wrap}
+  /* ---------- families as hanging rows ---------- */
+  .hanging{display:grid;gap:0 var(--s-8);margin-top:var(--s-8);border-top:1px solid var(--hairline)}
+  @media (min-width:760px){.hanging{grid-template-columns:1fr 1fr}}
+  .hang{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);
+    padding:var(--s-5) 0;border-bottom:1px solid var(--hairline);color:var(--ink);min-height:44px}
+  .hang-name{font-size:var(--t-title);line-height:1.1;letter-spacing:-.02em;font-weight:500;
+    transition:color var(--dur-2) linear}
+  .hang-count{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-variant-numeric:tabular-nums;
+    display:inline-flex;align-items:center;gap:var(--s-2)}
+  .hang-count .chev{transition:transform var(--dur-2) var(--ease-std)}
+  .hang:hover .hang-name,.hang:focus-visible .hang-name{color:var(--link)}
+  .hang:hover .chev{transform:translateX(3px)}
+  .hang--empty{border-bottom-style:dashed}
+  .hang--empty .hang-name{color:var(--muted)}
+  .family-note{margin-top:var(--s-5);font-size:var(--t-body-s);color:var(--muted);max-width:58ch}
 
-  /* catálogo */
-  .catalogue{border-top:1px solid var(--hairline)}
-  .grid{display:grid;grid-template-columns:1fr;gap:var(--s-7) var(--s-5);margin-top:var(--s-8)}
-  @media (min-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
-  @media (min-width:900px){.grid{grid-template-columns:repeat(3,1fr);gap:var(--s-8) var(--s-5)}}
-  .card{display:flex;flex-direction:column;min-width:0}
-  .card-media{display:block;background:var(--white);border-radius:var(--r-md);overflow:hidden;
-    transition:transform var(--dur-2) var(--ease-std)}
-  .card-media img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;mix-blend-mode:multiply;
-    transition:transform var(--dur-2) var(--ease-std)}
-  .card:hover .card-media img{transform:scale(1.02)}
-  .card-media.placeholder{display:grid;place-items:center;gap:var(--s-2);aspect-ratio:1;background:var(--surface)}
-  .card-media.placeholder img{mix-blend-mode:normal;width:64px;height:64px;opacity:.5}
-  .card-media.placeholder .state{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
-  .card .cat{margin-top:var(--s-4);font-size:var(--t-label);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
-  .card h3{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.01em;margin-top:var(--s-2)}
-  .card h3 a{color:inherit}
-  .card h3 a:hover{color:var(--link)}
-  .price{margin-top:var(--s-2);font-size:var(--t-headline);line-height:1.2;font-weight:500;
-    letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-  .price .cur{color:var(--muted);font-size:.85em;margin-right:2px}
-  .from{display:block;margin-top:var(--s-2);font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  /* ---------- the wall: no tiles, staggered hanging heights ---------- */
+  .wall{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-9) 0;margin-top:var(--section-tight)}
+  @media (min-width:780px){.wall{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--s-8)}}
+  .work{display:flex;flex-direction:column;min-width:0}
+  .work--feature{grid-column:1/-1;justify-self:start;width:min(100%,640px)}
+  @media (min-width:780px){
+    .work--low{margin-top:var(--s-9)}
+    .work--feature{justify-self:center}
+  }
+  .work-media{display:block}
+  .work-media img{width:100%;max-width:640px;height:auto;aspect-ratio:1;object-fit:contain;
+    mix-blend-mode:multiply;transition:transform var(--dur-2) var(--ease-std)}
+  .work:hover .work-media img{transform:scale(1.02)}
+  /* fallback for a fresh clone: no product photo, so the work keeps a ground and its size */
+  .work-media.is-empty{background:var(--surface);border-radius:var(--r-md);display:grid;place-items:center;
+    gap:var(--s-2);aspect-ratio:1;padding:var(--s-5)}
+  .work-media.is-empty img{mix-blend-mode:normal;width:64px;height:64px;opacity:.5;aspect-ratio:auto}
+  .work-media.is-empty .state{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .work .wall-label{margin-top:var(--s-5)}
+  .work--feature .wall-name{font-size:var(--t-title);letter-spacing:-.022em}
+  .work--feature .price{font-size:var(--t-numeral);letter-spacing:-.03em;line-height:1}
+  .work--feature .wall-meta{margin-top:var(--s-3)}
   .cap-line{margin-top:2px;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-variant-numeric:tabular-nums}
+  /* the rest of the wall: a text cell keeps the last slot empty of product */
+  .cell-text{display:flex;flex-direction:column;justify-content:flex-end;gap:var(--s-4);min-height:180px;
+    padding-top:var(--s-5);border-top:1px solid var(--hairline)}
+  .cell-text p{font-size:var(--t-body);color:var(--muted);max-width:34ch}
+  .cell-text .btn-2{align-self:flex-start}
 
-  /* detalle */
-  .detail{background:var(--surface)}
-  .detail-grid{display:grid;gap:var(--s-7);margin-top:var(--s-8);align-items:start}
-  @media (min-width:900px){.detail-grid{grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:var(--s-9)}}
-  .detail-media{background:var(--white);border-radius:var(--r-xl);padding:var(--s-5);box-shadow:var(--e-hairline)}
+  /* ---------- detail: the label becomes a spec sheet ---------- */
+  .detail{padding-top:var(--section)}
+  .detail-grid{display:grid;gap:var(--s-7);margin-top:var(--section-tight);align-items:start}
+  @media (min-width:900px){.detail-grid{grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:var(--s-9)}}
+  .detail-media{display:block;background:var(--surface);border-radius:var(--r-xl);padding:var(--s-6)}
   .detail-media img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;mix-blend-mode:multiply}
-  .detail-body h3{font-size:var(--t-title);line-height:1.1;letter-spacing:-.016em}
-  .detail-kicker{font-size:var(--t-label);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .detail-body h3{font-size:var(--t-title);line-height:1.08;letter-spacing:-.022em}
   .detail-lead{margin-top:var(--s-4);font-size:var(--t-body-s);color:var(--muted);max-width:44ch}
-  .price-block{margin-top:var(--s-6);padding-top:var(--s-5);border-top:1px solid var(--hairline)}
-  .price-block .amount{font-size:var(--t-title);line-height:1.1;font-weight:500;letter-spacing:-.016em;
-    font-variant-numeric:tabular-nums;display:block}
-  .price-block .amount .cur{color:var(--muted);font-size:.72em;margin-right:3px}
-  .price-block .lead{display:block;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);margin-bottom:2px}
-  fieldset{border:0;margin:var(--s-6) 0 0;padding:0;min-width:0}
+  fieldset{border:0;margin:var(--s-7) 0 0;padding:0;min-width:0}
   legend{font-size:var(--t-label);letter-spacing:.01em;font-weight:500;color:var(--muted);padding:0;margin-bottom:var(--s-3)}
   .caps{display:flex;gap:var(--s-3);flex-wrap:wrap}
   .cap{position:relative;display:block;min-width:132px;flex:1 1 132px;max-width:180px;padding:var(--s-3) var(--s-4);
@@ -168,22 +194,31 @@
     text-align:center;transition:background var(--dur-1) linear,box-shadow var(--dur-1) linear,color var(--dur-1) linear}
   .cap input{position:absolute;opacity:0;width:1px;height:1px}
   .cap .cap-name{display:block;font-size:var(--t-body-s);font-weight:500;line-height:1.2}
-  .cap .cap-price{display:block;margin-top:2px;font-size:.6875rem;line-height:1.35;letter-spacing:.015em;
+  .cap .cap-price{display:block;margin-top:2px;font-size:var(--t-caption);line-height:1.35;letter-spacing:.015em;
     color:var(--muted);font-variant-numeric:tabular-nums}
   .cap:hover{box-shadow:inset 0 0 0 1px var(--muted)}
-  .cap:has(input:checked){background:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);color:#fff}
+  .cap:has(input:checked){background:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);color:var(--white)}
   .cap:has(input:checked) .cap-price{color:rgba(255,255,255,.74)}
-  .cap:focus-within{outline:3px solid var(--accent);outline-offset:2px}
-  .detail-actions{display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-5);align-items:center;margin-top:var(--s-6)}
+  .cap:focus-within{outline:3px solid var(--accent);outline-offset:3px}
+  .spec{margin-top:var(--s-7);border-top:1px solid var(--hairline)}
+  .spec-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--s-4);align-items:baseline;
+    padding:var(--s-4) 0;border-bottom:1px solid var(--hairline)}
+  .spec dt{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .spec dd{text-align:right}
+  .spec-amount{font-size:var(--t-numeral);line-height:1;letter-spacing:-.03em;font-weight:500;
+    font-variant-numeric:tabular-nums}
+  .spec-amount .cur{color:var(--muted);font-size:.6em;margin-right:3px}
+  .spec-sku{font-family:var(--mono);font-size:var(--t-caption);line-height:1.4;color:var(--muted);word-break:break-all;
+    max-width:22ch}
+  .detail-actions{display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-5);align-items:center;margin-top:var(--s-7)}
   .detail-actions .btn{padding:0 var(--s-6)}
-  .sku{margin-top:var(--s-5);font-family:var(--mono);font-size:.6875rem;letter-spacing:0;color:var(--muted);word-break:break-all}
 
-  /* footer */
-  .site-foot{background:var(--surface);border-top:1px solid var(--hairline);padding:var(--s-9) 0 var(--s-7)}
+  /* ---------- footer ---------- */
+  .site-foot{padding:var(--section) 0 var(--s-7);border-top:1px solid var(--hairline)}
   .foot-grid{display:grid;grid-template-columns:1fr;gap:var(--s-7)}
   @media (min-width:700px){.foot-grid{grid-template-columns:repeat(3,1fr);gap:var(--s-6)}}
-  .foot-col h2{font-size:var(--t-label);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:500}
-  .foot-col ul{list-style:none;margin:var(--s-3) 0 0;padding:0;display:grid}
+  .foot-col h2{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-weight:500}
+  .foot-col ul{margin-top:var(--s-3);display:grid}
   .foot-col a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;min-height:36px}
   .foot-col a:hover{color:var(--link)}
   .notice{max-width:56ch;margin-top:var(--s-8);padding-top:var(--s-5);border-top:1px solid var(--hairline);
@@ -191,15 +226,15 @@
   .foot-base{margin-top:var(--s-4);display:flex;gap:var(--s-4);flex-wrap:wrap;justify-content:space-between;
     font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
 
-  /* motion */
-  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .enter{animation:rise var(--dur-3) var(--ease-out) both}
-  .enter:nth-child(2){animation-delay:60ms}
-  .enter:nth-child(3){animation-delay:110ms}
-  .enter:nth-child(4){animation-delay:150ms}
+  /* ---------- motion: one authored moment on load, then pointer feedback only ---------- */
+  @keyframes hang{from{opacity:0;transform:translateY(28px);filter:blur(8px)}
+    to{opacity:1;transform:none;filter:blur(0)}}
+  .enter{animation:hang var(--dur-4) var(--ease-out-expo) both;animation-delay:calc(var(--i,0) * 90ms)}
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition-duration:0ms!important}
-    .enter{opacity:1;transform:none}
+    .enter{opacity:1;transform:none;filter:none}
+    .wall-label::before,.hero-work .wall-label::before{transform:scaleX(1)}
+    .work:hover .work-media img{transform:none}
   }
 </style>
 </head>
@@ -239,118 +274,146 @@
 
   <section class="hero" aria-labelledby="hero-title">
     <div class="wrap">
-      <p class="hero-eyebrow enter">Catálogo Apple · Argentina</p>
-      <h1 id="hero-title" class="enter">Todo Apple, con el precio en pesos.</h1>
-      <p class="hero-sub enter">iPad, Mac, Watch, AirPods y accesorios. Elegí el modelo y la capacidad, y el
-        precio de la variante aparece en el lugar.</p>
-      <div class="actions enter">
+      <h1 id="hero-title" class="enter">
+        <span class="line">Todo Apple,</span>
+        <span class="line">con el precio</span>
+        <span class="line">en pesos.</span>
+      </h1>
+      <p class="hero-deck enter" style="--i:1">iPad, Mac, Watch, AirPods y accesorios. Elegí el modelo y la
+        capacidad, y el precio de esa variante aparece en el lugar.</p>
+      <div class="actions enter" style="--i:2">
         <a class="btn" href="#catalogo">Ver el catálogo</a>
-        <a class="btn-2" href="#detalle">Ver precios por capacidad <span class="chev" aria-hidden="true">›</span></a>
+        <a class="btn-2" href="#detalle">Precios por capacidad <span class="chev" aria-hidden="true">›</span></a>
       </div>
-      <p class="hero-fact enter">64 productos cargados en cinco familias</p>
     </div>
-    <div class="hero-stage">
+
+    <figure class="hero-work enter" style="--i:3">
       <img src="../../public/products/apple-11-ipad-pro-m5-space-black-1.webp"
         alt="Apple iPad Pro de 11 pulgadas en space black, visto de frente y de espaldas." width="640" height="640">
-    </div>
+      <figcaption class="wall-label">
+        <span class="wall-name">Apple 11" iPad Pro M5 Space Black</span>
+        <span class="wall-meta">iPad <span class="price"><span class="cur">$</span>900.000</span></span>
+      </figcaption>
+    </figure>
   </section>
+
+  <div class="rule" role="presentation"></div>
 
   <section id="familias" aria-labelledby="fam-title">
     <div class="wrap">
       <div class="sec-head">
-        <h2 id="fam-title">Cinco familias cargadas, y una que falta.</h2>
+        <h2 id="fam-title">Cinco familias colgadas. Una todavía vacía.</h2>
         <p>Elegí por dónde entrar. iPhone todavía no tiene productos en el catálogo y lo decimos acá,
           en lugar de mostrarte una góndola vacía.</p>
       </div>
-      <div class="families">
-        <a class="family" href="#catalogo"><b>Mac</b><em>27 productos</em></a>
-        <a class="family" href="#catalogo"><b>iPad</b><em>14 productos</em></a>
-        <a class="family" href="#catalogo"><b>Watch</b><em>9 productos</em></a>
-        <a class="family" href="#catalogo"><b>AirPods</b><em>5 productos</em></a>
-        <a class="family" href="#catalogo"><b>Accesorios</b><em>9 productos</em></a>
-        <span class="family is-empty"><b>iPhone</b><em>0 productos</em></span>
+      <div class="hanging">
+        <a class="hang" href="#catalogo"><span class="hang-name">Mac</span>
+          <span class="hang-count">27 productos <span class="chev" aria-hidden="true">›</span></span></a>
+        <a class="hang" href="#catalogo"><span class="hang-name">iPad</span>
+          <span class="hang-count">14 productos <span class="chev" aria-hidden="true">›</span></span></a>
+        <a class="hang" href="#catalogo"><span class="hang-name">Watch</span>
+          <span class="hang-count">9 productos <span class="chev" aria-hidden="true">›</span></span></a>
+        <a class="hang" href="#catalogo"><span class="hang-name">AirPods</span>
+          <span class="hang-count">5 productos <span class="chev" aria-hidden="true">›</span></span></a>
+        <a class="hang" href="#catalogo"><span class="hang-name">Accesorios</span>
+          <span class="hang-count">9 productos <span class="chev" aria-hidden="true">›</span></span></a>
+        <span class="hang hang--empty"><span class="hang-name">iPhone</span>
+          <span class="hang-count">0 productos</span></span>
       </div>
       <p class="family-note">iPhone todavía no está en el catálogo. Si lo necesitás, escribinos y lo buscamos.</p>
     </div>
   </section>
 
-  <section id="catalogo" class="catalogue" aria-labelledby="cat-title">
+  <section id="catalogo" aria-labelledby="cat-title">
     <div class="wrap">
       <div class="sec-head">
-        <h2 id="cat-title">Seis de los 64 productos.</h2>
+        <h2 id="cat-title">Seis de los 64, colgados a distinta altura.</h2>
         <p>Los mismos precios que vas a ver en la ficha de cada producto, en pesos argentinos.</p>
       </div>
-      <div class="grid">
-        <article class="card">
-          <a class="card-media" href="#detalle">
-            <img src="../../public/products/apple-13-macbook-air-chip-m5-1.webp"
-              alt="Apple MacBook Air de 13 pulgadas en gris espacial, abierta y de frente." width="640" height="640">
-          </a>
-          <p class="cat">Mac</p>
-          <h3><a href="#detalle">Apple 13" MacBook Air - Chip M5</a></h3>
-          <p class="price"><span class="cur">$</span>2.000.000</p>
-        </article>
-
-        <article class="card">
-          <a class="card-media" href="#detalle">
-            <img src="../../public/products/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp"
-              alt="Apple Watch Ultra 3 de titanio negro con correa Ocean Black." width="640" height="640">
-          </a>
-          <p class="cat">Watch</p>
-          <h3><a href="#detalle">Apple Watch Ultra 3 - 49mm GPS-CELL - Caja Titanio Black - Correa Ocean Black</a></h3>
-          <p class="price"><span class="cur">$</span>600.000</p>
-        </article>
-
-        <article class="card">
-          <a class="card-media" href="#detalle">
-            <img src="../../public/products/auriculares-airpods-max-usb-c-1.webp"
-              alt="Auriculares AirPods Max con almohadillas negras, vistos de frente." width="640" height="640">
-          </a>
-          <p class="cat">AirPods</p>
-          <h3><a href="#detalle">Auriculares AirPods Max USB-C</a></h3>
-          <p class="price"><span class="cur">$</span>250.000</p>
-        </article>
-
-        <article class="card">
-          <a class="card-media" href="#detalle">
+      <div class="wall">
+        <article class="work work--feature">
+          <a class="work-media" href="#detalle">
             <img src="../../public/products/apple-imac-24-m4-chip-azul-1.webp"
               alt="Apple iMac de 24 pulgadas en azul, con su teclado y su mouse." width="640" height="640">
           </a>
-          <p class="cat">Mac</p>
-          <h3><a href="#detalle">Apple iMac 24" M4 Chip Azul</a></h3>
-          <p class="price"><span class="cur">$</span>2.000.000</p>
+          <div class="wall-label">
+            <span class="wall-name"><a href="#detalle">Apple iMac 24" M4 Chip Azul</a></span>
+            <span class="wall-meta">Mac <span class="price"><span class="cur">$</span>2.000.000</span></span>
+          </div>
         </article>
 
-        <article class="card">
-          <a class="card-media" href="#detalle">
+        <article class="work">
+          <a class="work-media" href="#detalle">
+            <img src="../../public/products/apple-13-macbook-air-chip-m5-1.webp"
+              alt="Apple MacBook Air de 13 pulgadas en gris espacial, abierta y de frente." width="640" height="640">
+          </a>
+          <div class="wall-label">
+            <span class="wall-name"><a href="#detalle">Apple 13" MacBook Air - Chip M5</a></span>
+            <span class="wall-meta">Mac <span class="price"><span class="cur">$</span>2.000.000</span></span>
+          </div>
+        </article>
+
+        <article class="work work--low">
+          <a class="work-media" href="#detalle">
+            <img src="../../public/products/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp"
+              alt="Apple Watch Ultra 3 de titanio negro con correa Ocean Black." width="640" height="640">
+          </a>
+          <div class="wall-label">
+            <span class="wall-name"><a href="#detalle">Apple Watch Ultra 3 - 49mm GPS-CELL - Caja Titanio Black - Correa Ocean Black</a></span>
+            <span class="wall-meta">Watch <span class="price"><span class="cur">$</span>600.000</span></span>
+          </div>
+        </article>
+
+        <article class="work">
+          <a class="work-media" href="#detalle">
+            <img src="../../public/products/auriculares-airpods-max-usb-c-1.webp"
+              alt="Auriculares AirPods Max con almohadillas negras, vistos de frente." width="640" height="640">
+          </a>
+          <div class="wall-label">
+            <span class="wall-name"><a href="#detalle">Auriculares AirPods Max USB-C</a></span>
+            <span class="wall-meta">AirPods <span class="price"><span class="cur">$</span>250.000</span></span>
+          </div>
+        </article>
+
+        <article class="work work--low">
+          <a class="work-media" href="#detalle">
             <img src="../../public/products/apple-ipad-11-a16-chip-wi-fi-1.webp"
               alt="Cuatro Apple iPad de 11 pulgadas, en blanco, amarillo, rosa y azul, superpuestos." width="640" height="640">
           </a>
-          <p class="cat">iPad</p>
-          <h3><a href="#detalle">Apple iPad 11" A16 Chip WI-FI</a></h3>
-          <span class="from">Desde</span>
-          <p class="price"><span class="cur">$</span>900.000</p>
-          <p class="cap-line">128 GB · 256 GB · 512 GB</p>
+          <div class="wall-label">
+            <span class="wall-name"><a href="#detalle">Apple iPad 11" A16 Chip WI-FI</a></span>
+            <span class="wall-meta">iPad <span class="from">Desde</span>
+              <span class="price"><span class="cur">$</span>900.000</span></span>
+            <p class="cap-line">128 GB · 256 GB · 512 GB</p>
+          </div>
         </article>
 
-        <article class="card">
-          <div class="card-media placeholder">
+        <article class="work">
+          <div class="work-media is-empty">
             <img src="../../public/placeholder.webp" alt="" width="64" height="64">
             <span class="state">Imagen no disponible</span>
           </div>
-          <p class="cat">Accesorios</p>
-          <h3><a href="#detalle">Apple TV 4K (2022)</a></h3>
-          <p class="price"><span class="cur">$</span>30.000</p>
-          <p class="cap-line">64 GB</p>
+          <div class="wall-label">
+            <span class="wall-name"><a href="#detalle">Apple TV 4K (2022)</a></span>
+            <span class="wall-meta">Accesorios <span class="price"><span class="cur">$</span>30.000</span></span>
+            <p class="cap-line">64 GB</p>
+          </div>
         </article>
+
+        <div class="cell-text">
+          <p>Los otros 58 productos están en el catálogo completo, cada uno con su etiqueta.</p>
+          <a class="btn-2" href="#familias">Recorrer por familia <span class="chev" aria-hidden="true">›</span></a>
+        </div>
       </div>
     </div>
   </section>
 
+  <div class="rule" role="presentation"></div>
+
   <section id="detalle" class="detail" aria-labelledby="det-title">
     <div class="wrap">
       <div class="sec-head">
-        <h2 id="det-title">La ficha del producto, con la capacidad a la vista.</h2>
+        <h2 id="det-title">La ficha, con la capacidad a la vista.</h2>
         <p>Un producto, tres variantes. La capacidad que elegís es la que define el precio y el SKU.</p>
       </div>
       <div class="detail-grid">
@@ -359,10 +422,9 @@
             alt="Apple iPad 11 pulgadas plateado, de espaldas, con la pantalla encendida." width="640" height="640">
         </div>
         <div class="detail-body">
-          <p class="detail-kicker">iPad</p>
           <h3>Apple iPad 11" A16 Chip WI-FI</h3>
-          <p class="detail-lead">Tres capacidades de almacenamiento. El precio de arriba cambia con la
-            que elijas y es el de esa variante, no un promedio.</p>
+          <p class="detail-lead">Tres capacidades de almacenamiento. El precio de abajo es el de la
+            capacidad elegida, no un promedio.</p>
 
           <fieldset>
             <legend>Capacidad</legend>
@@ -385,16 +447,21 @@
             </div>
           </fieldset>
 
-          <div class="price-block">
-            <span class="lead">Precio de la variante</span>
-            <span class="amount"><span class="cur">$</span>900.000</span>
-          </div>
+          <dl class="spec">
+            <div class="spec-row">
+              <dt>Precio de la variante</dt>
+              <dd class="spec-amount"><span class="cur">$</span>900.000</dd>
+            </div>
+            <div class="spec-row">
+              <dt>SKU</dt>
+              <dd class="spec-sku">apple-ipad-11-a16-chip-wi-fi-128gb</dd>
+            </div>
+          </dl>
 
           <div class="detail-actions">
             <button class="btn" type="button">Agregar al carrito</button>
             <a class="btn-2" href="#catalogo">Ver todo el catálogo <span class="chev" aria-hidden="true">›</span></a>
           </div>
-          <p class="sku">SKU apple-ipad-11-a16-chip-wi-fi-128gb</p>
         </div>
       </div>
     </div>
@@ -417,11 +484,11 @@
       <div class="foot-col">
         <h2>Productos</h2>
         <ul>
-          <li><a href="#catalogo">MacBook Air 13"</a></li>
-          <li><a href="#detalle">iPad 11" A16</a></li>
+          <li><a href="#catalogo">iMac 24" M4 Azul</a></li>
+          <li><a href="#detalle">MacBook Air 13" M5</a></li>
           <li><a href="#catalogo">Watch Ultra 3</a></li>
           <li><a href="#catalogo">AirPods Max</a></li>
-          <li><a href="#catalogo">iMac 24" M4</a></li>
+          <li><a href="#detalle">iPad 11" A16</a></li>
         </ul>
       </div>
       <div class="foot-col">

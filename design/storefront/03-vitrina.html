@@ -7,8 +7,11 @@
 <title>iTech Store — vitrina</title>
 <!--
   Direction 03 · Vitrina — a black floor with lit cases.
-  Product photography here is white-background webp, so the dark page does not try to
-  dissolve it: every product sits in a lit case (white tile, multiply blend) on black.
+  Bolder pass: the hero case leaves the content column and is cropped by the viewport, so
+  the product sits in light that keeps going; the price is set as the second display line
+  of the title; the catalogue puts one case at 2×2 and five at 1×1 so the wall reads at two
+  scales. Product photography here is white-background webp, so the dark page does not try
+  to dissolve it: every product sits in a lit case (white ground, multiply blend) on black.
   Files resolve from the repository root: run the canvas from there.
 -->
 <style>
@@ -17,30 +20,42 @@
     --canvas-dark:#0a0a0a; --surface-dark:#101010; --surface-raised:#161618; --ink-dark:#ededed; --muted-dark:#a1a1a6;
     --hairline-dark:#262628; --hairline-strong:#3a3a3d;
     --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
-    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:88px; --s-10:120px;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+    --s-9:88px; --s-10:120px; --s-11:160px;
     --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
     --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
     --e-lift-dark:0 12px 32px rgba(0,0,0,.55);
-    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms;
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms; --dur-4:720ms;
     --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
     --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     --mono:ui-monospace,"SF Mono",Menlo,monospace;
-    --t-display:clamp(2.5rem,6vw,5rem);
-    --t-display-s:clamp(1.875rem,3.6vw,3rem);
-    --t-title:clamp(1.5rem,2.4vw,2.125rem);
+    --t-display:clamp(2.75rem,7vw,6rem);
+    --t-display-s:clamp(2rem,4.6vw,3.75rem);
+    --t-numeral:clamp(2rem,3.4vw,2.75rem);
+    --t-title:clamp(1.375rem,2.2vw,1.875rem);
     --t-headline:1.3125rem;
     --t-body:1.0625rem; --t-body-s:.9375rem; --t-label:.8125rem; --t-caption:.75rem;
-    --section:clamp(64px,9vw,120px);
+    --section-tall:clamp(88px,12vw,176px);
+    --section:clamp(64px,9vw,112px);
+    --section-tight:clamp(40px,5vw,64px);
     color-scheme:dark;
   }
   *,*::before,*::after{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
+  html{-webkit-text-size-adjust:100%;scrollbar-color:var(--hairline-strong) var(--canvas-dark)}
   body{margin:0;background:var(--canvas-dark);color:var(--ink-dark);font:400 var(--t-body)/1.47 var(--font);
-    -webkit-font-smoothing:antialiased}
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:var(--ink-dark);color:var(--canvas-dark)}
   img{max-width:100%;display:block}
-  a{color:var(--accent);text-decoration:none}
+  a{color:var(--ink-dark);text-decoration:underline;text-underline-offset:.2em;
+    text-decoration-thickness:1px;text-decoration-color:var(--hairline-strong);
+    transition:text-decoration-color var(--dur-1) linear}
+  a:hover{text-decoration-color:currentColor}
+  .skip,.brand,.nav-main a,.head-tools a,.menu nav a,.btn-2,.card h3 a,.foot-col a{text-decoration:none}
+  .card h3 a:hover,.foot-col a:hover{text-decoration:underline;text-underline-offset:.2em;
+    text-decoration-thickness:1px;text-decoration-color:currentColor}
   h1,h2,h3,h4{margin:0;font-weight:600;text-wrap:balance}
-  p{margin:0}
+  p{margin:0;text-wrap:pretty}
   ul{margin:0;padding:0;list-style:none}
   :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm)}
   .skip{position:absolute;left:12px;top:-56px;z-index:50;background:var(--ink-dark);color:var(--canvas-dark);
@@ -77,16 +92,19 @@
   .menu nav a{color:var(--ink-dark);padding:0 var(--s-4);min-height:44px;display:flex;align-items:center;border-radius:var(--r-sm)}
   .menu nav a:hover{background:var(--surface-raised)}
 
-  /* hero */
-  .hero{padding:clamp(32px,5vw,72px) 0 var(--section);overflow:hidden}
-  .hero-grid{display:grid;gap:var(--s-7);align-items:center}
-  @media (min-width:900px){.hero-grid{grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:var(--s-8)}}
-  .hero-eyebrow{font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted-dark)}
-  .hero h1{font-size:var(--t-display);line-height:1.02;letter-spacing:-.03em;margin-top:var(--s-4);max-width:14ch}
-  .hero h1 .amount{display:block;font-variant-numeric:tabular-nums;color:var(--ink-dark)}
-  .hero h1 .amount .cur{color:var(--muted-dark);font-size:.62em;margin-right:4px}
-  .hero-sub{margin-top:var(--s-5);font-size:var(--t-body);color:var(--muted-dark);max-width:44ch}
-  .hero-actions{display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-5);margin-top:var(--s-6)}
+  /* ---------- hero: the lit case leaves the column ---------- */
+  .hero{padding:clamp(32px,5vw,80px) 0 var(--section)}
+  .hero-bleed{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-8);
+    padding-left:var(--s-5);padding-right:var(--s-5)}
+  @media (min-width:900px){
+    .hero-bleed{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:clamp(32px,4vw,64px);
+      padding-left:max(64px,calc(50vw - 536px));padding-right:0;align-items:center}
+  }
+  .hero h1{font-size:var(--t-display);line-height:.92;letter-spacing:-.038em;max-width:13ch}
+  .hero h1 .amount{display:block;margin-top:var(--s-4);font-variant-numeric:tabular-nums;letter-spacing:-.045em}
+  .hero h1 .amount .cur{color:var(--muted-dark);font-size:.42em;margin-right:.1em}
+  .hero-product{margin-top:var(--s-6);font-size:var(--t-body-s);line-height:1.4;color:var(--muted-dark);max-width:38ch}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-5);margin-top:var(--s-7)}
   .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 var(--s-5);
     border-radius:var(--r-pill);border:0;background:var(--accent);color:#fff;font:500 var(--t-body-s)/1 var(--font);
     cursor:pointer;transition:transform var(--dur-1) var(--ease-std),background var(--dur-1) linear}
@@ -95,70 +113,84 @@
   .btn-2{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:var(--t-body-s);font-weight:500}
   .btn-2 .chev{transition:transform var(--dur-2) var(--ease-std)}
   .btn-2:hover .chev{transform:translateX(2px)}
-  .hero-facts{margin-top:var(--s-7);display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-6);
-    font-size:var(--t-label);letter-spacing:.01em;color:var(--muted-dark)}
-  .hero-facts span{display:inline-flex;align-items:center;gap:var(--s-2)}
-  .hero-facts span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--muted-dark)}
-  /* the lit case */
-  .case{position:relative;border-radius:var(--r-xl);padding:var(--s-5);
-    background:radial-gradient(120% 100% at 50% 0%,#ffffff 0%,var(--surface) 100%)}
+  .hero-note{margin-top:var(--s-7);font-size:var(--t-label);letter-spacing:.01em;color:var(--muted-dark);
+    display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-5);font-variant-numeric:tabular-nums}
+  .hero-note span{display:inline-flex;align-items:center;gap:var(--s-2)}
+  .hero-note span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--hairline-strong)}
+
+  /* the lit case: white ground the photo can dissolve into, cropped by the viewport edge */
+  .case{position:relative;border-radius:var(--r-xl);padding:clamp(20px,3vw,48px);
+    background:radial-gradient(120% 100% at 50% 0%,var(--white) 0%,var(--surface) 100%)}
   .case img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;mix-blend-mode:multiply}
+  .hero-case{min-height:min(72vh,620px);display:grid;place-items:center}
+  @media (min-width:900px){.hero-case{border-radius:var(--r-xl) 0 0 var(--r-xl);margin-right:0}}
+  .hero-case img{max-width:640px}
 
   /* sections */
   section{padding:var(--section) 0;border-top:1px solid var(--hairline-dark)}
-  .sec-head{max-width:50ch}
-  .sec-head h2{font-size:var(--t-display-s);line-height:1.05;letter-spacing:-.024em}
-  .sec-head p{margin-top:var(--s-4);font-size:var(--t-body);color:var(--muted-dark)}
+  .hero{border-top:0}
+  .sec-head{max-width:48ch}
+  .sec-head h2{font-size:var(--t-display-s);line-height:1.02;letter-spacing:-.03em}
+  .sec-head p{margin-top:var(--s-4);font-size:var(--t-body);color:var(--muted-dark);max-width:48ch}
 
-  /* families */
-  .families{display:grid;grid-template-columns:1fr;gap:var(--s-3);margin-top:var(--s-7)}
-  @media (min-width:560px){.families{grid-template-columns:repeat(2,1fr)}}
-  @media (min-width:900px){.families{grid-template-columns:repeat(3,1fr);gap:var(--s-4)}}
-  .family{display:flex;flex-direction:column;justify-content:space-between;gap:var(--s-5);min-height:132px;
-    padding:var(--s-5);border-radius:var(--r-lg);background:var(--surface-dark);
-    box-shadow:inset 0 0 0 1px var(--hairline-dark);color:var(--ink-dark);
-    transition:transform var(--dur-2) var(--ease-std),box-shadow var(--dur-2) var(--ease-std),background var(--dur-2) linear}
-  .family:hover{transform:translateY(-2px);background:var(--surface-raised);box-shadow:inset 0 0 0 1px var(--hairline-strong),var(--e-lift-dark)}
-  .family b{font-size:var(--t-title);line-height:1.1;letter-spacing:-.016em;font-weight:500}
-  .family em{font-style:normal;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted-dark)}
-  .family.is-empty{background:none;border:1px dashed var(--hairline-dark);box-shadow:none}
-  .family.is-empty:hover{transform:none;background:none;box-shadow:none}
-  .family.is-empty b{color:var(--muted-dark)}
-  .family-note{margin-top:var(--s-5);font-size:var(--t-body-s);color:var(--muted-dark);max-width:56ch}
+  /* families: plinth wall, the biggest family opens the wall */
+  .families{display:grid;grid-template-columns:1fr;gap:var(--s-3);margin-top:var(--section-tight)}
+  @media (min-width:700px){.families{grid-template-columns:1fr 1fr;gap:var(--s-4)}}
+  .family{display:grid;grid-template-rows:auto 1fr;text-decoration:none;gap:var(--s-6);min-height:clamp(152px,17vw,200px);
+    padding:var(--s-5);border-radius:var(--r-lg);background:var(--surface-dark);color:var(--ink-dark);
+    box-shadow:inset 0 0 0 1px var(--hairline-dark);
+    transition:background var(--dur-2) linear,box-shadow var(--dur-2) linear,transform var(--dur-2) var(--ease-std)}
+  .family:hover{background:var(--surface-raised);box-shadow:inset 0 0 0 1px var(--hairline-strong);transform:translateY(-2px)}
+  .family b{font-size:var(--t-title);line-height:1.08;letter-spacing:-.022em;font-weight:500}
+  .family .count{align-self:end;font-size:var(--t-numeral);line-height:.9;letter-spacing:-.04em;
+    color:var(--muted-dark);font-variant-numeric:tabular-nums;display:flex;align-items:baseline;
+    justify-content:space-between;gap:var(--s-3);transition:color var(--dur-2) linear}
+  .family .count small{font-size:var(--t-label);letter-spacing:.01em}
+  .family:hover .count{color:var(--ink-dark)}
+  .family--wide{grid-column:1/-1}
+  .family--empty{background:none;border:1px dashed var(--hairline-dark);box-shadow:none}
+  .family--empty:hover{transform:none;background:none;box-shadow:none}
+  .family--empty b{color:var(--muted-dark)}
+  .family-note{margin-top:var(--s-5);font-size:var(--t-body-s);color:var(--muted-dark);max-width:54ch}
 
-  /* catalogue */
-  .grid{display:grid;grid-template-columns:1fr;gap:var(--s-6) var(--s-4);margin-top:var(--s-8)}
-  @media (min-width:600px){.grid{grid-template-columns:repeat(2,1fr)}}
-  @media (min-width:960px){.grid{grid-template-columns:repeat(3,1fr);gap:var(--s-7) var(--s-5)}}
-  .card{display:flex;flex-direction:column;min-width:0;
-    transition:transform var(--dur-2) var(--ease-std)}
+  /* catalogue: two scales of case */
+  .grid{display:grid;grid-template-columns:1fr;gap:var(--s-6) var(--s-4);margin-top:var(--section-tight)}
+  @media (min-width:600px){.grid{grid-template-columns:1fr 1fr}}
+  @media (min-width:960px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:var(--s-6) var(--s-5);align-items:start}}
+  .card{display:flex;flex-direction:column;min-width:0;transition:transform var(--dur-2) var(--ease-std)}
   .card:hover{transform:translateY(-2px)}
-  .card-media{display:block;background:var(--white);border-radius:var(--r-lg);overflow:hidden;padding:var(--s-4);
-    box-shadow:inset 0 0 0 1px var(--hairline-dark);transition:box-shadow var(--dur-2) var(--ease-std)}
-  .card:hover .card-media{box-shadow:inset 0 0 0 1px var(--hairline-strong),var(--e-lift-dark)}
+  .card--monument{grid-column:1/-1}
+  @media (min-width:960px){
+    .card--monument{grid-column:1/3;grid-row:1/3}
+    .card--monument .card-media{padding:clamp(20px,2.4vw,40px)}
+  }
+  .card-media{display:block;background:var(--white);border-radius:var(--r-lg);overflow:hidden;
+    padding:var(--s-4);transition:box-shadow var(--dur-2) var(--ease-std)}
+  .card:hover .card-media{box-shadow:0 0 0 1px var(--hairline-strong),var(--e-lift-dark)}
   .card-media img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;mix-blend-mode:multiply;
     transition:transform var(--dur-2) var(--ease-std)}
   .card:hover .card-media img{transform:scale(1.02)}
-  .card-media.placeholder{display:grid;place-items:center;gap:var(--s-2);aspect-ratio:1;background:var(--surface)}
-  .card-media.placeholder img{mix-blend-mode:normal;width:56px;height:56px;opacity:.5}
-  .card-media.placeholder .state{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
-  .card .cat{margin-top:var(--s-4);font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted-dark)}
-  .card h3{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.01em;margin-top:var(--s-2)}
+  .card-media.is-empty{display:grid;place-items:center;gap:var(--s-2);aspect-ratio:1;background:var(--surface)}
+  .card-media.is-empty img{mix-blend-mode:normal;width:56px;height:56px;opacity:.5;aspect-ratio:auto}
+  .card-media.is-empty .state{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .card h3{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.012em;margin-top:var(--s-4);max-width:32ch}
   .card h3 a{color:var(--ink-dark)}
-  .card h3 a:hover{color:var(--accent)}
+  .card--monument h3{font-size:var(--t-title);letter-spacing:-.02em}
   .price{margin-top:var(--s-2);font-size:var(--t-headline);line-height:1.2;font-weight:500;letter-spacing:-.01em;
     font-variant-numeric:tabular-nums;color:var(--ink-dark)}
   .price .cur{color:var(--muted-dark);font-size:.85em;margin-right:2px}
+  .card--monument .price{font-size:var(--t-numeral);letter-spacing:-.035em;line-height:1;margin-top:var(--s-3)}
   .from{display:block;margin-top:var(--s-2);font-size:var(--t-label);letter-spacing:.01em;color:var(--muted-dark)}
-  .cap-line{margin-top:2px;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted-dark);font-variant-numeric:tabular-nums}
+  .cap-line{margin-top:2px;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted-dark);
+    font-variant-numeric:tabular-nums}
 
   /* configurator */
-  .detail-grid{display:grid;gap:var(--s-7);margin-top:var(--s-8);align-items:start}
+  .detail-grid{display:grid;gap:var(--s-7);margin-top:var(--section-tight);align-items:start}
   @media (min-width:960px){.detail-grid{grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:var(--s-9)}}
-  .detail-body h3{font-size:var(--t-title);line-height:1.1;letter-spacing:-.018em;color:var(--ink-dark)}
-  .detail-kicker{font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted-dark)}
+  .detail-body h3{font-size:var(--t-title);line-height:1.08;letter-spacing:-.022em;color:var(--ink-dark)}
   .detail-lead{margin-top:var(--s-4);font-size:var(--t-body-s);color:var(--muted-dark);max-width:42ch}
-  fieldset{border:0;margin:var(--s-6) 0 0;padding:0;min-width:0}
+  fieldset{border:0;margin:var(--s-7) 0 0;padding:0;min-width:0}
   legend{font-size:var(--t-label);letter-spacing:.01em;font-weight:500;color:var(--muted-dark);padding:0;margin-bottom:var(--s-3)}
   .caps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-2);padding:var(--s-1);
     border-radius:var(--r-pill);background:var(--surface-dark);box-shadow:inset 0 0 0 1px var(--hairline-dark)}
@@ -166,41 +198,45 @@
     cursor:pointer;min-height:56px;transition:background var(--dur-1) linear,color var(--dur-1) linear}
   .cap input{position:absolute;opacity:0;width:1px;height:1px}
   .cap .cap-name{display:block;font-size:var(--t-body-s);font-weight:500;line-height:1.2;color:var(--ink-dark)}
-  .cap .cap-price{display:block;margin-top:2px;font-size:.6875rem;line-height:1.35;letter-spacing:.015em;
+  .cap .cap-price{display:block;margin-top:2px;font-size:var(--t-caption);line-height:1.35;letter-spacing:.015em;
     color:var(--muted-dark);font-variant-numeric:tabular-nums}
   .cap:hover{background:var(--surface-raised)}
   .cap:has(input:checked){background:var(--ink-dark)}
   .cap:has(input:checked) .cap-name{color:var(--canvas-dark)}
   .cap:has(input:checked) .cap-price{color:rgba(10,10,10,.62)}
-  .cap:focus-within{outline:3px solid var(--accent);outline-offset:2px}
-  .price-block{margin-top:var(--s-6);padding-top:var(--s-5);border-top:1px solid var(--hairline-dark)}
-  .price-block .lead{display:block;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted-dark);margin-bottom:4px}
-  .price-block .amount{display:block;font-size:var(--t-display-s);line-height:1.05;font-weight:500;letter-spacing:-.024em;
+  .cap:focus-within{outline:3px solid var(--accent);outline-offset:3px}
+  .price-block{margin-top:var(--s-7);padding-top:var(--s-5);border-top:1px solid var(--hairline-dark)}
+  .price-block .lead{display:block;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted-dark);margin-bottom:var(--s-2)}
+  .price-block .amount{display:block;font-size:var(--t-display-s);line-height:1;font-weight:500;letter-spacing:-.04em;
     font-variant-numeric:tabular-nums;color:var(--ink-dark)}
-  .price-block .amount .cur{color:var(--muted-dark);font-size:.55em;margin-right:4px}
-  .detail-actions{display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-5);align-items:center;margin-top:var(--s-6)}
-  .sku{margin-top:var(--s-5);font-family:var(--mono);font-size:.6875rem;color:var(--muted-dark);word-break:break-all}
+  .price-block .amount .cur{color:var(--muted-dark);font-size:.44em;margin-right:4px}
+  .detail-actions{display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-5);align-items:center;margin-top:var(--s-7)}
+  .sku{margin-top:var(--s-5);font-family:var(--mono);font-size:var(--t-caption);color:var(--muted-dark);word-break:break-all}
 
   /* footer */
-  .site-foot{padding:var(--s-9) 0 var(--s-7)}
+  .site-foot{padding:var(--section) 0 var(--s-7);border-top:1px solid var(--hairline-dark)}
   .foot-grid{display:grid;grid-template-columns:1fr;gap:var(--s-7)}
   @media (min-width:700px){.foot-grid{grid-template-columns:repeat(3,1fr);gap:var(--s-6)}}
-  .foot-col h2{font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted-dark);font-weight:500}
+  .foot-col h2{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted-dark);font-weight:500}
   .foot-col ul{margin-top:var(--s-3);display:grid}
   .foot-col a{color:var(--ink-dark);font-size:var(--t-body-s);min-height:36px;display:inline-flex;align-items:center}
-  .foot-col a:hover{color:var(--accent)}
   .notice{max-width:56ch;margin-top:var(--s-8);padding-top:var(--s-5);border-top:1px solid var(--hairline-dark);
     font-size:var(--t-caption);line-height:1.35;letter-spacing:.015em;color:var(--muted-dark)}
   .foot-base{margin-top:var(--s-4);display:flex;gap:var(--s-4);flex-wrap:wrap;justify-content:space-between;
     font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted-dark)}
 
-  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .enter{animation:rise var(--dur-3) var(--ease-out) both}
-  .enter:nth-child(2){animation-delay:60ms}
-  .enter:nth-child(3){animation-delay:110ms}
+  /* motion: the case switches on and the copy rises once, on load */
+  @keyframes rise{from{opacity:0;transform:translateY(24px);filter:blur(6px)}
+    to{opacity:1;transform:none;filter:blur(0)}}
+  @keyframes lit{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+  .enter{animation:rise var(--dur-4) var(--ease-out-expo) both;animation-delay:calc(var(--i,0) * 90ms)}
+  .hero-case{animation:lit var(--dur-4) var(--ease-out-expo) 120ms both}
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition-duration:0ms!important}
-    .enter{opacity:1;transform:none}
+    .enter{opacity:1;transform:none;filter:none}
+    .hero-case{clip-path:none}
+    .card:hover{transform:none}
+    .card:hover .card-media img{transform:none}
   }
 </style>
 </head>
@@ -240,21 +276,21 @@
   <div id="top"></div>
 
   <section class="hero" aria-labelledby="hero-title">
-    <div class="wrap hero-grid">
-      <div>
-        <p class="hero-eyebrow enter">Watch · Apple Watch Ultra 3</p>
+    <div class="hero-bleed">
+      <div class="hero-copy">
         <h1 id="hero-title" class="enter">Titanio negro, 49 mm.
           <span class="amount"><span class="cur">$</span>600.000</span>
         </h1>
-        <p class="hero-sub enter">Caja de titanio, GPS + Cellular y correa Ocean Black. El precio que ves
-          es el de esta variante, en pesos, y no cambia cuando abrís la ficha.</p>
-        <div class="hero-actions enter">
+        <p class="hero-product enter" style="--i:1">Apple Watch Ultra 3 - 49mm GPS-CELL - Caja Titanio Black -
+          Correa Ocean Black. El precio que ves es el de esta variante, en pesos.</p>
+        <div class="hero-actions enter" style="--i:2">
           <button class="btn" type="button">Agregar al carrito</button>
           <a class="btn-2" href="#detalle">Ver la ficha <span class="chev" aria-hidden="true">›</span></a>
         </div>
-        <p class="hero-facts enter"><span>64 productos</span><span>68 variantes</span><span>5 de 6 familias con stock cargado</span></p>
+        <p class="hero-note enter" style="--i:3"><span>64 productos</span><span>68 variantes</span>
+          <span>5 de 6 familias con stock</span></p>
       </div>
-      <div class="case">
+      <div class="case hero-case">
         <img src="../../public/products/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp"
           alt="Apple Watch Ultra 3 de titanio negro con correa Ocean Black." width="640" height="640">
       </div>
@@ -265,16 +301,21 @@
     <div class="wrap">
       <div class="sec-head">
         <h2 id="fam-title">Seis vitrinas. Una todavía vacía.</h2>
-        <p>Cada familia tiene su lugar en la pared. iPhone también, con el cartel de lo que es:
-          cero productos cargados.</p>
+        <p>Cada familia tiene su lugar en la pared, con la cantidad real de productos en la esquina.</p>
       </div>
       <div class="families">
-        <a class="family" href="#catalogo"><b>Mac</b><em>27 productos</em></a>
-        <a class="family" href="#catalogo"><b>iPad</b><em>14 productos</em></a>
-        <a class="family" href="#catalogo"><b>Watch</b><em>9 productos</em></a>
-        <a class="family" href="#catalogo"><b>AirPods</b><em>5 productos</em></a>
-        <a class="family" href="#catalogo"><b>Accesorios</b><em>9 productos</em></a>
-        <span class="family is-empty"><b>iPhone</b><em>0 productos</em></span>
+        <a class="family family--wide" href="#catalogo"><b>Mac</b>
+          <span class="count">27 <small>productos</small></span></a>
+        <a class="family" href="#catalogo"><b>iPad</b>
+          <span class="count">14 <small>productos</small></span></a>
+        <a class="family" href="#catalogo"><b>Watch</b>
+          <span class="count">9 <small>productos</small></span></a>
+        <a class="family" href="#catalogo"><b>AirPods</b>
+          <span class="count">5 <small>productos</small></span></a>
+        <a class="family" href="#catalogo"><b>Accesorios</b>
+          <span class="count">9 <small>productos</small></span></a>
+        <span class="family family--wide family--empty"><b>iPhone</b>
+          <span class="count">0 <small>productos</small></span></span>
       </div>
       <p class="family-note">iPhone todavía no está en el catálogo. Si lo necesitás, escribinos y lo buscamos.</p>
     </div>
@@ -288,12 +329,11 @@
           el catálogo dice desde cuánto.</p>
       </div>
       <div class="grid">
-        <article class="card">
+        <article class="card card--monument">
           <a class="card-media" href="#detalle">
             <img src="../../public/products/apple-11-ipad-pro-m5-space-black-1.webp"
               alt="Apple iPad Pro de 11 pulgadas en space black, de frente y de espaldas." width="640" height="640">
           </a>
-          <p class="cat">iPad</p>
           <h3><a href="#detalle">Apple 11" iPad Pro M5 Space Black</a></h3>
           <p class="price"><span class="cur">$</span>900.000</p>
         </article>
@@ -303,7 +343,6 @@
             <img src="../../public/products/apple-13-macbook-air-chip-m5-1.webp"
               alt="Apple MacBook Air de 13 pulgadas en gris espacial, abierta y de frente." width="640" height="640">
           </a>
-          <p class="cat">Mac</p>
           <h3><a href="#detalle">Apple 13" MacBook Air - Chip M5</a></h3>
           <p class="price"><span class="cur">$</span>2.000.000</p>
         </article>
@@ -313,7 +352,6 @@
             <img src="../../public/products/auriculares-airpods-max-usb-c-1.webp"
               alt="Auriculares AirPods Max con almohadillas negras, vistos de frente." width="640" height="640">
           </a>
-          <p class="cat">AirPods</p>
           <h3><a href="#detalle">Auriculares AirPods Max USB-C</a></h3>
           <p class="price"><span class="cur">$</span>250.000</p>
         </article>
@@ -323,7 +361,6 @@
             <img src="../../public/products/apple-imac-24-m4-chip-azul-1.webp"
               alt="Apple iMac de 24 pulgadas en azul, con su teclado y su mouse." width="640" height="640">
           </a>
-          <p class="cat">Mac</p>
           <h3><a href="#detalle">Apple iMac 24" M4 Chip Azul</a></h3>
           <p class="price"><span class="cur">$</span>2.000.000</p>
         </article>
@@ -333,7 +370,6 @@
             <img src="../../public/products/apple-ipad-11-a16-chip-wi-fi-1.webp"
               alt="Cuatro Apple iPad de 11 pulgadas, en blanco, amarillo, rosa y azul, superpuestos." width="640" height="640">
           </a>
-          <p class="cat">iPad</p>
           <h3><a href="#detalle">Apple iPad 11" A16 Chip WI-FI</a></h3>
           <span class="from">Desde</span>
           <p class="price"><span class="cur">$</span>900.000</p>
@@ -341,11 +377,10 @@
         </article>
 
         <article class="card">
-          <div class="card-media placeholder">
+          <div class="card-media is-empty">
             <img src="../../public/placeholder.webp" alt="" width="56" height="56">
             <span class="state">Imagen no disponible</span>
           </div>
-          <p class="cat">Accesorios</p>
           <h3><a href="#detalle">Apple TV 4K (2022)</a></h3>
           <p class="price"><span class="cur">$</span>30.000</p>
           <p class="cap-line">64 GB</p>
@@ -358,7 +393,7 @@
     <div class="wrap">
       <div class="sec-head">
         <h2 id="det-title">Elegí la capacidad y el precio aparece solo.</h2>
-        <p>Tres variantes del mismo iPad, cada una con su SKU. No hay un precio "general" que después
+        <p>Tres variantes del mismo iPad, cada una con su SKU. No hay un precio general que después
           cambie en el carrito.</p>
       </div>
       <div class="detail-grid">
@@ -367,7 +402,6 @@
             alt="Apple iPad 11 pulgadas en starlight, de espaldas, con la pantalla encendida." width="640" height="640">
         </div>
         <div class="detail-body">
-          <p class="detail-kicker">iPad</p>
           <h3>Apple iPad 11" A16 Chip WI-FI</h3>
           <p class="detail-lead">Mismo modelo, tres capacidades. El total de abajo es la variante
             elegida y es el precio que se agrega al carrito.</p>

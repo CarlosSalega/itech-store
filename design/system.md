@@ -9,6 +9,14 @@ T6 → T7/T8).
 Direction: faithful to Apple's visual language — large type, generous whitespace, the product as
 protagonist, restrained motion. The language is borrowed, the layout is not.
 
+Revision 2 (bolder pass): the owner approved the palette, the Apple fidelity and the three directions,
+and asked for conviction rather than new ideas. Nothing is re-hued and no direction is replaced. What
+changed: the display scale is bigger and the steps between levels are real jumps instead of 1.2x
+creeps, a numeral scale carries counts and figures, each page is allowed one monument, a full-bleed
+rule became the shared structural device, and motion became authored (one moment per page) with
+scroll-driven counting where the browser supports it. Every artboard keeps one signature detail that
+no other direction uses; those are listed under "Signatures".
+
 ## Sources read
 
 | Source | Taken |
@@ -52,9 +60,13 @@ dissolves into the tile. On `--canvas-dark` the photo does not dissolve: it sits
 no ring) on the black floor. Never crop a product photo to fill a frame: they are 640px wide and
 contain their own margins.
 
-Rules: never put `--link` on a dark ground (use `--accent`) and never `--muted` on `--canvas-dark`
-(use `--muted-dark`). Body text is always `--ink` or `--ink-dark`, never a mid grey. Colour never
-carries meaning alone: an unavailable family also changes wording, not only contrast.
+Rules: never put `--link` on a dark ground. On dark, text links are `--ink-dark` with a 1px
+underline (`text-decoration-color: --hairline-strong`, `currentColor` on hover) and `--accent` is
+reserved for fills, focus rings and the selected control — `--accent` on `--canvas-dark` measures
+4.2:1, which is enough for a 3:1 focus ring and for white-on-accent button labels (4.7:1) but not for
+body-size text. Never `--muted` on `--canvas-dark` (use `--muted-dark`, 7.7:1). Body text is always
+`--ink` or `--ink-dark`, never a mid grey. Colour never carries meaning alone: an unavailable family
+also changes wording, not only contrast.
 
 ## Typography
 
@@ -70,25 +82,37 @@ font-family: -apple-system, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto,
 Geist Mono / `ui-monospace` only for capacity and SKU strings if ever shown alone.
 
 Tracking is size-specific and leading is inverse to size: large type tightens, small type drifts
-open. Never one fixed `letter-spacing`.
+open. Never one fixed `letter-spacing`. The jump between levels is deliberate: display runs 3–5x body and
+headline 1.25x body. Do not invent a level between display and display-s to soften a jump.
 
 | Token | Size | Leading | Tracking | Weight | Usage |
 | --- | --- | --- | --- | --- | --- |
-| `--t-display` | `clamp(2.5rem, 6.4vw, 5.5rem)` | `1.02` | `-0.03em` | 600 | Hero headline |
-| `--t-display-s` | `clamp(2rem, 4.4vw, 3.5rem)` | `1.05` | `-0.022em` | 600 | Section headline (large) |
-| `--t-title` | `clamp(1.5rem, 2.6vw, 2.25rem)` | `1.1` | `-0.016em` | 600 | Section headline (default), PDP name |
-| `--t-headline` | `1.3125rem` | `1.2` | `-0.01em` | 600 | Card name, index row |
+| `--t-display` | `clamp(2.75rem, 7vw, 6rem)` | `0.92–0.95` | `-0.035em` | 600 | Hero statement: the one monument per page. 6rem is the ceiling |
+| `--t-display-s` | `clamp(2rem, 4.6vw, 3.75rem)` | `1.02` | `-0.03em` | 600 | Section headline, variant price on a product page |
+| `--t-numeral` | `clamp(2rem, 3.4vw, 3.25rem)` | `0.9–1` | `-0.04em` | 500 | Counts, index numerals, the monumental product's price; `tabular-nums` |
+| `--t-title` | `clamp(1.375rem, 2.2vw, 1.875rem)` | `1.08` | `-0.022em` | 500/600 | Section headline (default), PDP name, family name |
+| `--t-headline` | `1.3125rem` | `1.2` | `-0.012em` | 600 | Product name in a card, a row, a wall label |
 | `--t-body` | `1.0625rem` | `1.47` | `0` | 400 | Body copy |
 | `--t-body-s` | `0.9375rem` | `1.5` | `0` | 400 | Supporting copy, navigation |
 | `--t-label` | `0.8125rem` | `1.3` | `0.01em` | 500 | Family counts, category labels |
 | `--t-caption` | `0.75rem` | `1.35` | `0.015em` | 400 | Sample-data notice, metadata |
 
 No text below 12px. `font-optical-sizing: auto` on headings. Numerals in prices use
-`font-variant-numeric: tabular-nums`.
+`font-variant-numeric: tabular-nums`. Tracking never goes below `-0.04em` and display type never
+exceeds 6rem: past those two marks the page stops being Apple's and starts being a poster.
+
+Rules that keep the enlarged scale honest:
+
+- One monument per page: one display statement, one large numeral, or one product moment. Everything
+  else steps down immediately. Two monuments cancel each other out.
+- Small text directly under display type is the jump. Do not fill the gap with a halfway size.
+- A category, family or city label never sits above a heading as an eyebrow. The heading carries
+  itself; if a label is needed it becomes the first line under the heading, or a caption line.
 
 ## Spacing
 
-4px base, 8-step rhythm. Layout is spacing, not borders: gaps carry the grouping.
+4px base; the steps above `--s-8` grow non-linearly so a page can go quiet. Layout is spacing,
+not borders: gaps carry the grouping.
 
 | Token | Value | Token | Value |
 | --- | --- | --- | --- |
@@ -97,9 +121,16 @@ No text below 12px. `font-optical-sizing: auto` on headings. Numerals in prices 
 | `--s-3` | `12px` | `--s-8` | `64px` |
 | `--s-4` | `16px` | `--s-9` | `88px` |
 | `--s-5` | `24px` | `--s-10` | `120px` |
+| | | `--s-11` | `160px` |
 
 - Content column: `max-width: 1200px`, side padding `--s-5` (mobile) → `--s-8` (≥900px).
-- Section rhythm: `clamp(64px, 9vw, 120px)` block padding. Sections breathe; they do not stack tight.
+- Section rhythm is three values, and they alternate on purpose:
+  `--section-tall: clamp(88px, 12vw, 176px)` for monumental and empty passages;
+  `--section: clamp(64px, 9vw, 112px)` as the default;
+  `--section-tight: clamp(40px, 5vw, 64px)` to pull a heading against what it introduces.
+  Two adjacent sections never use the same rhythm.
+- Density alternates: a tall section is followed by a tight one, a three-column wall by one line of
+  text. Uniform stacked sections were removed in the bolder pass.
 - Grid gutters: `--s-4` mobile, `--s-5` desktop. Card internal padding: `--s-5`.
 - One section per screen at 1440×900 is the target, not a rule: on a phone every section grows and
   nothing may overlap.
@@ -131,23 +162,68 @@ Depth never exceeds one level inside another panel (no card in a card in a card)
 
 ## Motion
 
-Restrained: motion confirms a pointer, never performs.
+Authored, not scattered: each page has **one** moment of motion worth remembering, and everything
+else is pointer feedback. Motion never carries meaning on its own — the final state is the default
+state, so a reduced-motion user loses the animation and nothing else.
 
 | Token | Value | Usage |
 | --- | --- | --- |
 | `--dur-1` | `120ms` | Press, hover colour |
 | `--dur-2` | `220ms` | Card lift, image zoom, underline draw |
-| `--dur-3` | `420ms` | Hero entrance, section reveal |
+| `--dur-3` | `420ms` | Caption rules, wall-label ticks |
+| `--dur-4` | `720ms` | The one authored moment: hero entrance, a case switching on |
 | `--ease-std` | `cubic-bezier(.28,.11,.32,1)` | Apple's standard curve, in and out |
-| `--ease-out` | `cubic-bezier(.22,1,.36,1)` | Entrances only |
+| `--ease-out` | `cubic-bezier(.22,1,.36,1)` | Small transitions that end at rest |
+| `--ease-out-expo` | `cubic-bezier(.16,1,.3,1)` | Entrances and authored moments only |
 
 - Feedback starts on pointer-down: `:active { transform: scale(.97) }`, `--dur-1`.
 - Hover: linked card lifts `translateY(-2px)` and its photo zooms to `1.02` inside the frame;
-  buttons step and press; nav underlines draw from the left.
-- Hero enters once on load (opacity 0→1, `translateY(8px)`→0, `--dur-3`, staggered ≤120ms).
-- Nothing animates because the page scrolled. No parallax, no tilt, no loop, no carousel.
-- `@media (prefers-reduced-motion: reduce)`: all transitions become 0ms opacity only; the entrance
-  is static; nothing is left hidden.
+  buttons step and press; nav underlines draw from the left; a wall label's hairline tick extends
+  from `scaleX(.16)` to `scaleX(1)`.
+- Entrance: the hero block enters once on load from `opacity:0`, `translateY(24px)` and `blur(6px)`,
+  `--dur-4`, staggered 90ms per line (`--i` custom property). It is the only load animation on a page.
+- Reveals past the fold use CSS scroll-driven animation only inside
+  `@supports (animation-timeline: view())`: a count that runs from 0 to its real value
+  (`@property` integer + `counter-reset`, so no script), and a hairline rule that draws down its
+  column. Outside that support block the element is already in its finished state.
+- The case / monument may switch on with `clip-path: inset(0 0 100% 0)` → `inset(0)`, once.
+- No parallax, no tilt, no loop, no carousel, no full-screen scroll hijacking, no motion that
+  requires a scroll to reveal meaning.
+- `@media (prefers-reduced-motion: reduce)`: every animation is off and every transition is 0ms. The
+  entrance block is fully visible, the wall-label tick is already drawn, the counted figure is set to
+  its final integer, and nothing is left hidden or animating.
+
+## Composition and layout
+
+The bolder pass made composition part of the system, not an accident of the grid:
+
+- **Full-bleed rule.** A 1px `--hairline` that ignores the content column
+  (`margin-inline: calc(50% - 50vw)`) is the shared structural device; section boundaries and page
+  divisions use it instead of a background change.
+- **One monument per page.** Either one product hung at its largest possible size inside the column,
+  one display-scale number, or one case that leaves the column. Never two.
+- **Grid break, deliberately.** At most one element per page may leave the column: a photograph that
+  crosses a rule, a case cropped by the viewport edge, or a tile that spans a different rhythm than
+  its neighbours. It must be the same element on every screen size, and it must not be a product
+  photograph cropped to fill a frame — the 640px source is a hard ceiling, the composition is not.
+- **Asymmetric hanging.** A wall of product tiles is hung at two or three heights, not one; the
+  largest item is placed by scale, not by position in the data.
+- **Empty space is a material.** Every page keeps one passage with nothing in it. Silence costs
+  nothing and buys the monument its weight.
+- **Density contrast.** Dense rows or a tight wall sit directly against an empty band; the eye needs
+  both to read either.
+
+## Signatures
+
+One memorable detail per direction. They are not interchangeable: a direction that borrows another
+one's signature has stopped being a separate bet.
+
+| Direction | Signature |
+| --- | --- |
+| Galería | **The wall label.** Every product hangs on the page with no tile, under a caption whose 1px tick is short until you hover it and then draws to the full caption width. |
+| Índice | **The counted figure.** The real product count is set inside the sentence at numeral scale and counts up from 0 as it scrolls into view, above a numeral spine (01–06) that draws itself. |
+| Vitrina | **The case that leaves the page.** The hero's lit case runs off the right edge of the window and is cropped by it, so the product sits in light that keeps going. |
+
 
 ## Price and price variants
 
@@ -182,6 +258,13 @@ hover. A text button is never styled as a bordered box.
 **Product card** — `<article>`: image tile (`--surface`, `--r-lg`, 4:3, `object-fit: contain`,
 `padding: --s-5`), then name (`--t-headline`), then price block, then optional capacity note. The
 whole card is not a link: the name is, and the tile is inside it. Card lift + photo `1.02` on hover.
+A direction may change the container: Galería hangs the photo on the page with no tile and captions
+it (wall label), and Vitrina puts the dominant product in a case at 2×2 while its neighbours stay
+1×1. The name / price / capacity order and the link rules never change.
+
+The **wall label** is the light-ground caption form: 1px `--hairline` on top (short tick that extends
+on hover), name at `--t-headline`, then one caption line of family and price at `--t-label`; on the
+monumental work the price steps up to `--t-numeral`.
 
 **Fallback tile** — when a product has no image (fresh clone, S13), the tile keeps its size and
 ground, shows `/placeholder.webp` as a decorative `<img alt="">` and a `--t-label` `--muted` line
@@ -208,3 +291,17 @@ toast, never repeated per card.
 Allowed colours: the ramp above plus `currentColor` and transparent shadows. Allowed faces: the
 system stack defined here. Any artboard that introduces a fifth neutral, a second accent or a new
 section rhythm is wrong and must be corrected here first.
+
+Static checks that must pass before an artboard is handed over:
+
+1. One `<h1>`, `lang="es-AR"`, landmarks (`header`, `main`, `footer`, `nav` with a label), sections in
+   the documented order, at least six real products, the sample-data notice exactly once.
+2. Every `img` carries `alt`; every `/products/...` and `/placeholder.webp` reference exists on disk;
+   `/placeholder.webp` appears on every page; the 640px ceiling is never exceeded.
+3. Every product name and price exists in `prisma/seed/products.json` and follows the price rules
+   above.
+4. No external URL except one Google Fonts link, and no note about where the catalog came from.
+5. One monument, one grid break, three section rhythms, one signature.
+6. `prefers-reduced-motion: reduce` in every file that has motion, and it must end in the finished
+   state (drawn tick, final count, visible case).
+7. Visible focus on every control, 44px minimum target, 4.5:1 body text, readable at 375px.
