@@ -1,0 +1,149 @@
+/* Galería direction: the work hangs on the page with no tile under it, and its
+   wall label carries a hairline tick that draws out to the caption width. */
+
+.work {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.media {
+	display: block;
+}
+
+.media img {
+	width: 100%;
+	max-width: 640px;
+	height: auto;
+	aspect-ratio: 1;
+	object-fit: contain;
+	/* The photography is white-ground webp, so the ground dissolves into the page. */
+	mix-blend-mode: multiply;
+	transition: transform var(--dur-2) var(--ease-std);
+}
+
+.work:hover .media img {
+	transform: scale(1.02);
+}
+
+/* Fresh clone (S13): no product photo, so the work keeps a ground and its size. */
+.empty {
+	display: grid;
+	place-items: center;
+	gap: var(--s-2);
+	aspect-ratio: 1;
+	padding: var(--s-5);
+	border-radius: var(--r-md);
+	background: var(--surface);
+}
+
+.empty img {
+	width: 64px;
+	max-width: 64px;
+	height: 64px;
+	aspect-ratio: auto;
+	mix-blend-mode: normal;
+	opacity: 0.5;
+}
+
+.emptyState {
+	font-size: var(--t-label);
+	letter-spacing: 0.01em;
+	color: var(--muted);
+}
+
+.label {
+	position: relative;
+	margin-top: var(--s-5);
+	padding-top: var(--s-3);
+}
+
+.label::before {
+	content: "";
+	position: absolute;
+	inset: 0 0 auto 0;
+	height: 1px;
+	background: var(--hairline);
+	transform: scaleX(0.16);
+	transform-origin: left;
+	transition:
+		transform var(--dur-3) var(--ease-out),
+		background var(--dur-2) linear;
+}
+
+.work:hover .label::before,
+.work:focus-within .label::before {
+	transform: scaleX(1);
+	background: var(--ink);
+}
+
+.name {
+	display: block;
+	font-size: var(--t-headline);
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: -0.012em;
+}
+
+.name a {
+	color: inherit;
+}
+
+.name a:hover {
+	color: var(--link);
+}
+
+.meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--s-3);
+	margin-top: var(--s-2);
+	font-size: var(--t-label);
+	letter-spacing: 0.01em;
+	color: var(--muted);
+}
+
+.from {
+	font-size: var(--t-label);
+	letter-spacing: 0.01em;
+	color: var(--muted);
+}
+
+.price {
+	font-weight: 500;
+	letter-spacing: -0.01em;
+	font-variant-numeric: tabular-nums;
+	color: var(--ink);
+}
+
+.currency {
+	margin-right: 2px;
+	font-size: 0.85em;
+	color: var(--muted);
+}
+
+.monument .name {
+	font-size: var(--t-title);
+	letter-spacing: -0.022em;
+}
+
+.monument .meta {
+	margin-top: var(--s-3);
+}
+
+.monument .price {
+	font-size: var(--t-numeral);
+	line-height: 1;
+	letter-spacing: -0.03em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.label::before {
+		transform: scaleX(1);
+	}
+
+	.work:hover .media img {
+		transform: none;
+	}
+}

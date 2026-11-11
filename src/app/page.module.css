@@ -1,0 +1,196 @@
+/* Landing in the Galería direction: three display lines, the monumental work
+   hung under its own wall label, then the families and the wall. */
+
+.hero {
+	padding: clamp(48px, 8vw, 112px) 0 var(--section-tall);
+	overflow: hidden;
+	text-align: center;
+}
+
+.heroTitle {
+	max-width: 16ch;
+	margin: 0 auto;
+	font-size: var(--t-display);
+	font-weight: 600;
+	font-optical-sizing: auto;
+	line-height: 0.94;
+	letter-spacing: -0.035em;
+}
+
+.line {
+	display: block;
+}
+
+.deck {
+	max-width: 48ch;
+	margin: var(--s-6) auto 0;
+	font-size: clamp(1rem, 1.5vw, 1.3125rem);
+	line-height: 1.45;
+	letter-spacing: -0.005em;
+	color: var(--muted);
+}
+
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: var(--s-4) var(--s-5);
+	margin-top: var(--s-7);
+}
+
+/* Buttons: a primary pill, never a bordered box; secondary is a text link. */
+.primary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	padding: 0 var(--s-5);
+	border-radius: var(--r-pill);
+	background: var(--accent);
+	color: var(--white);
+	font-size: var(--t-body-s);
+	font-weight: 500;
+	line-height: 1;
+	transition:
+		transform var(--dur-1) var(--ease-std),
+		background var(--dur-1) linear;
+}
+
+.primary:hover {
+	background: var(--accent-press);
+}
+
+.primary:active {
+	transform: scale(0.97);
+}
+
+.secondary {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 44px;
+	font-size: var(--t-body-s);
+	font-weight: 500;
+	color: var(--link);
+}
+
+.secondaryIcon {
+	display: block;
+	flex: none;
+	width: 16px;
+	height: 16px;
+	transition: transform var(--dur-2) var(--ease-std);
+}
+
+.secondary:hover .secondaryIcon {
+	transform: translateX(2px);
+}
+
+.monument {
+	width: min(560px, 84vw);
+	margin: clamp(32px, 5vw, 72px) auto 0;
+	text-align: left;
+}
+
+.section {
+	padding: var(--section) 0;
+}
+
+.sectionHead {
+	max-width: 46ch;
+}
+
+.sectionTitle {
+	font-size: var(--t-display-s);
+	font-weight: 600;
+	font-optical-sizing: auto;
+	line-height: 1.02;
+	letter-spacing: -0.028em;
+}
+
+.sectionHead p {
+	max-width: 54ch;
+	margin-top: var(--s-4);
+	font-size: var(--t-body);
+	color: var(--muted);
+}
+
+.familyNote {
+	max-width: 58ch;
+	margin-top: var(--s-5);
+	font-size: var(--t-body-s);
+	color: var(--muted);
+}
+
+/* The wall: staggered hanging heights, and one text cell instead of a tile. */
+.wall {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--s-9) 0;
+	margin-top: var(--section-tight);
+}
+
+@media (min-width: 780px) {
+	.wall {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		column-gap: var(--s-8);
+	}
+
+	.wall > :nth-child(even) {
+		margin-top: var(--s-9);
+	}
+}
+
+.cellText {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	gap: var(--s-4);
+	min-height: 180px;
+	padding-top: var(--s-5);
+	border-top: 1px solid var(--hairline);
+}
+
+.cellText p {
+	max-width: 34ch;
+	font-size: var(--t-body);
+	color: var(--muted);
+}
+
+.cellText .secondary {
+	align-self: flex-start;
+}
+
+/* One authored moment per page: the hero enters, once. */
+@keyframes hang {
+	from {
+		opacity: 0;
+		transform: translateY(28px);
+		filter: blur(8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+		filter: blur(0);
+	}
+}
+
+.enter {
+	animation: hang var(--dur-4) var(--ease-out-expo) both;
+	animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.enter {
+		animation: none;
+		opacity: 1;
+		transform: none;
+		filter: none;
+	}
+
+	.secondary:hover .secondaryIcon {
+		transform: none;
+	}
+}

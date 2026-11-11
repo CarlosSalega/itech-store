@@ -1,0 +1,195 @@
+.header {
+	position: sticky;
+	top: 0;
+	z-index: 20;
+	background: rgba(255, 255, 255, 0.72);
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	border-bottom: 1px solid var(--hairline);
+}
+
+.bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--s-5);
+	min-height: 48px;
+}
+
+@media (min-width: 900px) {
+	.bar {
+		min-height: 64px;
+	}
+}
+
+.brand {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	font-size: var(--t-body);
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	color: var(--ink);
+}
+
+.nav {
+	display: none;
+}
+
+@media (min-width: 900px) {
+	.nav {
+		display: flex;
+		align-items: center;
+		gap: var(--s-6);
+	}
+}
+
+.navLink {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	font-size: var(--t-body-s);
+	color: var(--ink);
+}
+
+/* The underline draws from the left on hover and on keyboard focus. */
+.navLink::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 10px;
+	height: 1px;
+	background: var(--ink);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform var(--dur-2) var(--ease-std);
+}
+
+.navLink:hover::after,
+.navLink:focus-visible::after {
+	transform: scaleX(1);
+}
+
+.tools {
+	display: flex;
+	align-items: center;
+	gap: var(--s-4);
+}
+
+.iconButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--r-pill);
+	background: transparent;
+	color: var(--ink);
+	transition: background var(--dur-1) linear;
+}
+
+.iconButton:hover:not(:disabled) {
+	background: var(--surface);
+}
+
+.iconButton:disabled {
+	/* Present, visibly inert: there is no cart to open. */
+	opacity: 0.45;
+	cursor: default;
+}
+
+.icon {
+	display: block;
+	flex: none;
+	width: 20px;
+	height: 20px;
+}
+
+@media (max-width: 479px) {
+	.bar {
+		gap: var(--s-3);
+	}
+
+	.tools {
+		gap: var(--s-2);
+	}
+}
+
+/* ---------- the mobile menu: <details> plus CSS, no JavaScript ---------- */
+
+.menu {
+	position: relative;
+}
+
+@media (min-width: 900px) {
+	.menu {
+		display: none;
+	}
+}
+
+.summary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--s-2);
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0 var(--s-3);
+	border-radius: var(--r-pill);
+	font-size: var(--t-body-s);
+	cursor: pointer;
+	list-style: none;
+	transition: background var(--dur-1) linear;
+}
+
+.summary::-webkit-details-marker {
+	display: none;
+}
+
+.summary:hover,
+.menu[open] .summary {
+	background: var(--surface);
+}
+
+/* The summary swaps its own icon: menu when closed, close when open. */
+.iconClose,
+.menu[open] .iconMenu {
+	display: none;
+}
+
+.menu[open] .iconClose {
+	display: block;
+}
+
+.menuNav {
+	position: absolute;
+	right: 0;
+	top: calc(100% + var(--s-2));
+	display: grid;
+	min-width: 220px;
+	max-width: calc(100vw - 48px);
+	padding: var(--s-3);
+	border-radius: var(--r-lg);
+	background: var(--white);
+	box-shadow:
+		var(--e-hairline),
+		var(--e-float);
+}
+
+.menuLink {
+	display: flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0 var(--s-4);
+	border-radius: var(--r-sm);
+	font-size: var(--t-body-s);
+	color: var(--ink);
+}
+
+.menuLink:hover {
+	background: var(--surface);
+}

@@ -3,12 +3,13 @@
   "chosen": "01-galeria.html",
   "handoffs": {
     "01-galeria.html": {
-      "status": "sent",
+      "status": "in_progress",
       "queued": false,
       "sentAt": "2026-11-11T18:08:55.207Z",
-      "startedAt": null,
+      "startedAt": "2026-11-11T18:09:06.088Z",
       "implementedAt": null,
-      "feature": "odd/tasks/public-catalog-mvp.md"
+      "feature": "odd/tasks/public-catalog-mvp.md",
+      "note": "Porting Galería to Next with real Prisma data for the featured products."
     }
   }
 }

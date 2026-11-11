@@ -1,0 +1,74 @@
+/* The families hang as rows on one hairline each. */
+
+.hanging {
+	display: grid;
+	gap: 0 var(--s-8);
+	margin-top: var(--s-8);
+	border-top: 1px solid var(--hairline);
+}
+
+@media (min-width: 760px) {
+	.hanging {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.hang {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--s-4);
+	min-height: 44px;
+	padding: var(--s-5) 0;
+	border-bottom: 1px solid var(--hairline);
+	color: var(--ink);
+}
+
+.name {
+	font-size: var(--t-title);
+	font-weight: 500;
+	line-height: 1.1;
+	letter-spacing: -0.02em;
+	transition: color var(--dur-2) linear;
+}
+
+.count {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--s-2);
+	font-size: var(--t-label);
+	letter-spacing: 0.01em;
+	font-variant-numeric: tabular-nums;
+	color: var(--muted);
+}
+
+.chevron {
+	display: block;
+	flex: none;
+	width: 16px;
+	height: 16px;
+	transition: transform var(--dur-2) var(--ease-std);
+}
+
+.hang:hover .name,
+.hang:focus-visible .name {
+	color: var(--link);
+}
+
+.hang:hover .chevron {
+	transform: translateX(3px);
+}
+
+.hang.empty {
+	border-bottom-style: dashed;
+}
+
+.hang.empty .name {
+	color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hang:hover .chevron {
+		transform: none;
+	}
+}
