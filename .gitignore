@@ -32,3 +32,6 @@ next-env.d.ts
 # Extracted catalog assets are tracked, but transient downloads are not.
 /tmp/
 *.log
+
+# Catalog images are local-only: extracted on demand, never committed.
+/public/products/

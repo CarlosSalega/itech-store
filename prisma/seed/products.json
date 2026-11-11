@@ -1,0 +1,1084 @@
+[
+	{
+		"slug": "airpods-pro-3",
+		"name": "Airpods Pro 3",
+		"description": "Descubrí la nueva manera de escuchar con los nuevos AirPods Pro 3 con Cancelación activa de ruido mejorada.",
+		"category": "AIRPODS",
+		"images": [
+			"/products/airpods-pro-3-1.webp",
+			"/products/airpods-pro-3-2.webp",
+			"/products/airpods-pro-3-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "airpods-pro-3",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-11-ipad-air-m4-blue",
+		"name": "Apple 11\" iPad Air M4 Blue",
+		"description": "Descubrí el Apple iPad Air 11\" M4 Blue, con chip M4, pantalla vibrante y opciones Wi-Fi o 5G. ¡Ideal para trabajo y creatividad! Compra ahora.\n",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-11-ipad-air-m4-blue-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-11-ipad-air-m4-blue",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-11-ipad-air-m4-purple",
+		"name": "Apple 11\" iPad Air M4 Purple",
+		"description": "Descubrí el Apple iPad Air 11\" M4 Purple, con chip M4, pantalla vibrante y opciones Wi-Fi o 5G. ¡Ideal para trabajo y creatividad! Compra ahora.",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-11-ipad-air-m4-purple-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-11-ipad-air-m4-purple",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-11-ipad-air-m4-space-gray",
+		"name": "Apple 11\" iPad Air M4 Space Gray",
+		"description": "Descubrí el Apple iPad Air 11\" M4 Space Gray, con chip M4, pantalla vibrante y opciones Wi-Fi o 5G. ¡Ideal para trabajo y creatividad! Compra ahora.",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-11-ipad-air-m4-space-gray-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-11-ipad-air-m4-space-gray",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-11-ipad-air-m4-starlight",
+		"name": "Apple 11\" iPad Air M4 Starlight",
+		"description": "Descubrí el Apple iPad Air M4 11\" Starlight con chip M4, pantalla vibrante y opciones Wi-Fi o 5G. Ideal para creatividad y trabajo. ¡Compralo ya!",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-11-ipad-air-m4-starlight-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-11-ipad-air-m4-starlight",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-11-ipad-pro-m5-silver",
+		"name": "Apple 11\" iPad Pro M5 Silver",
+		"description": "Descubrí el Apple iPad Pro 11\" M5 Silver con chip M5, pantalla Liquid Retina y opciones de hasta 2TB. Ideal para profesionales creativos. ¡Compralo ya!",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-11-ipad-pro-m5-silver-1.webp",
+			"/products/apple-11-ipad-pro-m5-silver-2.webp",
+			"/products/apple-11-ipad-pro-m5-silver-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-11-ipad-pro-m5-silver",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-11-ipad-pro-m5-space-black",
+		"name": "Apple 11\" iPad Pro M5 Space Black",
+		"description": "Descubrí el iPad Pro 11\" M5 Space Black con chip potente, pantalla Liquid Retina y opciones de almacenamiento. Ideal para profesionales creativos. ¡Compralo ya!",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-11-ipad-pro-m5-space-black-1.webp",
+			"/products/apple-11-ipad-pro-m5-space-black-2.webp",
+			"/products/apple-11-ipad-pro-m5-space-black-3.webp",
+			"/products/apple-11-ipad-pro-m5-space-black-4.webp",
+			"/products/apple-11-ipad-pro-m5-space-black-5.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-11-ipad-pro-m5-space-black",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-13-ipad-air-m4-blue",
+		"name": "Apple 13\" iPad Air M4 Blue",
+		"description": "Descubrí el iPad Air 13\" M4 Azul con chip Apple M4 y pantalla Liquid Retina. Potencia y elegancia para profesionales y creativos. ¡Compralo ahora!",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-13-ipad-air-m4-blue-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-13-ipad-air-m4-blue",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-13-ipad-air-m4-purple",
+		"name": "Apple 13\" iPad Air M4 Purple",
+		"description": "Descubrí el Apple iPad Air M4 13\" Purple, con chip M4, pantalla Liquid Retina y 12GB RAM. Ideal para profesionales y creativos. ¡Compralo ahora!",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-13-ipad-air-m4-purple-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-13-ipad-air-m4-purple",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-13-ipad-air-m4-space-gray",
+		"name": "Apple 13\" iPad Air M4 Space Gray",
+		"description": "Descubrí el Apple iPad Air M4 13\" Space Gray con chip M4, pantalla Liquid Retina y alta conectividad. Ideal para profesionales y creativos. ¡Compralo ya!",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-13-ipad-air-m4-space-gray-1.webp",
+			"/products/apple-13-ipad-air-m4-space-gray-2.webp",
+			"/products/apple-13-ipad-air-m4-space-gray-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-13-ipad-air-m4-space-gray",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-13-ipad-air-m4-starlight",
+		"name": "Apple 13\" iPad Air M4 Starlight",
+		"description": "Descubrí el iPad Air M4 13\" Starlight con chip M4, pantalla Liquid Retina y 12GB RAM. Ideal para profesionales y creativos. ¡Compralo ahora!",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-13-ipad-air-m4-starlight-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-13-ipad-air-m4-starlight",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-13-ipad-pro-m5-silver",
+		"name": "Apple 13\" iPad Pro M5 Silver",
+		"description": "Descubrí el Apple iPad Pro 13\" M5 Silver con pantalla Liquid Retina, chip M5 y opciones de almacenamiento hasta 2TB. Ideal para profesionales creativos. ¡Compralo ya!",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-13-ipad-pro-m5-silver-1.webp",
+			"/products/apple-13-ipad-pro-m5-silver-2.webp",
+			"/products/apple-13-ipad-pro-m5-silver-3.webp",
+			"/products/apple-13-ipad-pro-m5-silver-4.webp",
+			"/products/apple-13-ipad-pro-m5-silver-5.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-13-ipad-pro-m5-silver",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-13-ipad-pro-m5-space-black",
+		"name": "Apple 13\" iPad Pro M5 Space Black",
+		"description": "Descubrí el iPad Pro M5 13\" Space Black con chip Apple M5, pantalla Liquid Retina y opciones de almacenamiento hasta 2TB. ¡Compra ahora y potencia tu creatividad!",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-13-ipad-pro-m5-space-black-1.webp",
+			"/products/apple-13-ipad-pro-m5-space-black-2.webp",
+			"/products/apple-13-ipad-pro-m5-space-black-3.webp",
+			"/products/apple-13-ipad-pro-m5-space-black-4.webp",
+			"/products/apple-13-ipad-pro-m5-space-black-5.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-13-ipad-pro-m5-space-black",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-13-macbook-air-chip-m5",
+		"name": "Apple 13\" MacBook Air - Chip M5",
+		"description": "MacBook Air de 13\" y 15\" con el nuevo Chip M5, súper liviana y compacta. ",
+		"category": "MAC",
+		"images": [
+			"/products/apple-13-macbook-air-chip-m5-1.webp",
+			"/products/apple-13-macbook-air-chip-m5-2.webp",
+			"/products/apple-13-macbook-air-chip-m5-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-13-macbook-air-chip-m5",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-13-macbook-neo-a18-pro",
+		"name": "Apple 13\" MacBook Neo - A18 Pro",
+		"description": "Nueva MacBook Neo 256GB, disponible en todos los colores índigo, Blush, Citrus y Silver. ",
+		"category": "MAC",
+		"images": [
+			"/products/apple-13-macbook-neo-a18-pro-1.webp",
+			"/products/apple-13-macbook-neo-a18-pro-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-13-macbook-neo-a18-pro-256gb",
+				"storage": "256GB"
+			}
+		]
+	},
+	{
+		"slug": "apple-13-macbook-neo-a18-pro-touch-id",
+		"name": "Apple 13\" MacBook Neo - A18 Pro - Touch ID",
+		"description": "Nueva MacBook Neo con el chip A18 Pro en 512GB con Touch Id, disponible en todos los colores Blush, Indigo, Silver y Citrus.",
+		"category": "MAC",
+		"images": [
+			"/products/apple-13-macbook-neo-a18-pro-touch-id-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-13-macbook-neo-a18-pro-touch-id-512gb",
+				"storage": "512GB"
+			}
+		]
+	},
+	{
+		"slug": "apple-14-macbook-pro-chip-m5-pro-silver",
+		"name": "Apple 14\" MacBook Pro - Chip M5 Pro - Silver",
+		"description": "Descubrí el Apple MacBook Pro de 14\" con chip M5 Pro, la herramienta definitiva para profesionales que demandan un rendimiento excepcional en cada tarea. Est...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-14-macbook-pro-chip-m5-pro-silver-1.webp",
+			"/products/apple-14-macbook-pro-chip-m5-pro-silver-2.webp",
+			"/products/apple-14-macbook-pro-chip-m5-pro-silver-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-14-macbook-pro-chip-m5-pro-silver",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-14-macbook-pro-chip-m5-pro-space-black",
+		"name": "Apple 14\" MacBook Pro - Chip M5 Pro - Space Black",
+		"description": "MacBook con Chip M5 Pro para usuarios de alto rendimiento",
+		"category": "MAC",
+		"images": [
+			"/products/apple-14-macbook-pro-chip-m5-pro-space-black-1.webp",
+			"/products/apple-14-macbook-pro-chip-m5-pro-space-black-2.webp",
+			"/products/apple-14-macbook-pro-chip-m5-pro-space-black-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-14-macbook-pro-chip-m5-pro-space-black",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-14-macbook-pro-m5-chip",
+		"name": "Apple 14\" MacBook Pro M5 Chip",
+		"description": "Descubrí la potencia y sofisticación de la Apple MacBook Pro 14\" con chip M5, diseñada para profesionales que exigen lo mejor en rendimiento y eficiencia. El...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-14-macbook-pro-m5-chip-1.webp",
+			"/products/apple-14-macbook-pro-m5-chip-2.webp",
+			"/products/apple-14-macbook-pro-m5-chip-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-14-macbook-pro-m5-chip",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-14-macbook-pro-m5-max-18-core-cpu-32-core-gpu-silver",
+		"name": "Apple 14\" MacBook Pro M5 Max - 18-core CPU / 32-core GPU - Silver",
+		"description": "Apple 14\" MacBook Pro M5 Max disponible en nuestra tienda. ",
+		"category": "MAC",
+		"images": [
+			"/products/apple-14-macbook-pro-m5-max-18-core-cpu-32-core-gpu-silver-1.webp",
+			"/products/apple-14-macbook-pro-m5-max-18-core-cpu-32-core-gpu-silver-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-14-macbook-pro-m5-max-18-core-cpu-32-core-gpu-silver",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-14-macbook-pro-m5-max-18-core-cpu-32-core-gpu-space-black",
+		"name": "Apple 14\" MacBook Pro M5 Max - 18-core CPU / 32-core GPU - Space Black",
+		"description": "Descubrí el Apple MacBook Pro 14\" M5 Max con CPU 18 núcleos y GPU 32 núcleos. Rendimiento máximo para profesionales creativos. ¡Compralo ahora!",
+		"category": "MAC",
+		"images": [
+			"/products/apple-14-macbook-pro-m5-max-18-core-cpu-32-core-gpu-space-black-1.webp",
+			"/products/apple-14-macbook-pro-m5-max-18-core-cpu-32-core-gpu-space-black-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-14-macbook-pro-m5-max-18-core-cpu-32-core-gpu-space-black",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-14-macbook-pro-m5-max-18-core-cpu-40-core-gpu-silver",
+		"name": "Apple 14\" MacBook Pro M5 Max - 18-core CPU / 40-core GPU - Silver",
+		"description": "Descubrí el MacBook Pro 14\" M5 Max con CPU 18 núcleos y GPU 40 núcleos. Ideal para profesionales creativos. ¡Compralo ahora!",
+		"category": "MAC",
+		"images": [
+			"/products/apple-14-macbook-pro-m5-max-18-core-cpu-40-core-gpu-silver-1.webp",
+			"/products/apple-14-macbook-pro-m5-max-18-core-cpu-40-core-gpu-silver-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-14-macbook-pro-m5-max-18-core-cpu-40-core-gpu-silver",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-14-macbook-pro-m5-max-18-core-cpu-40-core-gpu-space-black",
+		"name": "Apple 14\" MacBook Pro M5 Max - 18-core CPU / 40-core GPU - Space Black",
+		"description": "Descubrí el Apple MacBook Pro 14\" M5 Max con CPU 18 núcleos y GPU 40 núcleos. Potencia y eficiencia para profesionales creativos. ¡Compralo ahora!",
+		"category": "MAC",
+		"images": [
+			"/products/apple-14-macbook-pro-m5-max-18-core-cpu-40-core-gpu-space-black-1.webp",
+			"/products/apple-14-macbook-pro-m5-max-18-core-cpu-40-core-gpu-space-black-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-14-macbook-pro-m5-max-18-core-cpu-40-core-gpu-space-black",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-14-macbook-pro-m5-pro-18-core-cpu-20-core-gpu-silver",
+		"name": "Apple 14\" MacBook Pro M5 Pro - 18-core CPU / 20-core GPU - Silver",
+		"description": "Nueva MacBook Pro 14\" M5 Pro, disponibles en Silver y Space Black. ",
+		"category": "MAC",
+		"images": [
+			"/products/apple-14-macbook-pro-m5-pro-18-core-cpu-20-core-gpu-silver-1.webp",
+			"/products/apple-14-macbook-pro-m5-pro-18-core-cpu-20-core-gpu-silver-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-14-macbook-pro-m5-pro-18-core-cpu-20-core-gpu-silver",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-14-macbook-pro-m5-pro-18-core-cpu-20-core-gpu-space-black",
+		"name": "Apple 14\" MacBook Pro M5 Pro - 18-core CPU / 20-core GPU - Space Black",
+		"description": "Nueva MacBook Pro 14\" M5 Pro. Disponible en color Silver y Space Black. Elegí tu customización a pedido",
+		"category": "MAC",
+		"images": [
+			"/products/apple-14-macbook-pro-m5-pro-18-core-cpu-20-core-gpu-space-black-1.webp",
+			"/products/apple-14-macbook-pro-m5-pro-18-core-cpu-20-core-gpu-space-black-2.webp",
+			"/products/apple-14-macbook-pro-m5-pro-18-core-cpu-20-core-gpu-space-black-3.webp",
+			"/products/apple-14-macbook-pro-m5-pro-18-core-cpu-20-core-gpu-space-black-4.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-14-macbook-pro-m5-pro-18-core-cpu-20-core-gpu-space-black",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-15-macbook-air-chip-m5",
+		"name": "Apple 15\" MacBook Air - Chip M5",
+		"description": "Apple 15\" MacBook Air, de 16GB de ram, 24GB de ram, 32GB de ram, con 512GB de disco, 1TB, 2TB, 4TB. ",
+		"category": "MAC",
+		"images": [
+			"/products/apple-15-macbook-air-chip-m5-1.webp",
+			"/products/apple-15-macbook-air-chip-m5-2.webp",
+			"/products/apple-15-macbook-air-chip-m5-3.webp",
+			"/products/apple-15-macbook-air-chip-m5-4.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-15-macbook-air-chip-m5",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-16-macbook-pro-m5-max-18-core-cpu-32-core-gpu",
+		"name": "Apple 16\" MacBook Pro - M5 Max - 18-Core CPU / 32-Core GPU",
+		"description": "Descubrí el Apple MacBook Pro 16\" con M5 Max, CPU 18 núcleos y GPU 32 núcleos, ideal para profesionales creativos. ¡Compralo ya!",
+		"category": "MAC",
+		"images": [
+			"/products/apple-16-macbook-pro-m5-max-18-core-cpu-32-core-gpu-1.webp",
+			"/products/apple-16-macbook-pro-m5-max-18-core-cpu-32-core-gpu-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-16-macbook-pro-m5-max-18-core-cpu-32-core-gpu",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-16-macbook-pro-m5-max-18-core-cpu-40-core-gpu-silver",
+		"name": "Apple 16\" MacBook Pro - M5 Max - 18-Core CPU / 40-Core GPU - Silver",
+		"description": "Descubrí el Apple MacBook Pro 16\" con M5 Max, CPU 18 núcleos y GPU 40 núcleos. Ideal para edición 8K y desarrollo. ¡Compralo ya!",
+		"category": "MAC",
+		"images": [
+			"/products/apple-16-macbook-pro-m5-max-18-core-cpu-40-core-gpu-silver-1.webp",
+			"/products/apple-16-macbook-pro-m5-max-18-core-cpu-40-core-gpu-silver-2.webp",
+			"/products/apple-16-macbook-pro-m5-max-18-core-cpu-40-core-gpu-silver-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-16-macbook-pro-m5-max-18-core-cpu-40-core-gpu-silver",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-16-macbook-pro-m5-max-18-core-cpu-40-core-gpu-space-black",
+		"name": "Apple 16\" MacBook Pro - M5 Max - 18-Core CPU / 40-Core GPU - Space Black",
+		"description": "Descubrí el Apple MacBook Pro 16\" con procesador M5 Max, 18 núcleos CPU y 40 núcleos GPU. Ideal para profesionales que exigen máximo rendimiento. ¡Compralo ahora!",
+		"category": "MAC",
+		"images": [
+			"/products/apple-16-macbook-pro-m5-max-18-core-cpu-40-core-gpu-space-black-1.webp",
+			"/products/apple-16-macbook-pro-m5-max-18-core-cpu-40-core-gpu-space-black-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-16-macbook-pro-m5-max-18-core-cpu-40-core-gpu-space-black",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-16-macbook-pro-m5-pro",
+		"name": "Apple 16\" MacBook Pro - M5 Pro",
+		"description": "Descubrí el Apple MacBook Pro 16\" con procesador M5 Pro, ideal para profesionales que buscan rendimiento y diseño elegante. ¡Compralo ahora!",
+		"category": "MAC",
+		"images": [
+			"/products/apple-16-macbook-pro-m5-pro-1.webp",
+			"/products/apple-16-macbook-pro-m5-pro-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-16-macbook-pro-m5-pro",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-airpods-4th-gen-con-cancelacion-de-ruido-usb-c",
+		"name": "Apple AirPods (4th Gen) con Cancelación de Ruido USB-C",
+		"description": "Apple AirPods 4 con Cancelación de Ruido + Estuche USB&#8209;C Llévate lo mejor de ambos mundos con los nuevos AirPods 4&#8239;—&#8239;la comodidad de diseño...",
+		"category": "AIRPODS",
+		"images": [
+			"/products/apple-airpods-4th-gen-con-cancelacion-de-ruido-usb-c-1.webp",
+			"/products/apple-airpods-4th-gen-con-cancelacion-de-ruido-usb-c-2.webp",
+			"/products/apple-airpods-4th-gen-con-cancelacion-de-ruido-usb-c-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-airpods-4th-gen-con-cancelacion-de-ruido-usb-c",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-airpods-4th-generacion-con-estuche-cargador-usb-c",
+		"name": "Apple AirPods (4th Generación) con Estuche Cargador USB-C",
+		"description": "Apple AirPods (4ta Generación) con Estuche Cargador USB-CDisfruta de un sonido más envolvente y claro con los AirPods de 4ta generación. Con un diseño cómodo...",
+		"category": "AIRPODS",
+		"images": [
+			"/products/apple-airpods-4th-generacion-con-estuche-cargador-usb-c-1.webp",
+			"/products/apple-airpods-4th-generacion-con-estuche-cargador-usb-c-2.webp",
+			"/products/apple-airpods-4th-generacion-con-estuche-cargador-usb-c-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-airpods-4th-generacion-con-estuche-cargador-usb-c",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-airpods-5th-generacion-con-cancelacion-de-ruido",
+		"name": "Apple Airpods 5th Generación con cancelación de ruido",
+		"description": "Nuevos AirPods 5Th generación con cancelación de ruido. ",
+		"category": "AIRPODS",
+		"images": [
+			"/products/apple-airpods-5th-generacion-con-cancelacion-de-ruido-1.webp",
+			"/products/apple-airpods-5th-generacion-con-cancelacion-de-ruido-2.webp",
+			"/products/apple-airpods-5th-generacion-con-cancelacion-de-ruido-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-airpods-5th-generacion-con-cancelacion-de-ruido",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-airtag",
+		"name": "Apple Airtag",
+		"description": "Realiza un seguimiento y encuentra tus artículos junto con amigos y dispositivos en la aplicación Buscar mi Buscador de llaves y localizador para tu cartera,...",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/apple-airtag-1.webp",
+			"/products/apple-airtag-2.webp",
+			"/products/apple-airtag-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-airtag",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-cable-de-carga-tejido-usb-c",
+		"name": "Apple Cable de carga tejido USB-C",
+		"description": "Este cable de carga de 1 M. está fabricado con un diseño tejido, con conectores USB-C en ambos extremos, y es ideal para cargar, sincronizar y transferir dat...",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/apple-cable-de-carga-tejido-usb-c-1.webp",
+			"/products/apple-cable-de-carga-tejido-usb-c-2.webp",
+			"/products/apple-cable-de-carga-tejido-usb-c-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-cable-de-carga-tejido-usb-c",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-homepod-mini",
+		"name": "Apple HomePod Mini",
+		"description": "Controla todos tus dispositivos Apple compatibles, habla con familiares en otras habitaciones y disfruta de todas las funciones de Siri con el Apple HomePod ...",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/apple-homepod-mini-1.webp",
+			"/products/apple-homepod-mini-2.webp",
+			"/products/apple-homepod-mini-3.webp",
+			"/products/apple-homepod-mini-4.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-homepod-mini",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-homepod-mini-2da-generacion",
+		"name": "Apple HomePod Mini (2da Generación)",
+		"description": "El Apple HomePod mini (2da Generación) es un altavoz inteligente compacto con una potencia acústica impresionante. Ofrece un sonido de 360 grados que llena l...",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/apple-homepod-mini-2da-generacion-1.webp",
+			"/products/apple-homepod-mini-2da-generacion-2.webp",
+			"/products/apple-homepod-mini-2da-generacion-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-homepod-mini-2da-generacion",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-imac-24-m4-chip-amarilla",
+		"name": "Apple iMac 24\" M4 Chip Amarilla",
+		"description": "Presentamos la Apple iMac de 24\" con el potente Chip M4, una combinación perfecta de diseño elegante y rendimiento excepcional. Este equipo todo en uno es id...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-imac-24-m4-chip-amarilla-1.webp",
+			"/products/apple-imac-24-m4-chip-amarilla-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-imac-24-m4-chip-amarilla",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-imac-24-m4-chip-azul",
+		"name": "Apple iMac 24\" M4 Chip Azul",
+		"description": "Presentamos la Apple iMac de 24\" con el potente Chip M4, una combinación perfecta de diseño elegante y rendimiento excepcional. Este equipo todo en uno es id...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-imac-24-m4-chip-azul-1.webp",
+			"/products/apple-imac-24-m4-chip-azul-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-imac-24-m4-chip-azul",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-imac-24-m4-chip-naranja",
+		"name": "Apple iMac 24\" M4 Chip Naranja",
+		"description": "Presentamos la Apple iMac de 24\" con el potente Chip M4, una combinación perfecta de diseño elegante y rendimiento excepcional. Este equipo todo en uno es id...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-imac-24-m4-chip-naranja-1.webp",
+			"/products/apple-imac-24-m4-chip-naranja-2.webp",
+			"/products/apple-imac-24-m4-chip-naranja-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-imac-24-m4-chip-naranja",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-imac-24-m4-chip-rosa",
+		"name": "Apple iMac 24\" M4 Chip Rosa",
+		"description": "Presentamos la Apple iMac de 24\" con el potente Chip M4, una combinación perfecta de diseño elegante y rendimiento excepcional. Este equipo todo en uno es id...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-imac-24-m4-chip-rosa-1.webp",
+			"/products/apple-imac-24-m4-chip-rosa-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-imac-24-m4-chip-rosa",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-imac-24-m4-chip-silver",
+		"name": "Apple iMac 24\" M4 Chip Silver",
+		"description": "Presentamos la Apple iMac de 24\" con el potente Chip M4, una combinación perfecta de diseño elegante y rendimiento excepcional. Este equipo todo en uno es id...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-imac-24-m4-chip-silver-1.webp",
+			"/products/apple-imac-24-m4-chip-silver-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-imac-24-m4-chip-silver",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-imac-24-m4-chip-verde",
+		"name": "Apple iMac 24\" M4 Chip Verde",
+		"description": "Presentamos la Apple iMac de 24\" con el potente Chip M4, una combinación perfecta de diseño elegante y rendimiento excepcional. Este equipo todo en uno es id...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-imac-24-m4-chip-verde-1.webp",
+			"/products/apple-imac-24-m4-chip-verde-2.webp",
+			"/products/apple-imac-24-m4-chip-verde-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-imac-24-m4-chip-verde",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-imac-24-m4-chip-violeta",
+		"name": "Apple iMac 24\" M4 Chip Violeta",
+		"description": "Presentamos la Apple iMac de 24\" con el potente Chip M4, una combinación perfecta de diseño elegante y rendimiento excepcional. Este equipo todo en uno es id...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-imac-24-m4-chip-violeta-1.webp",
+			"/products/apple-imac-24-m4-chip-violeta-2.webp",
+			"/products/apple-imac-24-m4-chip-violeta-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-imac-24-m4-chip-violeta",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-ipad-11-a16-chip-wi-fi",
+		"name": "Apple iPad 11\" A16 Chip WI-FI",
+		"description": "Apple iPad 11\" A16 Chip 128GB WI-FI Descubre el Apple iPad 11\" con el potente A16 Chip, diseñado para ofrecerte un rendimiento excepcional y una experiencia ...",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-ipad-11-a16-chip-wi-fi-1.webp",
+			"/products/apple-ipad-11-a16-chip-wi-fi-2.webp",
+			"/products/apple-ipad-11-a16-chip-wi-fi-3.webp",
+			"/products/apple-ipad-11-a16-chip-wi-fi-4.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-ipad-11-a16-chip-wi-fi-128gb",
+				"storage": "128GB"
+			},
+			{
+				"sku": "apple-ipad-11-a16-chip-wi-fi-256gb",
+				"storage": "256GB"
+			},
+			{
+				"sku": "apple-ipad-11-a16-chip-wi-fi-512gb",
+				"storage": "512GB"
+			}
+		]
+	},
+	{
+		"slug": "apple-ipad-mini-8-3-7th-gen-wi-fi",
+		"name": "Apple iPad Mini 8.3\" 7th Gen WI-FI",
+		"description": "Descubrí el Apple iPad Mini 8.3\" 7th Gen 128GB WI-FI, un dispositivo compacto y potente que se adapta perfectamente a tu estilo de vida. Ideal para llevar a ...",
+		"category": "IPAD",
+		"images": [
+			"/products/apple-ipad-mini-8-3-7th-gen-wi-fi-1.webp",
+			"/products/apple-ipad-mini-8-3-7th-gen-wi-fi-2.webp",
+			"/products/apple-ipad-mini-8-3-7th-gen-wi-fi-3.webp",
+			"/products/apple-ipad-mini-8-3-7th-gen-wi-fi-4.webp",
+			"/products/apple-ipad-mini-8-3-7th-gen-wi-fi-5.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-ipad-mini-8-3-7th-gen-wi-fi-128gb",
+				"storage": "128GB"
+			},
+			{
+				"sku": "apple-ipad-mini-8-3-7th-gen-wi-fi-256gb",
+				"storage": "256GB"
+			},
+			{
+				"sku": "apple-ipad-mini-8-3-7th-gen-wi-fi-512gb",
+				"storage": "512GB"
+			}
+		]
+	},
+	{
+		"slug": "apple-mac-mini-chip-m4",
+		"name": "Apple Mac Mini Chip M4",
+		"description": "Descubre el poder compacto con el Apple Mac Mini equipado con el innovador Chip M4. Este pequeño pero potente ordenador de escritorio está diseñado para ofre...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-mac-mini-chip-m4-1.webp",
+			"/products/apple-mac-mini-chip-m4-2.webp",
+			"/products/apple-mac-mini-chip-m4-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-mac-mini-chip-m4",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-mac-mini-chip-m4-pro",
+		"name": "Apple Mac Mini Chip M4 Pro",
+		"description": "El chip M4 Pro en el Mac mini es una evolución del M4, diseñado para tareas más exigentes. El M4 Pro ofrece una CPU de hasta 14 núcleos (10 de rendimiento y ...",
+		"category": "MAC",
+		"images": [
+			"/products/apple-mac-mini-chip-m4-pro-1.webp",
+			"/products/apple-mac-mini-chip-m4-pro-2.webp",
+			"/products/apple-mac-mini-chip-m4-pro-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-mac-mini-chip-m4-pro",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-paquete-de-4-airtag",
+		"name": "Apple Paquete de 4 AirTag",
+		"description": "Mantén un seguimiento y encuentra tus llaves, cartera, equipaje, mochila y más. Configuración sencilla de un solo toque con iPhone o iPad",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/apple-paquete-de-4-airtag-1.webp",
+			"/products/apple-paquete-de-4-airtag-2.webp",
+			"/products/apple-paquete-de-4-airtag-3.webp",
+			"/products/apple-paquete-de-4-airtag-4.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-paquete-de-4-airtag",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-studio-display-27-vidrio-nano-texturado",
+		"name": "Apple Studio Display 27\" - Vidrio Nano Texturado",
+		"description": "Descubre la excelencia visual con el Apple Studio Display de 27\". Este monitor premium combina un diseño elegante con tecnología de vanguardia, ofreciendo un...",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/apple-studio-display-27-vidrio-nano-texturado-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-studio-display-27-vidrio-nano-texturado",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-tv-4k-2022",
+		"name": "Apple TV 4K (2022)",
+		"description": "Vivi la mejor experiencia de entretenimiento en casa con el Apple TV 4K (3.ª generación).",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/apple-tv-4k-2022-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-tv-4k-2022-64gb",
+				"storage": "64GB"
+			}
+		]
+	},
+	{
+		"slug": "apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra",
+		"name": "Apple Watch Series 11 - Caja Aluminio Negro - Correa Deportiva Negra",
+		"description": "Comprá el Apple Watch Series 11 en Argentina. Con 5G, pantalla ultra brillante, materiales reciclados, monitoreo de salud y resistencia al agua. Envíos a todo el país y garantía oficial.",
+		"category": "WATCH",
+		"images": [
+			"/products/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-1.webp",
+			"/products/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-2.webp",
+			"/products/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-watch-series-11-caja-aluminio-rose-gold-correa-deportiva-light-blush-m-l",
+		"name": "Apple Watch Series 11 - Caja Aluminio Rose Gold - Correa Deportiva Light Blush - M/L",
+		"description": "Descubrí el Apple Watch Series 11 con caja aluminio Rose Gold y correa Light Blush. Tecnología avanzada, salud en tiempo real y diseño elegante. ¡Compralo ya!",
+		"category": "WATCH",
+		"images": [
+			"/products/apple-watch-series-11-caja-aluminio-rose-gold-correa-deportiva-light-blush-m-l-1.webp",
+			"/products/apple-watch-series-11-caja-aluminio-rose-gold-correa-deportiva-light-blush-m-l-2.webp",
+			"/products/apple-watch-series-11-caja-aluminio-rose-gold-correa-deportiva-light-blush-m-l-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-watch-series-11-caja-aluminio-rose-gold-correa-deportiva-light-blush-m-l",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-watch-series-11-caja-de-titanio-natural-correa-deportiva-gris",
+		"name": "Apple Watch Series 11 - Caja de Titanio Natural - Correa Deportiva Gris",
+		"description": "Descubrí el Apple Watch Series 11 con caja de titanio natural y correa deportiva gris. Tecnología avanzada, resistencia y estilo para tu día a día. ¡Compralo ya!",
+		"category": "WATCH",
+		"images": [
+			"/products/apple-watch-series-11-caja-de-titanio-natural-correa-deportiva-gris-1.webp",
+			"/products/apple-watch-series-11-caja-de-titanio-natural-correa-deportiva-gris-2.webp",
+			"/products/apple-watch-series-11-caja-de-titanio-natural-correa-deportiva-gris-3.webp",
+			"/products/apple-watch-series-11-caja-de-titanio-natural-correa-deportiva-gris-4.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-watch-series-11-caja-de-titanio-natural-correa-deportiva-gris",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-watch-series-11-caja-titanio-dorado-correa-deportiva-beige",
+		"name": "Apple Watch Series 11 - Caja titanio Dorado - Correa Deportiva Beige",
+		"description": "Comprá el Apple Watch Series 11 en Argentina. Con 5G, pantalla ultra brillante, materiales reciclados, monitoreo de salud y resistencia al agua. Envíos a todo el país y garantía oficial.",
+		"category": "WATCH",
+		"images": [
+			"/products/apple-watch-series-11-caja-titanio-dorado-correa-deportiva-beige-1.webp",
+			"/products/apple-watch-series-11-caja-titanio-dorado-correa-deportiva-beige-2.webp",
+			"/products/apple-watch-series-11-caja-titanio-dorado-correa-deportiva-beige-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-watch-series-11-caja-titanio-dorado-correa-deportiva-beige",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-watch-series-11-caja-titanio-dorado-malla-milanes-dorado-46mm-m-l",
+		"name": "Apple Watch Series 11 - Caja Titanio Dorado - Malla Milanés Dorado 46mm M/L",
+		"description": "Descubrí el Apple Watch Series 11 con caja de titanio dorado y malla milanesa. Tecnología avanzada y diseño premium en un reloj único. ¡Compralo ahora!",
+		"category": "WATCH",
+		"images": [
+			"/products/apple-watch-series-11-caja-titanio-dorado-malla-milanes-dorado-46mm-m-l-1.webp",
+			"/products/apple-watch-series-11-caja-titanio-dorado-malla-milanes-dorado-46mm-m-l-2.webp",
+			"/products/apple-watch-series-11-caja-titanio-dorado-malla-milanes-dorado-46mm-m-l-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-watch-series-11-caja-titanio-dorado-malla-milanes-dorado-46mm-m-l",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black",
+		"name": "Apple Watch Ultra 3 - 49mm GPS-CELL - Caja Titanio Black - Correa Ocean Black",
+		"description": "Descubrí el Apple Watch Ultra 3 con caja de titanio Black, GPS-CELL y correa Ocean Black. Resistente, elegante y con tecnología avanzada. ¡Compralo ya!",
+		"category": "WATCH",
+		"images": [
+			"/products/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp",
+			"/products/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-2.webp",
+			"/products/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-watch-ultra-3-gps-cell-49mm-caja-titanio-black-correa-milanes-titanio-black-l",
+		"name": "Apple Watch Ultra 3 GPS+CELL 49mm - Caja Titanio black - Correa Milanés titanio Black - L",
+		"description": "Descubrí el Apple Watch Ultra 3 49mm con caja de titanio Black y correa Milanés. Tecnología avanzada, resistencia superior y estilo único. ¡Compralo ahora!",
+		"category": "WATCH",
+		"images": [
+			"/products/apple-watch-ultra-3-gps-cell-49mm-caja-titanio-black-correa-milanes-titanio-black-l-1.webp",
+			"/products/apple-watch-ultra-3-gps-cell-49mm-caja-titanio-black-correa-milanes-titanio-black-l-2.webp",
+			"/products/apple-watch-ultra-3-gps-cell-49mm-caja-titanio-black-correa-milanes-titanio-black-l-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-watch-ultra-3-gps-cell-49mm-caja-titanio-black-correa-milanes-titanio-black-l",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-watch-ultra-3-gps-cell-49mm-caja-titanio-natural-correa-de-anclaje-azul-oceano",
+		"name": "Apple Watch Ultra 3 GPS+CELL 49mm - Caja Titanio Natural - Correa de Anclaje Azul Oceano",
+		"description": "Descubrí el Apple Watch Ultra 3 con titanio natural y correa azul océano. Tecnología GPS+CELL, salud en tiempo real y resistencia superior. Compralo ya.",
+		"category": "WATCH",
+		"images": [
+			"/products/apple-watch-ultra-3-gps-cell-49mm-caja-titanio-natural-correa-de-anclaje-azul-oceano-1.webp",
+			"/products/apple-watch-ultra-3-gps-cell-49mm-caja-titanio-natural-correa-de-anclaje-azul-oceano-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-watch-ultra-3-gps-cell-49mm-caja-titanio-natural-correa-de-anclaje-azul-oceano",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "apple-watch-ultra-3-gps-cell-49mm-caja-titanio-natural-correa-milanes-natural-l",
+		"name": "Apple Watch Ultra 3 GPS+CELL 49mm - Caja titanio Natural - correa Milanés Natural - L",
+		"description": "Descubrí el Apple Watch Ultra 3 con caja de titanio y correa Milanés. Tecnología avanzada, resistencia y diseño premium. ¡Compralo ahora y elegí sofisticación!",
+		"category": "WATCH",
+		"images": [
+			"/products/apple-watch-ultra-3-gps-cell-49mm-caja-titanio-natural-correa-milanes-natural-l-1.webp",
+			"/products/apple-watch-ultra-3-gps-cell-49mm-caja-titanio-natural-correa-milanes-natural-l-2.webp"
+		],
+		"variants": [
+			{
+				"sku": "apple-watch-ultra-3-gps-cell-49mm-caja-titanio-natural-correa-milanes-natural-l",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "auriculares-airpods-max-usb-c",
+		"name": "Auriculares AirPods Max USB-C",
+		"description": "Los AirPods Max son ideales para cualquier tipo de entretenimiento de audio, pero con las películas, te hacen sentir como si fueras parte de la acción. Esto ...",
+		"category": "AIRPODS",
+		"images": [
+			"/products/auriculares-airpods-max-usb-c-1.webp",
+			"/products/auriculares-airpods-max-usb-c-2.webp",
+			"/products/auriculares-airpods-max-usb-c-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "auriculares-airpods-max-usb-c",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "beats-by-dr-dre-powerbeats-pro-2-wireless-noise-canceling-earbuds",
+		"name": "Beats by Dr. Dre Powerbeats Pro 2 Wireless Noise-Canceling Earbuds",
+		"description": "Beats Powerbeats&#8239;Pro&#8239;2 – Audífonos Deportivos con ANC y Sensor de Ritmo Cardíaco Ideal para entrenamientos intensos, estos earbuds combinan estil...",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/beats-by-dr-dre-powerbeats-pro-2-wireless-noise-canceling-earbuds-1.webp",
+			"/products/beats-by-dr-dre-powerbeats-pro-2-wireless-noise-canceling-earbuds-2.webp",
+			"/products/beats-by-dr-dre-powerbeats-pro-2-wireless-noise-canceling-earbuds-3.webp",
+			"/products/beats-by-dr-dre-powerbeats-pro-2-wireless-noise-canceling-earbuds-4.webp"
+		],
+		"variants": [
+			{
+				"sku": "beats-by-dr-dre-powerbeats-pro-2-wireless-noise-canceling-earbuds",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "mac-mini-m6",
+		"name": "Mac Mini M6",
+		"description": "Descubrí el Mac Mini M6 con chip M6, IA avanzada, Wi-Fi 7 y puertos Thunderbolt 4. Compacto y potente para tu escritorio. ¡Compralo ya!",
+		"category": "MAC",
+		"images": [
+			"/products/mac-mini-m6-1.webp",
+			"/products/mac-mini-m6-2.webp",
+			"/products/mac-mini-m6-3.webp"
+		],
+		"variants": [
+			{
+				"sku": "mac-mini-m6",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "soporte-apple-pro-stand",
+		"name": "Soporte Apple Pro Stand",
+		"description": "Eleva tu experiencia de visualización con el Apple Pro Stand, diseñado específicamente para complementar el Apple Studio Display. Este soporte premium combin...",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/soporte-apple-pro-stand-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "soporte-apple-pro-stand",
+				"storage": null
+			}
+		]
+	}
+]
