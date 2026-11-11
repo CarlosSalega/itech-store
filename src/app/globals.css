@@ -46,6 +46,9 @@
 	--s-6: 32px;
 	--s-7: 48px;
 	--s-8: 64px;
+	/* Clearance for the floating WhatsApp action: its own height plus its offset
+	   and a little air, so the end of a page is never permanently underneath it. */
+	--float-clearance: 96px;
 	--s-9: 88px;
 	--s-10: 120px;
 	--s-11: 160px;

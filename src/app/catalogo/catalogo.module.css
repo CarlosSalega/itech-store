@@ -65,6 +65,28 @@
 	gap: var(--s-2) var(--s-3);
 }
 
+/* At 320px six chips wrapped into three ragged rows and ate half the screen.
+   Below the tablet breakpoint they become one scrollable strip instead: same
+   information, one line, and no ragged column widths. The scrollbar is hidden
+   because the strip reads as a row, not as an overflow. */
+@media (max-width: 599px) {
+	.filterRow {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		padding-bottom: var(--s-1);
+		scrollbar-width: none;
+	}
+
+	.filterRow::-webkit-scrollbar {
+		display: none;
+	}
+
+	.filterRow > * {
+		flex: none;
+	}
+}
+
 .filter {
 	display: inline-flex;
 	align-items: center;

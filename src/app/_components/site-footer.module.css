@@ -1,5 +1,5 @@
 .footer {
-	padding: var(--section) 0 var(--s-7);
+	padding: var(--section) 0 calc(var(--s-7) + var(--float-clearance));
 	border-top: 1px solid var(--hairline);
 }
 
