@@ -35,3 +35,6 @@ next-env.d.ts
 
 # Catalog images are local-only: extracted on demand, never committed.
 /public/products/
+
+# Canvas-only design variants with product photos embedded. Never committed.
+/design/storefront-photos/
