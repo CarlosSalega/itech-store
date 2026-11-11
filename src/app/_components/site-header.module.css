@@ -41,6 +41,13 @@
 	flex: none;
 	width: 20px;
 	height: 20px;
+	/* Optical centring, not geometric. `align-items: center` centres the image box
+	   against the text's line box, whose centre sits about 4.25px above the
+	   baseline, while the eye reads the middle of the letters nearer 6.1px above
+	   it. The gap is ~1.8px, so the mark rises to sit with the cap height instead
+	   of with the box. The apple's ink is centred inside its 24x24 viewBox, so
+	   this offset is not compensating for the artwork. */
+	transform: translateY(-1px);
 }
 
 .nav {
@@ -142,6 +149,12 @@
 	   with room to spare instead of landing on the exact pixel. */
 	.brand {
 		font-size: var(--t-body-s);
+	}
+
+	/* Smaller type means a smaller gap to the cap-height midpoint, so the mark
+	   rises a little less. */
+	.logo {
+		transform: translateY(-0.5px);
 	}
 }
 
