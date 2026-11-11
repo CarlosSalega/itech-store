@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iTech Store — sistema</title>
+<style>
+  :root{
+    --white:#fff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
+    --canvas-dark:#0a0a0a; --surface-dark:#101010; --surface-raised:#161618; --ink-dark:#ededed; --muted-dark:#a1a1a6;
+    --hairline-dark:#262628; --hairline-strong:#3a3a3d;
+    --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:88px; --s-10:120px;
+    --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
+    --e-hairline:inset 0 0 0 1px var(--hairline);
+    --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+    --e-lift:0 12px 32px rgba(0,0,0,.10);
+    --e-lift-dark:0 12px 32px rgba(0,0,0,.55);
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms;
+    --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--white);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.47;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 64px}
+  section{padding:64px 0;border-top:1px solid var(--hairline)}
+  h1{font-size:44px;line-height:1.05;letter-spacing:-.028em;margin:0 0 8px;font-weight:600}
+  h2{font-size:28px;line-height:1.1;letter-spacing:-.018em;margin:0 0 4px;font-weight:600}
+  .lede{color:var(--muted);margin:0 0 32px;max-width:62ch}
+  h3{font-size:13px;line-height:1.3;letter-spacing:.01em;font-weight:500;color:var(--muted);margin:40px 0 12px;text-transform:none}
+  h3:first-of-type{margin-top:0}
+  code{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  /* swatches */
+  .sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;margin:0;padding:0;list-style:none}
+  .sw li{border-radius:var(--r-md);overflow:hidden;box-shadow:var(--e-hairline)}
+  .sw .chip{height:72px}
+  .sw .meta{padding:10px 12px;background:var(--white)}
+  .sw b{display:block;font-size:13px;font-weight:600;letter-spacing:0}
+  .sw span{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  /* type */
+  .scale{display:grid;gap:24px;border-top:1px solid var(--hairline);padding-top:24px}
+  .scale > div{display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:baseline}
+  .tag{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:0;line-height:1.6}
+  .d1{font-size:88px;line-height:1.02;letter-spacing:-.03em;font-weight:600}
+  .d2{font-size:56px;line-height:1.05;letter-spacing:-.022em;font-weight:600}
+  .t1{font-size:36px;line-height:1.1;letter-spacing:-.016em;font-weight:600}
+  .h1s{font-size:21px;line-height:1.2;letter-spacing:-.01em;font-weight:600}
+  .b1{font-size:17px;line-height:1.47}
+  .b2{font-size:15px;line-height:1.5}
+  .l1{font-size:13px;line-height:1.3;letter-spacing:.01em;font-weight:500;color:var(--muted)}
+  .c1{font-size:12px;line-height:1.35;letter-spacing:.015em;color:var(--muted)}
+  /* spacing */
+  .sp{display:grid;gap:10px}
+  .sp div{display:flex;align-items:center;gap:16px}
+  .sp i{display:block;height:14px;background:var(--accent);border-radius:2px;opacity:.85}
+  /* radius */
+  .radii{display:flex;gap:24px;flex-wrap:wrap}
+  .radii div{text-align:center}
+  .radii i{display:block;width:88px;height:88px;background:var(--surface);box-shadow:var(--e-hairline);margin-bottom:8px}
+  /* elevation */
+  .elev{display:flex;gap:32px;flex-wrap:wrap}
+  .elev div{width:200px;padding:20px;border-radius:var(--r-lg);background:var(--white);font-size:13px}
+  /* components */
+  .row{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 24px;border-radius:var(--r-pill);border:0;background:var(--accent);color:#fff;font:500 15px/1 var(--font);cursor:pointer;transition:transform var(--dur-1) var(--ease-std),background var(--dur-1) linear}
+  .btn:hover{background:var(--accent-press)}
+  .btn:active{transform:scale(.97)}
+  .btn2{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 8px;color:var(--link);text-decoration:none;font:500 15px/1 var(--font)}
+  .btn2 span{transition:transform var(--dur-2) var(--ease-std)}
+  .btn2:hover span{transform:translateX(2px)}
+  a:focus-visible,button:focus-visible,label:focus-within{outline:3px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
+  .card{width:300px;background:var(--white);border-radius:var(--r-lg);padding:24px;box-shadow:var(--e-hairline);transition:transform var(--dur-2) var(--ease-std),box-shadow var(--dur-2) var(--ease-std)}
+  .card:hover{transform:translateY(-2px);box-shadow:var(--e-lift)}
+  .tile{background:var(--surface);border-radius:var(--r-md);aspect-ratio:4/3;display:grid;place-items:center;overflow:hidden;margin-bottom:20px}
+  .tile img{width:78%;height:78%;object-fit:contain;mix-blend-mode:multiply;transition:transform var(--dur-2) var(--ease-std)}
+  .card:hover .tile img{transform:scale(1.02)}
+  .name{font-size:21px;line-height:1.2;letter-spacing:-.01em;font-weight:600;margin:0 0 12px}
+  .name a{color:inherit;text-decoration:none}
+  .price{font-size:21px;letter-spacing:-.01em;font-weight:500;font-variant-numeric:tabular-nums;margin:0}
+  .price .cur{color:var(--muted);font-size:.85em;margin-right:2px}
+  .from{font-size:13px;letter-spacing:.01em;color:var(--muted);display:block;margin-bottom:2px;font-weight:500}
+  .cap{font-size:13px;letter-spacing:.01em;color:var(--muted);margin:10px 0 0}
+  .fallback{display:grid;place-items:center;gap:6px;text-align:center}
+  .fallback .ph{width:64px;height:64px;object-fit:contain;opacity:.55;mix-blend-mode:normal}
+  .fallback span{font-size:13px;letter-spacing:.01em;color:var(--muted)}
+  fieldset{border:0;margin:0;padding:0}
+  legend{font-size:13px;letter-spacing:.01em;font-weight:500;color:var(--muted);padding:0;margin-bottom:12px}
+  .caps{display:flex;gap:12px;flex-wrap:wrap}
+  .caps label{position:relative;display:block;min-width:132px;padding:12px 20px;border-radius:var(--r-pill);box-shadow:inset 0 0 0 1px var(--hairline);cursor:pointer;transition:box-shadow var(--dur-1) var(--ease-std),background var(--dur-1) linear,color var(--dur-1) linear}
+  .caps input{position:absolute;opacity:0;width:1px;height:1px}
+  .caps .ph{display:block;font-size:15px;font-weight:500;line-height:1.2}
+  .caps .pp{display:block;font-size:12px;line-height:1.35;letter-spacing:.015em;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
+  .caps label:has(input:checked){background:var(--ink);color:#fff;box-shadow:inset 0 0 0 1px var(--ink)}
+  .caps label:has(input:checked) .pp{color:rgba(255,255,255,.72)}
+  .fam{display:flex;gap:12px;flex-wrap:wrap}
+  .fam a{display:flex;flex-direction:column;gap:2px;min-width:132px;padding:16px 20px;border-radius:var(--r-lg);background:var(--surface);color:inherit;text-decoration:none;transition:transform var(--dur-2) var(--ease-std)}
+  .fam a:hover{transform:translateY(-2px)}
+  .fam b{font-size:17px;font-weight:500;letter-spacing:-.01em}
+  .fam em{font-style:normal;font-size:13px;letter-spacing:.01em;color:var(--muted)}
+  .fam .empty{background:none;box-shadow:inset 0 0 0 1px var(--hairline);border:1px dashed var(--hairline)}
+  .dark{background:var(--canvas-dark);color:var(--ink-dark)}
+  .dark .lede,.dark .tag,.dark .l1,.dark .c1,.dark .from{color:var(--muted-dark)}
+  .dark h3{color:var(--muted-dark)}
+  .dark .d1,.dark .d2,.dark .t1,.dark .h1s,.dark .b1{color:var(--ink-dark)}
+  .notice{font-size:12px;line-height:1.35;letter-spacing:.015em;color:var(--muted);max-width:52ch;margin:0}
+  .dark .notice{color:var(--muted-dark)}
+  .hdr{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 64px;height:64px;background:rgba(255,255,255,.72);backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--hairline);font-size:15px;z-index:2}
+  .hdr nav{display:flex;gap:28px}
+  .hdr a{color:var(--ink);text-decoration:none;position:relative}
+  .hdr nav a::after{content:"";position:absolute;left:0;bottom:-6px;height:1px;width:0;background:var(--ink);transition:width var(--dur-2) var(--ease-std)}
+  .hdr nav a:hover::after{width:100%}
+  .hdr .brand{font-weight:600;letter-spacing:-.02em}
+  .skip{position:absolute;left:12px;top:-56px;z-index:9;background:var(--ink);color:#fff;padding:12px 20px;
+    border-radius:var(--r-pill);min-height:44px;display:inline-flex;align-items:center}
+  .skip:focus{top:12px}
+  footer{padding:48px 0 64px;border-top:1px solid var(--hairline);color:var(--muted);font-size:13px}
+  footer a{color:var(--ink)}
+  @media (prefers-reduced-motion:reduce){
+    *{transition-duration:0ms!important;animation:none!important}
+    .card:hover{transform:none}
+    .card:hover .tile img{transform:none}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+<header class="hdr">
+  <span class="brand">iTech Store</span>
+  <nav aria-label="Sistema">
+    <a href="#color">Color</a><a href="#tipografia">Tipografía</a><a href="#espaciado">Espaciado</a>
+    <a href="#componentes">Componentes</a><a href="#precio">Precio</a>
+  </nav>
+</header>
+<main class="wrap" id="main">
+  <section aria-labelledby="t" style="border-top:0;padding-top:48px">
+    <h1 id="t">Sistema de diseño</h1>
+    <p class="lede">Propuesta inicial derivada del scaffold del proyecto. Solo cuatro neutros y las dos
+      familias tipográficas provienen de una fuente real (<code>src/app/globals.css</code>,
+      <code>src/app/layout.tsx</code>); el resto de los tokens se propone acá y lo adoptan los tres
+      artboards de <code>design/storefront/</code>.</p>
+  </section>
+
+  <section id="color" aria-labelledby="tc">
+    <h2 id="tc">Color</h2>
+    <p class="lede">Una sola rampa neutra. Ningún tono se gasta en decoración.</p>
+    <ul class="sw">
+      <li><div class="chip" style="background:#fff;box-shadow:inset 0 0 0 1px #d2d2d7"></div><div class="meta"><b>--white</b><span>#ffffff</span></div></li>
+      <li><div class="chip" style="background:#171717"></div><div class="meta"><b>--ink</b><span>#171717</span></div></li>
+      <li><div class="chip" style="background:#6e6e73"></div><div class="meta"><b>--muted</b><span>#6e6e73</span></div></li>
+      <li><div class="chip" style="background:#d2d2d7"></div><div class="meta"><b>--hairline</b><span>#d2d2d7</span></div></li>
+      <li><div class="chip" style="background:#f5f5f7"></div><div class="meta"><b>--surface</b><span>#f5f5f7</span></div></li>
+      <li><div class="chip" style="background:#0a0a0a"></div><div class="meta"><b>--canvas-dark</b><span>#0a0a0a</span></div></li>
+      <li><div class="chip" style="background:#101010"></div><div class="meta"><b>--surface-dark</b><span>#101010</span></div></li>
+      <li><div class="chip" style="background:#161618"></div><div class="meta"><b>--surface-raised</b><span>#161618</span></div></li>
+      <li><div class="chip" style="background:#262628"></div><div class="meta"><b>--hairline-dark</b><span>#262628</span></div></li>
+      <li><div class="chip" style="background:#3a3a3d"></div><div class="meta"><b>--hairline-strong</b><span>#3a3a3d</span></div></li>
+      <li><div class="chip" style="background:#ededed"></div><div class="meta"><b>--ink-dark</b><span>#ededed</span></div></li>
+      <li><div class="chip" style="background:#a1a1a6"></div><div class="meta"><b>--muted-dark</b><span>#a1a1a6</span></div></li>
+      <li><div class="chip" style="background:#0066cc"></div><div class="meta"><b>--link</b><span>#0066cc</span></div></li>
+      <li><div class="chip" style="background:#0071e3"></div><div class="meta"><b>--accent</b><span>#0071e3</span></div></li>
+      <li><div class="chip" style="background:#0062c4"></div><div class="meta"><b>--accent-press</b><span>#0062c4</span></div></li>
+    </ul>
+  </section>
+
+  <section id="tipografia" aria-labelledby="tt">
+    <h2 id="tt">Tipografía</h2>
+    <p class="lede">Geist Sans en producción. Los artboards usan la pila del sistema, que es además el
+      fallback correcto. El tracking se ajusta por tamaño; nunca un único valor.</p>
+    <div class="scale">
+      <div><span class="tag">--t-display<br>clamp(2.5rem,6.4vw,5.5rem)<br>1.02 / -.03em / 600</span><span class="d1">Elegí la capacidad</span></div>
+      <div><span class="tag">--t-display-s<br>clamp(2rem,4.4vw,3.5rem)<br>1.05 / -.022em / 600</span><span class="d2">Cinco familias con productos</span></div>
+      <div><span class="tag">--t-title<br>clamp(1.5rem,2.6vw,2.25rem)<br>1.1 / -.016em / 600</span><span class="t1">Apple iPad 11" A16 Chip WI-FI</span></div>
+      <div><span class="tag">--t-headline<br>1.3125rem<br>1.2 / -.01em / 600</span><span class="h1s">Apple Watch Ultra 3 - 49mm</span></div>
+      <div><span class="tag">--t-body<br>1.0625rem<br>1.47 / 0 / 400</span><span class="b1">64 productos cargados en el catálogo público.</span></div>
+      <div><span class="tag">--t-body-s<br>.9375rem<br>1.5 / 0 / 400</span><span class="b2">Elegí modelo y capacidad: el precio se actualiza en el lugar.</span></div>
+      <div><span class="tag">--t-label<br>.8125rem<br>1.3 / .01em / 500</span><span class="l1">27 productos · MAC</span></div>
+      <div><span class="tag">--t-caption<br>.75rem<br>1.35 / .015em / 400</span><span class="c1">Los precios de este catálogo son de ejemplo.</span></div>
+    </div>
+  </section>
+
+  <section id="espaciado" aria-labelledby="te">
+    <h2 id="te">Espaciado y radios</h2>
+    <p class="lede">Base 4px. El ritmo vertical de sección es <code>clamp(64px, 9vw, 120px)</code>.</p>
+    <div class="sp">
+      <div><i style="width:4px"></i><span class="tag">--s-1 · 4px</span></div>
+      <div><i style="width:8px"></i><span class="tag">--s-2 · 8px</span></div>
+      <div><i style="width:12px"></i><span class="tag">--s-3 · 12px</span></div>
+      <div><i style="width:16px"></i><span class="tag">--s-4 · 16px</span></div>
+      <div><i style="width:24px"></i><span class="tag">--s-5 · 24px</span></div>
+      <div><i style="width:32px"></i><span class="tag">--s-6 · 32px</span></div>
+      <div><i style="width:48px"></i><span class="tag">--s-7 · 48px</span></div>
+      <div><i style="width:64px"></i><span class="tag">--s-8 · 64px</span></div>
+      <div><i style="width:88px"></i><span class="tag">--s-9 · 88px</span></div>
+      <div><i style="width:120px"></i><span class="tag">--s-10 · 120px</span></div>
+    </div>
+    <h3>Radios</h3>
+    <div class="radii">
+      <div><i style="border-radius:8px"></i><span class="tag">--r-sm 8</span></div>
+      <div><i style="border-radius:12px"></i><span class="tag">--r-md 12</span></div>
+      <div><i style="border-radius:18px"></i><span class="tag">--r-lg 18</span></div>
+      <div><i style="border-radius:28px"></i><span class="tag">--r-xl 28</span></div>
+      <div><i style="border-radius:980px"></i><span class="tag">--r-pill 980</span></div>
+    </div>
+    <h3>Elevación</h3>
+    <div class="elev">
+      <div style="box-shadow:var(--e-hairline)">--e-hairline</div>
+      <div style="box-shadow:var(--e-float)">--e-float</div>
+      <div style="box-shadow:var(--e-lift)">--e-lift</div>
+      <div style="background:#101010;color:#ededed;box-shadow:var(--e-lift-dark)">--e-lift-dark</div>
+    </div>
+  </section>
+
+  <section id="componentes" aria-labelledby="tc2">
+    <h2 id="tc2">Componentes</h2>
+    <h3>Botones — dos estilos, uno solo con relleno</h3>
+    <div class="row">
+      <button class="btn" type="button">Agregar al carrito</button>
+      <a class="btn2" href="#precio">Ver la ficha <span aria-hidden="true">›</span></a>
+    </div>
+    <h3>Card de producto, precio simple y fallback</h3>
+    <div class="row" style="align-items:flex-start">
+      <article class="card">
+        <div class="tile"><img src="../public/products/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp" alt="Apple Watch Ultra 3 de titanio negro con correa Ocean Black."></div>
+        <h4 class="name"><a href="#precio">Apple Watch Ultra 3 - 49mm GPS-CELL</a></h4>
+        <p class="price"><span class="cur">$</span>600.000</p>
+      </article>
+      <article class="card">
+        <div class="tile fallback">
+          <img class="ph" src="../public/placeholder.webp" alt="">
+          <span>Imagen no disponible</span>
+        </div>
+        <h4 class="name"><a href="#precio">Apple TV 4K (2022)</a></h4>
+        <p class="price"><span class="cur">$</span>30.000</p>
+        <p class="cap">64 GB</p>
+      </article>
+    </div>
+    <h3>Familias, con una familia vacía</h3>
+    <div class="fam">
+      <a href="#componentes"><b>Mac</b><em>27 productos</em></a>
+      <a href="#componentes"><b>iPad</b><em>14 productos</em></a>
+      <a href="#componentes"><b>Watch</b><em>9 productos</em></a>
+      <a href="#componentes"><b>AirPods</b><em>5 productos</em></a>
+      <a href="#componentes"><b>Accesorios</b><em>9 productos</em></a>
+      <span class="fam"><a class="empty" href="#componentes" aria-describedby="iph"><b>iPhone</b><em>0 productos</em></a></span>
+    </div>
+    <p id="iph" class="c1" style="margin-top:12px">iPhone todavía no está en el catálogo. Podés consultarnos.</p>
+  </section>
+
+  <section id="precio" aria-labelledby="tp">
+    <h2 id="tp">Precio y variantes</h2>
+    <p class="lede">Los importes viven en centavos enteros (ARS) y salen formateados: <code>$</code> +
+      espacio + entero agrupado, sin decimales, <code>Intl.NumberFormat("es-AR")</code>. El
+      <code>Product</code> es el paraguas; la <code>Variant</code> es lo que se compra.</p>
+    <div class="row" style="align-items:flex-start;gap:64px">
+      <div style="max-width:300px">
+        <span class="from">Desde</span>
+        <p class="price"><span class="cur">$</span>900.000</p>
+        <p class="cap">128 GB · 256 GB · 512 GB</p>
+      </div>
+      <div>
+        <fieldset>
+          <legend>Capacidad</legend>
+          <div class="caps">
+            <label><input type="radio" name="cap" checked><span class="ph">128 GB</span><span class="pp">$ 900.000</span></label>
+            <label><input type="radio" name="cap"><span class="ph">256 GB</span><span class="pp">$ 1.035.000</span></label>
+            <label><input type="radio" name="cap"><span class="ph">512 GB</span><span class="pp">$ 1.215.000</span></label>
+          </div>
+        </fieldset>
+        <p class="price" style="margin-top:24px"><span class="cur">$</span>900.000</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark" aria-labelledby="td" style="margin:0 -64px;padding:64px;border-top:0">
+    <h2 id="td">La misma rampa en oscuro</h2>
+    <p class="lede">Superficie <code>--canvas-dark</code>, texto <code>--ink-dark</code>, secundario
+      <code>--muted-dark</code>. El acento sigue siendo el único color.</p>
+    <h3>Card en oscuro</h3>
+    <div class="row" style="align-items:flex-start">
+      <article class="card" style="background:var(--surface-dark);box-shadow:inset 0 0 0 1px var(--hairline-dark)">
+        <div class="tile" style="background:var(--white)"><img src="../public/products/auriculares-airpods-max-usb-c-1.webp" alt="Auriculares AirPods Max con almohadillas negras, vistos de frente."></div>
+        <h4 class="name" style="color:var(--ink-dark)"><a href="#precio">Auriculares AirPods Max USB-C</a></h4>
+        <p class="price" style="color:var(--ink-dark)"><span class="cur" style="color:var(--muted-dark)">$</span>250.000</p>
+      </article>
+    </div>
+  </section>
+
+  <section aria-labelledby="tn" style="border-top:0">
+    <h2 id="tn">Aviso de datos de ejemplo</h2>
+    <p class="notice">Los precios de este catálogo son de ejemplo y no son precios de venta.</p>
+    <p class="tag" style="margin-top:24px">Una vez por página, en el footer, en --t-caption --muted.
+      Nunca como banner ni repetido por card.</p>
+  </section>
+</main>
+<footer>
+  <div class="wrap">
+    <p class="tag" style="margin:0">Sistema propuesto · design/system.md · adoptado por design/storefront/01-galeria.html,
+      02-indice.html y 03-vitrina.html.</p>
+  </div>
+</footer>
+</body>
+</html>

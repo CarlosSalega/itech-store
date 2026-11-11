@@ -1,0 +1,28 @@
+{
+  "title": "Landing y catálogo público",
+  "brief": "Landing page for an Apple products store in Argentina (es-AR), with a family entry point, a product grid and — in two of the three directions — the product-detail treatment with a capacity selector. All prices are sample data rendered in ARS.",
+  "feature": "odd/tasks/public-catalog-mvp.md",
+  "artboards": [
+    {
+      "file": "01-galeria.html",
+      "title": "Galería",
+      "tradeoff": "Centred, quiet, most faithful to Apple's product pages; type and whitespace carry the page, but it is the least information-dense and a six-item grid hides the other 58 products",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "02-indice.html",
+      "title": "Índice",
+      "tradeoff": "A readable catalog with a numbered family index and wide rows that compare at a glance, and the capacity price ladder outside the PDP; less dramatic, reads closer to an editorial catalog than to Apple",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "03-vitrina.html",
+      "title": "Vitrina",
+      "tradeoff": "Dark floor with each product in a lit case and a segmented capacity configurator in the detail; the strongest premium pull, the hardest place to keep retail prices legible and the furthest from a familiar Argentine store",
+      "width": 1440,
+      "height": 900
+    }
+  ]
+}

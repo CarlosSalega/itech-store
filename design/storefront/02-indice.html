@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Catálogo Apple ordenado por familia, con el precio de cada capacidad a la vista.">
+<title>iTech Store — el catálogo, en orden</title>
+<!--
+  Direction 02 · Índice — the catalog as a printed index.
+  Left-aligned editorial grid, numbered families, wide reading rows, and the
+  capacity ladder printed next to the price instead of hidden in the PDP.
+  Product photos: 640px webp on white; panels are --surface with multiply blending.
+  Files resolve from the repository root: run the canvas from there.
+-->
+<style>
+  :root{
+    --white:#fff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
+    --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:88px; --s-10:120px;
+    --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
+    --e-hairline:inset 0 0 0 1px var(--hairline);
+    --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms;
+    --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+    --t-display:clamp(2.25rem,4.6vw,4rem);
+    --t-display-s:clamp(1.75rem,3.1vw,2.625rem);
+    --t-title:clamp(1.375rem,2.1vw,1.75rem);
+    --t-headline:1.3125rem;
+    --t-body:1.0625rem; --t-body-s:.9375rem; --t-label:.8125rem; --t-caption:.75rem;
+    --section:clamp(64px,9vw,112px);
+    color-scheme:light;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--white);color:var(--ink);font:400 var(--t-body)/1.47 var(--font);
+    -webkit-font-smoothing:antialiased}
+  img{max-width:100%;display:block}
+  a{color:var(--link);text-decoration:none}
+  h1,h2,h3,h4{margin:0;font-weight:600;text-wrap:balance}
+  p{margin:0}
+  ul,ol{margin:0;padding:0;list-style:none}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
+  .skip{position:absolute;left:12px;top:-56px;z-index:50;background:var(--ink);color:#fff;padding:12px 20px;
+    border-radius:var(--r-pill);min-height:44px;display:inline-flex;align-items:center;transition:top var(--dur-1) var(--ease-std)}
+  .skip:focus{top:12px}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 var(--s-5)}
+  @media (min-width:900px){.wrap{padding:0 var(--s-8)}}
+
+  /* header */
+  .site-head{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.72);
+    backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+    border-bottom:1px solid var(--hairline)}
+  .site-head .wrap{display:flex;align-items:center;justify-content:space-between;gap:var(--s-5);min-height:48px}
+  @media (min-width:900px){.site-head .wrap{min-height:64px}}
+  .brand{color:var(--ink);font-weight:600;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px}
+  .brand span{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-weight:400;display:none}
+  @media (min-width:760px){.brand span{display:inline}}
+  .nav-main{display:none}
+  @media (min-width:900px){.nav-main{display:flex;align-items:center;gap:var(--s-6);margin-left:auto}}
+  .nav-main a{color:var(--ink);font-size:var(--t-body-s);position:relative;display:inline-flex;align-items:center;min-height:44px}
+  .nav-main a::after{content:"";position:absolute;left:0;right:0;bottom:10px;height:1px;background:var(--ink);
+    transform:scaleX(0);transform-origin:left;transition:transform var(--dur-2) var(--ease-std)}
+  .nav-main a:hover::after,.nav-main a:focus-visible::after{transform:scaleX(1)}
+  .head-tools{display:flex;align-items:center;gap:var(--s-4);margin-left:auto}
+  @media (min-width:900px){.head-tools{margin-left:var(--s-6)}}
+  .head-tools a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;min-height:44px}
+  @media (max-width:479px){.head-tools a{display:none}}
+  .menu{position:relative}
+  @media (min-width:900px){.menu{display:none}}
+  .menu summary{list-style:none;cursor:pointer;min-height:44px;padding:0 var(--s-3);display:inline-flex;align-items:center;
+    gap:var(--s-2);font-size:var(--t-body-s);border-radius:var(--r-pill)}
+  .menu summary::-webkit-details-marker{display:none}
+  .menu[open] summary{border:1px solid var(--hairline)}
+  .menu nav{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:#fff;border-radius:var(--r-lg);
+    box-shadow:var(--e-hairline),var(--e-float);padding:var(--s-3);display:grid}
+  .menu nav a{color:var(--ink);padding:0 var(--s-4);min-height:44px;display:flex;align-items:center;border-radius:var(--r-sm)}
+  .menu nav a:hover{background:var(--surface)}
+
+  /* hero: asymmetric split, text first */
+  .hero{padding:clamp(32px,5vw,64px) 0 var(--section)}
+  .hero-grid{display:grid;gap:var(--s-7);align-items:end}
+  @media (min-width:900px){.hero-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--s-8)}}
+  .hero-eyebrow{font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;font-weight:500;color:var(--muted);
+    display:flex;align-items:center;gap:var(--s-3)}
+  .hero-eyebrow::before{content:"";width:32px;height:1px;background:var(--hairline)}
+  .hero h1{font-size:var(--t-display);line-height:1.04;letter-spacing:-.028em;margin-top:var(--s-5);max-width:16ch}
+  .hero-sub{margin-top:var(--s-5);font-size:var(--t-body);color:var(--muted);max-width:46ch}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:var(--s-4) var(--s-5);margin-top:var(--s-6)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 var(--s-5);
+    border-radius:var(--r-pill);border:0;background:var(--accent);color:#fff;font:500 var(--t-body-s)/1 var(--font);
+    cursor:pointer;transition:transform var(--dur-1) var(--ease-std),background var(--dur-1) linear}
+  .btn:hover{background:var(--accent-press)}
+  .btn:active{transform:scale(.97)}
+  .btn-2{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:var(--t-body-s);font-weight:500}
+  .btn-2 .chev{transition:transform var(--dur-2) var(--ease-std)}
+  .btn-2:hover .chev{transform:translateX(2px)}
+  .fact-strip{margin-top:var(--s-7);padding-top:var(--s-5);border-top:1px solid var(--hairline);display:flex;
+    flex-wrap:wrap;gap:var(--s-3) var(--s-7)}
+  .fact-strip div{display:grid;gap:2px}
+  .fact-strip dt{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);order:2}
+  .fact-strip dd{margin:0;font-size:1.375rem;line-height:1.1;letter-spacing:-.016em;font-weight:500;
+    font-variant-numeric:tabular-nums;order:1}
+  .hero-panel{position:relative;border-radius:var(--r-xl);background:var(--surface);overflow:hidden;
+    display:grid;place-items:center;padding:var(--s-5);aspect-ratio:4/5;box-shadow:var(--e-hairline)}
+  @media (min-width:900px){.hero-panel{aspect-ratio:auto;min-height:520px}}
+  .hero-panel img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+
+  /* sections */
+  section{padding:var(--section) 0}
+  .band{background:var(--surface)}
+  .sec-head{max-width:52ch}
+  .sec-head h2{font-size:var(--t-display-s);line-height:1.06;letter-spacing:-.022em}
+  .sec-head p{margin-top:var(--s-4);font-size:var(--t-body);color:var(--muted)}
+  .sec-top{display:flex;flex-wrap:wrap;gap:var(--s-4);align-items:baseline;justify-content:space-between;
+    border-bottom:1px solid var(--hairline);padding-bottom:var(--s-5)}
+
+  /* index list */
+  .index{margin-top:var(--s-2);display:grid}
+  @media (min-width:760px){.index{grid-template-columns:1fr 1fr;column-gap:var(--s-9)}}
+  .index li{border-bottom:1px solid var(--hairline)}
+  .index a,.index .row-static{display:grid;grid-template-columns:3rem 1fr auto;align-items:center;gap:var(--s-4);
+    padding:var(--s-4) 0;min-height:64px;color:var(--ink);transition:padding-left var(--dur-2) var(--ease-std)}
+  .index a:hover{padding-left:var(--s-2)}
+  .index .num{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-variant-numeric:tabular-nums}
+  .index .label{font-size:var(--t-title);line-height:1.1;letter-spacing:-.016em;font-weight:500}
+  .index .label small{display:block;margin-top:2px;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-weight:400}
+  .index .count{font-size:var(--t-body-s);color:var(--muted);font-variant-numeric:tabular-nums;display:flex;
+    align-items:center;gap:var(--s-3)}
+  .index .count .chev{transition:transform var(--dur-2) var(--ease-std)}
+  .index a:hover .chev{transform:translateX(3px)}
+  .index .empty .label{color:var(--muted)}
+  .index .empty .count{font-style:normal}
+  .index-note{margin-top:var(--s-6);font-size:var(--t-body-s);color:var(--muted);max-width:56ch}
+
+  /* wide reading rows */
+  .rows{display:grid;gap:var(--s-3);margin-top:var(--s-7)}
+  @media (min-width:860px){.rows{grid-template-columns:1fr 1fr;gap:var(--s-3) var(--s-4)}}
+  .row{display:grid;grid-template-columns:88px minmax(0,1fr);gap:var(--s-4);align-items:center;
+    padding:var(--s-4);border-radius:var(--r-lg);background:var(--white);box-shadow:var(--e-hairline);
+    transition:transform var(--dur-2) var(--ease-std),box-shadow var(--dur-2) var(--ease-std)}
+  @media (min-width:520px){.row{grid-template-columns:120px minmax(0,1fr)}}
+  .row:hover{transform:translateY(-2px);box-shadow:var(--e-hairline),var(--e-lift)}
+  .row-media{border-radius:var(--r-md);background:var(--surface);overflow:hidden;aspect-ratio:1;display:grid;place-items:center}
+  .row-media img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;
+    transition:transform var(--dur-2) var(--ease-std)}
+  .row:hover .row-media img{transform:scale(1.02)}
+  .row-media.placeholder{background:var(--surface)}
+  .row-media.placeholder img{width:56px;height:56px;mix-blend-mode:normal;opacity:.5}
+  .state-line{margin-top:2px;font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+  .row-body{min-width:0;display:grid;gap:2px}
+  .row-body .cat{font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .row-body h3{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.01em}
+  .row-body h3 a{color:inherit}
+  .row-body h3 a:hover{color:var(--link)}
+  .row-price{display:flex;align-items:baseline;gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-1);
+    font-size:var(--t-body);font-weight:500;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+  .row-price .cur{color:var(--muted);font-size:.85em}
+  .row-price .from{color:var(--muted);font-size:var(--t-label);font-weight:400;letter-spacing:.01em}
+  .ladder{margin-top:var(--s-2);display:grid;gap:1px;font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted);
+    font-variant-numeric:tabular-nums}
+  .ladder span{display:flex;justify-content:space-between;gap:var(--s-4);max-width:220px;padding:2px 0}
+  .ladder b{font-weight:400;color:var(--ink)}
+  .cap-line{margin-top:2px;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  /* price explainer */
+  .how{display:grid;gap:var(--s-6);margin-top:var(--s-7);counter-reset:step}
+  @media (min-width:760px){.how{grid-template-columns:repeat(3,1fr);gap:var(--s-7)}}
+  .how div{padding-top:var(--s-4);border-top:1px solid var(--hairline)}
+  .how h3{font-size:var(--t-body);font-weight:600;letter-spacing:-.01em;display:flex;gap:var(--s-3);align-items:baseline}
+  .how h3::before{counter-increment:step;content:"0" counter(step);font-size:var(--t-label);letter-spacing:.01em;
+    color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums}
+  .how p{margin-top:var(--s-2);font-size:var(--t-body-s);color:var(--muted)}
+  .how code{font-family:var(--mono);font-size:.75rem;color:var(--ink);background:var(--white);padding:1px 6px;
+    border-radius:var(--r-sm);box-shadow:var(--e-hairline)}
+
+  /* footer */
+  .site-foot{background:var(--surface);border-top:1px solid var(--hairline);padding:var(--s-9) 0 var(--s-7)}
+  .foot-grid{display:grid;grid-template-columns:1fr;gap:var(--s-7)}
+  @media (min-width:700px){.foot-grid{grid-template-columns:1.4fr repeat(3,1fr);gap:var(--s-6)}}
+  .foot-col h2{font-size:var(--t-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+  .foot-col ul{margin-top:var(--s-3);display:grid}
+  .foot-col a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;min-height:36px}
+  .foot-col a:hover{color:var(--link)}
+  .foot-col p{margin-top:0;font-size:var(--t-body-s);color:var(--muted);max-width:28ch}
+  .notice{max-width:56ch;margin-top:var(--s-8);padding-top:var(--s-5);border-top:1px solid var(--hairline);
+    font-size:var(--t-caption);line-height:1.35;letter-spacing:.015em;color:var(--muted)}
+  .foot-base{margin-top:var(--s-4);display:flex;gap:var(--s-4);flex-wrap:wrap;justify-content:space-between;
+    font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .enter{animation:rise var(--dur-3) var(--ease-out) both}
+  .enter:nth-child(2){animation-delay:60ms}
+  .enter:nth-child(3){animation-delay:110ms}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition-duration:0ms!important}
+    .enter{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="#top">iTech Store <span>Catálogo público</span></a>
+    <nav class="nav-main" aria-label="Principal">
+      <a href="#familias">Mac</a>
+      <a href="#familias">iPad</a>
+      <a href="#familias">Watch</a>
+      <a href="#familias">AirPods</a>
+      <a href="#familias">Accesorios</a>
+    </nav>
+    <div class="head-tools">
+      <a href="#catalogo">Buscar</a>
+      <a href="#catalogo">Carrito</a>
+      <details class="menu">
+        <summary aria-label="Abrir el menú">Menú</summary>
+        <nav aria-label="Principal en móvil">
+          <a href="#familias">Mac</a>
+          <a href="#familias">iPad</a>
+          <a href="#familias">Watch</a>
+          <a href="#familias">AirPods</a>
+          <a href="#familias">Accesorios</a>
+          <a href="#precio">Cómo leemos el precio</a>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div id="top"></div>
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="hero-eyebrow enter">Catálogo Apple · pesos argentinos</p>
+        <h1 id="hero-title" class="enter">Apple, ordenado para elegir.</h1>
+        <p class="hero-sub enter">Cinco familias con productos, 64 modelos y el precio de cada capacidad
+          impreso al lado del nombre. Sin abrir la ficha para saber cuánto sale.</p>
+        <div class="hero-actions enter">
+          <a class="btn" href="#catalogo">Recorrer el catálogo</a>
+          <a class="btn-2" href="#precio">Cómo leemos el precio <span class="chev" aria-hidden="true">›</span></a>
+        </div>
+        <dl class="fact-strip enter">
+          <div><dt>productos cargados</dt><dd>64</dd></div>
+          <div><dt>variantes con SKU propio</dt><dd>68</dd></div>
+          <div><dt>familias con productos</dt><dd>5 de 6</dd></div>
+        </dl>
+      </div>
+      <div class="hero-panel">
+        <img src="../../public/products/apple-13-macbook-air-chip-m5-1.webp"
+          alt="Apple MacBook Air de 13 pulgadas en gris espacial, abierta y de frente." width="640" height="640">
+      </div>
+    </div>
+  </section>
+
+  <section id="familias" aria-labelledby="fam-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 id="fam-title">Seis familias, una todavía vacía.</h2>
+        <p>El índice del catálogo, con la cantidad real de productos de cada familia. iPhone aparece
+          con cero y no lo escondemos detrás de una foto de stock.</p>
+      </div>
+      <ol class="index">
+        <li>
+          <a href="#catalogo">
+            <span class="num">01</span>
+            <span class="label">Mac<small>MacBook Air, MacBook Pro, iMac, Mac Mini</small></span>
+            <span class="count">27 productos <span class="chev" aria-hidden="true">›</span></span>
+          </a>
+        </li>
+        <li>
+          <a href="#catalogo">
+            <span class="num">02</span>
+            <span class="label">iPad<small>iPad, iPad Air, iPad Pro, iPad Mini</small></span>
+            <span class="count">14 productos <span class="chev" aria-hidden="true">›</span></span>
+          </a>
+        </li>
+        <li>
+          <a href="#catalogo">
+            <span class="num">03</span>
+            <span class="label">Watch<small>Series 11 y Ultra 3</small></span>
+            <span class="count">9 productos <span class="chev" aria-hidden="true">›</span></span>
+          </a>
+        </li>
+        <li>
+          <a href="#catalogo">
+            <span class="num">04</span>
+            <span class="label">AirPods<small>AirPods, AirPods Pro y AirPods Max</small></span>
+            <span class="count">5 productos <span class="chev" aria-hidden="true">›</span></span>
+          </a>
+        </li>
+        <li>
+          <a href="#catalogo">
+            <span class="num">05</span>
+            <span class="label">Accesorios<small>AirTag, HomePod, Apple TV, soportes y cables</small></span>
+            <span class="count">9 productos <span class="chev" aria-hidden="true">›</span></span>
+          </a>
+        </li>
+        <li class="empty">
+          <div class="row-static">
+            <span class="num">06</span>
+            <span class="label">iPhone<small>Sin modelos cargados</small></span>
+            <span class="count">0 productos</span>
+          </div>
+        </li>
+      </ol>
+      <p class="index-note">iPhone todavía no está en el catálogo. Si lo necesitás, escribinos y lo buscamos.</p>
+    </div>
+  </section>
+
+  <section id="catalogo" class="band" aria-labelledby="cat-title">
+    <div class="wrap">
+      <div class="sec-top">
+        <div class="sec-head">
+          <h2 id="cat-title">El catálogo, en filas largas.</h2>
+          <p>Nombre, categoría y precio en la misma línea de lectura: se compara mirando hacia abajo,
+            no abriendo y cerrando fichas.</p>
+        </div>
+      </div>
+      <div class="rows">
+        <article class="row">
+          <div class="row-media">
+            <img src="../../public/products/apple-11-ipad-pro-m5-space-black-1.webp"
+              alt="Apple iPad Pro de 11 pulgadas en space black, de frente y de espaldas." width="640" height="640">
+          </div>
+          <div class="row-body">
+            <p class="cat">iPad</p>
+            <h3><a href="#catalogo">Apple 11" iPad Pro M5 Space Black</a></h3>
+            <p class="row-price"><span class="cur">$</span>900.000</p>
+          </div>
+        </article>
+
+        <article class="row">
+          <div class="row-media">
+            <img src="../../public/products/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp"
+              alt="Apple Watch Ultra 3 de titanio negro con correa Ocean Black." width="640" height="640">
+          </div>
+          <div class="row-body">
+            <p class="cat">Watch</p>
+            <h3><a href="#catalogo">Apple Watch Ultra 3 - 49mm GPS-CELL - Caja Titanio Black - Correa Ocean Black</a></h3>
+            <p class="row-price"><span class="cur">$</span>600.000</p>
+          </div>
+        </article>
+
+        <article class="row">
+          <div class="row-media">
+            <img src="../../public/products/auriculares-airpods-max-usb-c-1.webp"
+              alt="Auriculares AirPods Max con almohadillas negras, vistos de frente." width="640" height="640">
+          </div>
+          <div class="row-body">
+            <p class="cat">AirPods</p>
+            <h3><a href="#catalogo">Auriculares AirPods Max USB-C</a></h3>
+            <p class="row-price"><span class="cur">$</span>250.000</p>
+          </div>
+        </article>
+
+        <article class="row">
+          <div class="row-media">
+            <img src="../../public/products/apple-imac-24-m4-chip-azul-1.webp"
+              alt="Apple iMac de 24 pulgadas en azul, con su teclado y su mouse." width="640" height="640">
+          </div>
+          <div class="row-body">
+            <p class="cat">Mac</p>
+            <h3><a href="#catalogo">Apple iMac 24" M4 Chip Azul</a></h3>
+            <p class="row-price"><span class="cur">$</span>2.000.000</p>
+          </div>
+        </article>
+
+        <article class="row">
+          <div class="row-media">
+            <img src="../../public/products/apple-ipad-11-a16-chip-wi-fi-1.webp"
+              alt="Cuatro Apple iPad de 11 pulgadas, en blanco, amarillo, rosa y azul, superpuestos." width="640" height="640">
+          </div>
+          <div class="row-body">
+            <p class="cat">iPad</p>
+            <h3><a href="#catalogo">Apple iPad 11" A16 Chip WI-FI</a></h3>
+            <p class="row-price"><span class="from">Desde</span><span class="cur">$</span>900.000</p>
+            <div class="ladder">
+              <span>128 GB <b>$ 900.000</b></span>
+              <span>256 GB <b>$ 1.035.000</b></span>
+              <span>512 GB <b>$ 1.215.000</b></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="row">
+          <div class="row-media placeholder">
+            <img src="../../public/placeholder.webp" alt="" width="56" height="56">
+          </div>
+          <div class="row-body">
+            <p class="cat">Accesorios</p>
+            <h3><a href="#catalogo">Apple TV 4K (2022)</a></h3>
+            <p class="row-price"><span class="cur">$</span>30.000</p>
+            <p class="state-line">64 GB · imagen no disponible</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="precio" aria-labelledby="price-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 id="price-title">El precio es de la variante, no del producto.</h2>
+        <p>Un producto puede tener una sola variante o tres. Cuando hay más de una, el catálogo dice
+          "Desde" y muestra la escalera completa.</p>
+      </div>
+      <div class="how">
+        <div>
+          <h3>Producto</h3>
+          <p>El modelo, con su nombre y su slug. Es la fila que ves en el catálogo.</p>
+        </div>
+        <div>
+          <h3>Variante</h3>
+          <p>Cada capacidad es una variante con su <code>SKU</code> y su precio propios.</p>
+        </div>
+        <div>
+          <h3>Precio</h3>
+          <p>Un entero de centavos de peso que se muestra como <code>$ 1.035.000</code>. Nunca se
+            muestra un promedio.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot" id="contacto">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <h2>iTech Store</h2>
+        <p>Catálogo Apple con precios en pesos argentinos. Elegí por familia o por capacidad.</p>
+      </div>
+      <div class="foot-col">
+        <h2>Familias</h2>
+        <ul>
+          <li><a href="#familias">Mac</a></li>
+          <li><a href="#familias">iPad</a></li>
+          <li><a href="#familias">Watch</a></li>
+          <li><a href="#familias">AirPods</a></li>
+          <li><a href="#familias">Accesorios</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>Productos</h2>
+        <ul>
+          <li><a href="#catalogo">MacBook Air 13"</a></li>
+          <li><a href="#catalogo">iPad 11" A16</a></li>
+          <li><a href="#catalogo">Watch Ultra 3</a></li>
+          <li><a href="#catalogo">AirPods Max</a></li>
+          <li><a href="#catalogo">iMac 24" M4</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>Cuenta</h2>
+        <ul>
+          <li><a href="#contacto">Contacto</a></li>
+          <li><a href="#contacto">Ingresar</a></li>
+          <li><a href="#precio">Cómo leemos el precio</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="notice">Los precios de este catálogo son de ejemplo y no son precios de venta.</p>
+    <div class="foot-base">
+      <span>iTech Store · Catálogo Apple</span>
+      <span>Precios en pesos argentinos (ARS).</span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
