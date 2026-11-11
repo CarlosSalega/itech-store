@@ -179,6 +179,12 @@
 	font-size: var(--t-body-s);
 	color: var(--muted);
 }
+/* The shared `.rule` hairline carries no spacing of its own, which left it
+   sitting on top of the note above it. The rule separates the filter header from
+   the catalogue wall, so it needs air on the side it faces. */
+.separator {
+	margin-top: var(--s-6);
+}
 
 /* Honest empty state: a family with no products, or a catalog with none. */
 .empty {

@@ -179,7 +179,7 @@ export default async function CatalogoPage({
 					</nav>
 				</div>
 
-				<div className="rule" role="presentation" />
+				<div className={`rule ${styles.separator}`} role="presentation" />
 
 				<section aria-labelledby="wall-title" className={styles.wallSection}>
 					<div className="wrap">
