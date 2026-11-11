@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Apple iPad 11 pulgadas A16 Chip WI-FI: las cuatro fotos del producto, las tres capacidades con su precio en pesos y la ficha técnica.">
+<title>iTech Store — Apple iPad 11&quot; A16 Chip WI-FI</title>
+<!--
+  Direction 01 · Galería — product page. Same page, same content, as 05-detalle-indice
+  and 06-detalle-vitrina.
+  The work hangs on white with no tile and its wall label is the page's h1: the 1px tick
+  is short until hover or keyboard focus and then draws to the full caption width. The
+  four real photos ride under the work as a numbered strip of small hung labels, and the
+  configurator (capacity + the price of the selected variant) sits in the margin column.
+  The price follows the radio group with a few lines of script; the markup already carries
+  the 128 GB figures, so the page is correct with no script at all.
+  Product photography here is 640px webp on a white ground: the photo dissolves into the
+  page with mix-blend-mode: multiply and is never cropped.
+  Files resolve from the repository root: run the canvas from there.
+-->
+<style>
+  :root{
+    --white:#fff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
+    --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+    --s-9:88px; --s-10:120px; --s-11:160px;
+    --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
+    --e-hairline:inset 0 0 0 1px var(--hairline);
+    --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms; --dur-4:720ms;
+    --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
+    --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+    --t-display:clamp(2.75rem,7vw,6rem);
+    --t-display-s:clamp(2rem,4.6vw,3.75rem);
+    --t-numeral:clamp(1.75rem,3vw,2.625rem);
+    --t-title:clamp(1.375rem,2.2vw,1.875rem);
+    --t-headline:1.3125rem;
+    --t-body:1.0625rem; --t-body-s:.9375rem; --t-label:.8125rem; --t-caption:.75rem;
+    --section-tall:clamp(88px,12vw,176px);
+    --section:clamp(64px,9vw,112px);
+    --section-tight:clamp(40px,5vw,64px);
+    color-scheme:light;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scrollbar-color:var(--hairline) var(--white);scroll-behavior:smooth}
+  body{margin:0;background:var(--white);color:var(--ink);font:400 var(--t-body)/1.47 var(--font);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:var(--ink);color:var(--white)}
+  img{max-width:100%;display:block}
+  a{color:var(--link);text-decoration:none}
+  h1,h2,h3,h4{margin:0;font-weight:600;text-wrap:balance}
+  p{margin:0;text-wrap:pretty}
+  ul,ol{margin:0;padding:0;list-style:none}
+  dl,dd,dt{margin:0}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
+  .skip{position:absolute;left:12px;top:-56px;z-index:50;background:var(--ink);color:var(--white);
+    padding:12px 20px;border-radius:var(--r-pill);min-height:44px;display:inline-flex;align-items:center;
+    transition:top var(--dur-1) var(--ease-std)}
+  .skip:focus{top:12px}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 var(--s-5)}
+  @media (min-width:900px){.wrap{padding:0 var(--s-8)}}
+  /* full-bleed 1px rule: the gallery's structural device, drawn past the content column */
+  .rule{height:1px;background:var(--hairline);margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
+
+  /* ---------- icons: inline SVG, 24 grid, 1.6 stroke, sized by CSS only ---------- */
+  .ico{display:block;flex:none;width:20px;height:20px}
+  .ico-16{width:16px;height:16px}
+  .ico-20{width:20px;height:20px}
+  .ico-24{width:24px;height:24px}
+  .chev{display:inline-flex;align-items:center}
+
+  /* ---------- header ---------- */
+  .site-head{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.72);
+    backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+    border-bottom:1px solid var(--hairline)}
+  .site-head .wrap{display:flex;align-items:center;justify-content:space-between;gap:var(--s-5);min-height:48px}
+  @media (min-width:900px){.site-head .wrap{min-height:64px}}
+  .brand{font-weight:600;letter-spacing:-.02em;font-size:var(--t-body);color:var(--ink);
+    display:inline-flex;align-items:center;min-height:44px}
+  .nav-main{display:none}
+  @media (min-width:900px){.nav-main{display:flex;align-items:center;gap:var(--s-6)}}
+  .nav-main a{color:var(--ink);font-size:var(--t-body-s);position:relative;display:inline-flex;align-items:center;min-height:44px}
+  .nav-main a::after{content:"";position:absolute;left:0;right:0;bottom:10px;height:1px;background:var(--ink);
+    transform:scaleX(0);transform-origin:left;transition:transform var(--dur-2) var(--ease-std)}
+  .nav-main a:hover::after,.nav-main a:focus-visible::after{transform:scaleX(1)}
+  .head-tools{display:flex;align-items:center;gap:var(--s-4)}
+  .icon-btn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;
+    color:var(--ink);border-radius:var(--r-pill);transition:background var(--dur-1) linear}
+  .icon-btn:hover{background:var(--surface)}
+  @media (max-width:479px){.site-head .wrap{gap:var(--s-3)}.head-tools{gap:var(--s-2)}}
+  .menu{position:relative}
+  @media (min-width:900px){.menu{display:none}}
+  .menu summary{list-style:none;cursor:pointer;min-height:44px;min-width:44px;padding:0 var(--s-3);
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);font-size:var(--t-body-s);
+    border-radius:var(--r-pill);transition:background var(--dur-1) linear}
+  .menu summary::-webkit-details-marker{display:none}
+  .menu summary:hover,.menu[open] summary{background:var(--surface)}
+  /* the summary swaps its own icon with CSS: menu when closed, close when open */
+  .menu summary .i-close,.menu[open] summary .i-menu{display:none}
+  .menu[open] summary .i-close{display:block}
+  .menu nav{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;max-width:calc(100vw - 48px);
+    background:var(--white);border-radius:var(--r-lg);box-shadow:var(--e-hairline),var(--e-float);
+    padding:var(--s-3);display:grid}
+  .menu nav a{color:var(--ink);padding:0 var(--s-4);min-height:44px;display:flex;align-items:center;border-radius:var(--r-sm)}
+  .menu nav a:hover{background:var(--surface)}
+
+  /* ---------- breadcrumb: back to the catalog ---------- */
+  .crumbs{padding-top:var(--s-5)}
+  .crumbs ol{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-1) var(--s-2);
+    font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .crumbs li{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px}
+  .crumbs a{color:var(--ink);display:inline-flex;align-items:center;min-height:44px}
+  .crumbs a:hover{color:var(--link)}
+  .crumbs .sep{color:var(--hairline)}
+  .crumbs [aria-current="page"]{color:var(--muted)}
+
+  /* ---------- the work, hanging, with its wall label as the page title ---------- */
+  .product{padding:var(--s-4) 0 var(--section-tall)}
+  .product-grid{display:grid;gap:var(--s-8);align-items:start}
+  @media (min-width:960px){
+    .product-grid{grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:var(--s-9)}
+  }
+  .work-media{margin:0}
+  .work-media img{width:100%;height:auto;max-width:640px;aspect-ratio:1;object-fit:contain;
+    mix-blend-mode:multiply;transition:transform var(--dur-2) var(--ease-std)}
+  .work-media:hover img{transform:scale(1.02)}
+  /* the wall label: a 1px tick that is short until the work is hovered or focused */
+  .wall-label{position:relative;margin-top:var(--s-6);padding-top:var(--s-3)}
+  .wall-label::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--hairline);
+    transform:scaleX(.16);transform-origin:left;
+    transition:transform var(--dur-3) var(--ease-out),background var(--dur-2) linear}
+  .work-media:hover .wall-label::before,.work-media:focus-within .wall-label::before{
+    transform:scaleX(1);background:var(--ink)}
+  .wall-name{display:block;font-size:var(--t-title);line-height:1.08;letter-spacing:-.022em;font-weight:600}
+  .wall-meta{display:flex;align-items:baseline;gap:var(--s-3);flex-wrap:wrap;margin-top:var(--s-2);
+    font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  /* numbered strip of the four real photos, captioned like small works */
+  .thumbs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-4);
+    margin-top:var(--s-6)}
+  .thumb{position:relative;display:block;padding-top:var(--s-3);color:var(--ink);min-height:44px}
+  .thumb::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--hairline);
+    transform:scaleX(.4);transform-origin:left;transition:transform var(--dur-3) var(--ease-out),
+    background var(--dur-2) linear}
+  .thumb img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;mix-blend-mode:multiply;
+    transition:transform var(--dur-2) var(--ease-std)}
+  .thumb .n{display:block;margin-top:var(--s-2);font-size:var(--t-caption);letter-spacing:.015em;
+    color:var(--muted);font-variant-numeric:tabular-nums}
+  .thumb:hover::before,.thumb:focus-visible::before{transform:scaleX(1);background:var(--ink)}
+  .thumb:hover img{transform:scale(1.04)}
+  .thumb[aria-current="true"]::before{transform:scaleX(1);background:var(--ink)}
+  .thumb[aria-current="true"] .n{color:var(--ink)}
+
+  /* ---------- configurator: one price, under the capacity that owns it ---------- */
+  .detail-body{padding-top:var(--s-2)}
+  .detail-lead{font-size:var(--t-body-s);color:var(--muted);max-width:44ch}
+  fieldset{border:0;margin:var(--s-7) 0 0;padding:0;min-width:0}
+  legend{font-size:var(--t-label);letter-spacing:.01em;font-weight:500;color:var(--muted);padding:0;
+    margin-bottom:var(--s-3)}
+  .caps{display:flex;gap:var(--s-3);flex-wrap:wrap}
+  .cap{position:relative;display:block;min-width:132px;flex:1 1 132px;max-width:180px;padding:var(--s-3) var(--s-4);
+    border-radius:var(--r-pill);box-shadow:inset 0 0 0 1px var(--hairline);cursor:pointer;background:var(--white);
+    text-align:center;min-height:60px;
+    transition:background var(--dur-1) linear,box-shadow var(--dur-1) linear,color var(--dur-1) linear}
+  .cap input{position:absolute;opacity:0;width:1px;height:1px}
+  .cap .cap-name{display:block;font-size:var(--t-body-s);font-weight:500;line-height:1.2}
+  .cap .cap-price{display:block;margin-top:2px;font-size:var(--t-caption);line-height:1.35;
+    letter-spacing:.015em;color:var(--muted);font-variant-numeric:tabular-nums}
+  .cap:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+  .cap:has(input:checked){background:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);color:var(--white)}
+  .cap:has(input:checked) .cap-price{color:rgba(255,255,255,.74)}
+  .cap:focus-within{outline:3px solid var(--accent);outline-offset:3px}
+  @media (max-width:479px){.cap{flex:1 1 100%;max-width:none}}
+  /* price of the variant, always the one directly under the selector */
+  .price-block{margin-top:var(--s-6);padding-top:var(--s-4);border-top:1px solid var(--hairline)}
+  .price-block .lead{display:block;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .price-block .amount{display:block;margin-top:var(--s-1);font-size:var(--t-numeral);line-height:1;
+    font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .price-block .amount .cur{color:var(--muted);font-size:.6em;margin-right:6px}
+  .price-note{margin-top:var(--s-2);font-size:var(--t-caption);line-height:1.35;letter-spacing:.015em;color:var(--muted)}
+  .stock{display:flex;align-items:baseline;gap:var(--s-2);margin-top:var(--s-5);font-size:var(--t-body-s);
+    color:var(--ink)}
+  .stock .dot{width:6px;height:6px;border-radius:50%;background:var(--ink);flex:none;align-self:center}
+  .stock b{font-variant-numeric:tabular-nums;font-weight:600}
+  .stock .sample{font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+  .actions{display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-5);align-items:center;margin-top:var(--s-6)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 var(--s-6);
+    border-radius:var(--r-pill);border:0;background:var(--accent);color:#fff;font:500 var(--t-body-s)/1 var(--font);
+    cursor:pointer;transition:transform var(--dur-1) var(--ease-std),background var(--dur-1) linear}
+  .btn:hover{background:var(--accent-press)}
+  .btn:active{transform:scale(.97)}
+  /* the cart does not exist yet: the action is disabled and says so, in the button and below it */
+  .btn[disabled]{background:var(--surface);color:var(--muted);cursor:not-allowed;
+    box-shadow:inset 0 0 0 1px var(--hairline)}
+  .btn[disabled]:active{transform:none}
+  .soon{margin-top:var(--s-3);font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;
+    color:var(--muted);max-width:44ch}
+  .btn-2{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--link);
+    font-size:var(--t-body-s);font-weight:500}
+  .btn-2 .chev{transition:transform var(--dur-2) var(--ease-std)}
+  .btn-2:hover .chev{transform:translateX(2px)}
+  .sku-line{margin-top:var(--s-5);font-family:var(--mono);font-size:var(--t-caption);line-height:1.4;
+    color:var(--muted);word-break:break-all}
+
+  /* ---------- spec sheet: the label becomes a sheet of ruled rows ---------- */
+  .sec-head{max-width:46ch}
+  .sec-head h2{font-size:var(--t-display-s);line-height:1.02;letter-spacing:-.028em}
+  .sec-head p{margin-top:var(--s-4);font-size:var(--t-body);color:var(--muted);max-width:54ch}
+  .sheet{display:grid;gap:0 var(--s-8);margin-top:var(--section-tight);border-top:1px solid var(--hairline)}
+  @media (min-width:760px){.sheet{grid-template-columns:1fr 1fr}}
+  .sheet-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--s-4);align-items:baseline;
+    padding:var(--s-4) 0;border-bottom:1px solid var(--hairline)}
+  .sheet dt{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .sheet dd{text-align:right;font-size:var(--t-body-s);font-variant-numeric:tabular-nums;max-width:60ch}
+  .sheet dd.mono{font-family:var(--mono);font-size:var(--t-caption);word-break:break-all;max-width:22ch}
+
+  /* ---------- related: more works on the same wall ---------- */
+  .wall{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-9) 0;margin-top:var(--section-tight)}
+  @media (min-width:780px){.wall{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--s-8)}}
+  .work{display:flex;flex-direction:column;min-width:0}
+  @media (min-width:780px){.work--low{margin-top:var(--s-9)}}
+  .work-media--card{display:block}
+  .work-media--card img{width:100%;max-width:640px;height:auto;aspect-ratio:1;object-fit:contain;
+    mix-blend-mode:multiply;transition:transform var(--dur-2) var(--ease-std)}
+  .work:hover .work-media--card img{transform:scale(1.02)}
+  /* fallback for a photo that is not on this clone: the work keeps its ground and its size */
+  .work-media--card.is-empty{background:var(--surface);border-radius:var(--r-md);display:grid;
+    place-items:center;gap:var(--s-2);aspect-ratio:1;padding:var(--s-5)}
+  .work-media--card.is-empty img{mix-blend-mode:normal;width:64px;height:64px;opacity:.5;aspect-ratio:auto}
+  .work-media--card.is-empty .state{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .work .wall-label{margin-top:var(--s-5)}
+  .work .wall-name{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.012em}
+  .work .wall-name a{color:inherit}
+  .work .wall-name a:hover{color:var(--link)}
+  .price{font-variant-numeric:tabular-nums;font-weight:500;letter-spacing:-.01em;color:var(--ink)}
+  .price .cur{color:var(--muted);font-size:.85em;margin-right:2px}
+  .from{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .cap-line{margin-top:2px;font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);
+    font-variant-numeric:tabular-nums}
+
+  /* ---------- footer ---------- */
+  .site-foot{padding:var(--section) 0 var(--s-7);border-top:1px solid var(--hairline)}
+  .foot-grid{display:grid;grid-template-columns:1fr;gap:var(--s-7)}
+  @media (min-width:700px){.foot-grid{grid-template-columns:repeat(3,1fr);gap:var(--s-6)}}
+  .foot-col h2{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);font-weight:500}
+  .foot-col ul{margin-top:var(--s-3);display:grid}
+  .foot-col a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;min-height:44px}
+  .foot-col a:hover{color:var(--link)}
+  .notice{max-width:56ch;margin-top:var(--s-8);padding-top:var(--s-5);border-top:1px solid var(--hairline);
+    font-size:var(--t-caption);line-height:1.35;letter-spacing:.015em;color:var(--muted)}
+  .foot-base{margin-top:var(--s-4);display:flex;gap:var(--s-4);flex-wrap:wrap;justify-content:space-between;
+    font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+
+  /* ---------- motion: the work hangs itself once, then pointer feedback only ---------- */
+  @keyframes hang{from{opacity:0;transform:translateY(28px);filter:blur(8px)}
+    to{opacity:1;transform:none;filter:blur(0)}}
+  .enter{animation:hang var(--dur-4) var(--ease-out-expo) both;animation-delay:calc(var(--i,0) * 90ms)}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition-duration:0ms!important}
+    html{scroll-behavior:auto}
+    .enter{opacity:1;transform:none;filter:none}
+    .wall-label::before,.work-media .wall-label::before{transform:scaleX(1)}
+    .work-media:hover img,.thumb:hover img,.work:hover .work-media--card img{transform:none}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="01-galeria.html">iTech Store</a>
+    <nav class="nav-main" aria-label="Principal">
+      <a href="01-galeria.html#familias">Mac</a>
+      <a href="01-galeria.html#familias">iPad</a>
+      <a href="01-galeria.html#familias">Watch</a>
+      <a href="01-galeria.html#familias">AirPods</a>
+      <a href="01-galeria.html#familias">Accesorios</a>
+    </nav>
+    <div class="head-tools">
+      <a class="icon-btn" href="#ficha">
+        <svg class="ico ico-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <circle cx="10.5" cy="10.5" r="6.5"/>
+          <path d="M15.4 15.4 21 21"/>
+        </svg>
+        <span class="sr-only">Buscar</span>
+      </a>
+      <a class="icon-btn" href="#carrito">
+        <svg class="ico ico-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M5.6 8.2h12.8a1.6 1.6 0 0 1 1.6 1.6v9a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 18.8v-9a1.6 1.6 0 0 1 1.6-1.6Z"/>
+          <path d="M8.4 8.2V6.6a3.6 3.6 0 0 1 7.2 0v1.6"/>
+        </svg>
+        <span class="sr-only">Carrito, próximamente</span>
+      </a>
+      <details class="menu">
+        <summary>Menú
+          <svg class="ico ico-20 i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M4 8.5h16"/>
+            <path d="M4 15.5h16"/>
+          </svg>
+          <svg class="ico ico-20 i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M6.5 6.5 17.5 17.5"/>
+            <path d="M17.5 6.5 6.5 17.5"/>
+          </svg>
+        </summary>
+        <nav aria-label="Principal en móvil">
+          <a href="01-galeria.html#familias">Mac</a>
+          <a href="01-galeria.html#familias">iPad</a>
+          <a href="01-galeria.html#familias">Watch</a>
+          <a href="01-galeria.html#familias">AirPods</a>
+          <a href="01-galeria.html#familias">Accesorios</a>
+          <a href="#ficha">Ficha técnica</a>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Ruta de navegación">
+      <ol>
+        <li><a href="01-galeria.html#catalogo">Catálogo</a></li>
+        <li aria-hidden="true" class="sep">/</li>
+        <li><a href="01-galeria.html#catalogo">iPad</a></li>
+        <li aria-hidden="true" class="sep">/</li>
+        <li aria-current="page">Apple iPad 11" A16 Chip WI-FI</li>
+      </ol>
+    </nav>
+  </div>
+
+  <section class="product" aria-labelledby="product-title">
+    <div class="wrap">
+      <div class="product-grid">
+        <div class="enter">
+          <figure class="work-media" id="foto">
+            <img src="../../public/products/apple-ipad-11-a16-chip-wi-fi-1.webp"
+              alt="Cuatro Apple iPad de 11 pulgadas en blanco, amarillo, rosa y azul, superpuestos de espaldas, con la cámara a la vista."
+              width="640" height="640">
+            <figcaption class="wall-label">
+              <h1 class="wall-name" id="product-title">Apple iPad 11" A16 Chip WI-FI</h1>
+              <span class="wall-meta">iPad · 4 fotos · 3 capacidades · Wi-Fi</span>
+            </figcaption>
+          </figure>
+
+          <div class="thumbs" role="group" aria-label="Fotos del producto">
+            <a class="thumb" href="#foto" aria-current="true">
+              <img src="../../public/products/apple-ipad-11-a16-chip-wi-fi-1.webp"
+                alt="iPad de 11 pulgadas en cuatro colores, de espaldas, superpuestos." width="640" height="640">
+              <span class="n"><span class="sr-only">Foto </span>01</span>
+            </a>
+            <a class="thumb" href="#foto">
+              <img src="../../public/products/apple-ipad-11-a16-chip-wi-fi-2.webp"
+                alt="iPad de 11 pulgadas en plata, de espaldas y de frente, con un fondo abstracto oscuro en pantalla."
+                width="640" height="640">
+              <span class="n"><span class="sr-only">Foto </span>02</span>
+            </a>
+            <a class="thumb" href="#foto">
+              <img src="../../public/products/apple-ipad-11-a16-chip-wi-fi-3.webp"
+                alt="iPad de 11 pulgadas en plata, de espaldas y de frente, con un fondo abstracto en tonos durazno y dorado."
+                width="640" height="640">
+              <span class="n"><span class="sr-only">Foto </span>03</span>
+            </a>
+            <a class="thumb" href="#foto">
+              <img src="../../public/products/apple-ipad-11-a16-chip-wi-fi-4.webp"
+                alt="iPad de 11 pulgadas en plata, de espaldas y de frente, con un fondo abstracto en tonos violeta."
+                width="640" height="640">
+              <span class="n"><span class="sr-only">Foto </span>04</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="detail-body enter" style="--i:1">
+          <p class="detail-lead">Apple iPad 11" con el potente A16 Chip, diseñado para ofrecerte un
+            rendimiento excepcional y una experiencia ...</p>
+
+          <fieldset>
+            <legend>Capacidad</legend>
+            <div class="caps">
+              <label class="cap">
+                <input type="radio" name="capacidad" value="128gb" checked
+                  data-variant-name="128 GB" data-cents="90000000" data-units="5"
+                  data-variant-sku="apple-ipad-11-a16-chip-wi-fi-128gb">
+                <span class="cap-name">128 GB</span>
+                <span class="cap-price">$ 900.000</span>
+              </label>
+              <label class="cap">
+                <input type="radio" name="capacidad" value="256gb"
+                  data-variant-name="256 GB" data-cents="103500000" data-units="7"
+                  data-variant-sku="apple-ipad-11-a16-chip-wi-fi-256gb">
+                <span class="cap-name">256 GB</span>
+                <span class="cap-price">$ 1.035.000</span>
+              </label>
+              <label class="cap">
+                <input type="radio" name="capacidad" value="512gb"
+                  data-variant-name="512 GB" data-cents="121500000" data-units="2"
+                  data-variant-sku="apple-ipad-11-a16-chip-wi-fi-512gb">
+                <span class="cap-name">512 GB</span>
+                <span class="cap-price">$ 1.215.000</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="price-block" aria-live="polite">
+            <span class="lead">Precio de la variante · <span data-cap-name>128 GB</span></span>
+            <span class="amount"><span class="cur">$</span><span data-price>900.000</span></span>
+            <p class="price-note">El precio es el de la capacidad elegida. No hay un precio general
+              que después cambie en el carrito.</p>
+            <p class="sku-line">SKU <span data-sku>apple-ipad-11-a16-chip-wi-fi-128gb</span></p>
+          </div>
+
+          <p class="stock"><span class="dot" aria-hidden="true"></span>Stock de muestra:
+            <b data-stock>5</b> unidades <span class="sample">· valor de ejemplo</span></p>
+
+          <div class="actions" id="carrito">
+            <button class="btn" type="button" disabled aria-describedby="carrito-nota">Agregar al carrito</button>
+            <a class="btn-2" href="#ficha">Ver la ficha técnica <span class="chev" aria-hidden="true"><svg class="ico ico-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg></span></a>
+          </div>
+          <p class="soon" id="carrito-nota">Próximamente: el carrito todavía no existe en esta versión
+            del catálogo, así que este botón está desactivado a propósito.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule" role="presentation"></div>
+
+  <section id="ficha" aria-labelledby="ficha-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 id="ficha-title">La ficha, línea por línea.</h2>
+        <p>Lo que el catálogo sabe de este producto: su familia, sus tres capacidades y el SKU de
+          cada una.</p>
+      </div>
+      <dl class="sheet">
+        <div class="sheet-row">
+          <dt>Modelo</dt>
+          <dd>Apple iPad 11" A16 Chip WI-FI</dd>
+        </div>
+        <div class="sheet-row">
+          <dt>Familia</dt>
+          <dd>iPad</dd>
+        </div>
+        <div class="sheet-row">
+          <dt>Chip</dt>
+          <dd>A16</dd>
+        </div>
+        <div class="sheet-row">
+          <dt>Conectividad</dt>
+          <dd>Wi-Fi</dd>
+        </div>
+        <div class="sheet-row">
+          <dt>Capacidades</dt>
+          <dd>128 GB · 256 GB · 512 GB</dd>
+        </div>
+        <div class="sheet-row">
+          <dt>Fotos del producto</dt>
+          <dd>4</dd>
+        </div>
+        <div class="sheet-row">
+          <dt>SKU de la variante elegida</dt>
+          <dd class="mono" data-sku>apple-ipad-11-a16-chip-wi-fi-128gb</dd>
+        </div>
+        <div class="sheet-row">
+          <dt>Stock de muestra</dt>
+          <dd><b data-stock>5</b> unidades</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <div class="rule" role="presentation"></div>
+
+  <section id="relacionados" aria-labelledby="rel-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 id="rel-title">Tres iPads más y un accesorio.</h2>
+        <p>Del mismo catálogo, con el precio real de la semilla. El accesorio todavía no tiene foto
+          en este clon, así que se ve el estado sin imagen.</p>
+      </div>
+      <div class="wall">
+        <article class="work">
+          <a class="work-media--card" href="01-galeria.html#catalogo">
+            <img src="../../public/products/apple-ipad-mini-8-3-7th-gen-wi-fi-1.webp"
+              alt="Cuatro Apple iPad Mini en gris, blanco, violeta y celeste, vistos de perfil." width="640" height="640">
+          </a>
+          <div class="wall-label">
+            <span class="wall-name"><a href="01-galeria.html#catalogo">Apple iPad Mini 8.3" 7th Gen WI-FI</a></span>
+            <span class="wall-meta">iPad <span class="from">Desde</span>
+              <span class="price"><span class="cur">$</span>900.000</span></span>
+            <p class="cap-line">128 GB · 256 GB · 512 GB</p>
+          </div>
+        </article>
+
+        <article class="work work--low">
+          <a class="work-media--card" href="01-galeria.html#catalogo">
+            <img src="../../public/products/apple-11-ipad-pro-m5-space-black-1.webp"
+              alt="Apple iPad Pro de 11 pulgadas en space black, de frente y de espaldas." width="640" height="640">
+          </a>
+          <div class="wall-label">
+            <span class="wall-name"><a href="01-galeria.html#catalogo">Apple 11" iPad Pro M5 Space Black</a></span>
+            <span class="wall-meta">iPad <span class="price"><span class="cur">$</span>900.000</span></span>
+          </div>
+        </article>
+
+        <article class="work">
+          <a class="work-media--card" href="01-galeria.html#catalogo">
+            <img src="../../public/products/apple-11-ipad-air-m4-blue-1.webp"
+              alt="Apple iPad Air de 11 pulgadas en azul, de espaldas y de frente, con un fondo abstracto azul." width="640" height="640">
+          </a>
+          <div class="wall-label">
+            <span class="wall-name"><a href="01-galeria.html#catalogo">Apple 11" iPad Air M4 Blue</a></span>
+            <span class="wall-meta">iPad <span class="price"><span class="cur">$</span>900.000</span></span>
+          </div>
+        </article>
+
+        <article class="work work--low">
+          <a class="work-media--card is-empty" href="01-galeria.html#catalogo">
+            <img src="../../public/placeholder.webp" alt="" width="64" height="64">
+            <span class="state">Imagen no disponible</span>
+          </a>
+          <div class="wall-label">
+            <span class="wall-name"><a href="01-galeria.html#catalogo">Apple TV 4K (2022)</a></span>
+            <span class="wall-meta">Accesorios <span class="price"><span class="cur">$</span>30.000</span></span>
+            <p class="cap-line">64 GB</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot" id="contacto">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <h2>Catálogo</h2>
+        <ul>
+          <li><a href="01-galeria.html#familias">Mac</a></li>
+          <li><a href="01-galeria.html#familias">iPad</a></li>
+          <li><a href="01-galeria.html#familias">Watch</a></li>
+          <li><a href="01-galeria.html#familias">AirPods</a></li>
+          <li><a href="01-galeria.html#familias">Accesorios</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>Productos</h2>
+        <ul>
+          <li><a href="01-galeria.html#catalogo">iMac 24" M4 Azul</a></li>
+          <li><a href="01-galeria.html#catalogo">MacBook Air 13" M5</a></li>
+          <li><a href="01-galeria.html#catalogo">Watch Ultra 3</a></li>
+          <li><a href="01-galeria.html#catalogo">AirPods Max</a></li>
+          <li><a href="#relacionados">iPad 11" A16</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>Cuenta y contacto</h2>
+        <ul>
+          <li><a href="#contacto">Contacto</a></li>
+          <li><a href="#contacto">Ingresar</a></li>
+          <li><a href="01-galeria.html#catalogo">Buscar un producto</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="notice">Los precios de este catálogo son de ejemplo y no son precios de venta.</p>
+    <div class="foot-base">
+      <span>iTech Store · Catálogo Apple</span>
+      <span>Precios en pesos argentinos (ARS).</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Static-artboard affordance: the price, SKU and stock follow the capacity radio group.
+  // The markup already carries the 128 GB figures, so the page reads correctly with no script.
+  (function () {
+    var price = document.querySelector("[data-price]");
+    var capName = document.querySelector("[data-cap-name]");
+    var sku = document.querySelectorAll("[data-sku]");
+    var stock = document.querySelectorAll("[data-stock]");
+    var formatter = new Intl.NumberFormat("es-AR");
+
+    document.querySelectorAll('input[name="capacidad"]').forEach(function (input) {
+      input.addEventListener("change", function () {
+        if (!input.checked) return;
+        price.textContent = formatter.format(Number(input.dataset.cents) / 100);
+        capName.textContent = input.dataset.variantName;
+        sku.forEach(function (node) { node.textContent = input.dataset.variantSku; });
+        stock.forEach(function (node) { node.textContent = input.dataset.units; });
+      });
+    });
+  })();
+</script>
+</body>
+</html>

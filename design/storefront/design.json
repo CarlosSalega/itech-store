@@ -26,7 +26,31 @@
       "width": 1440,
       "height": 900,
       "signature": "The case that leaves the page: the lit case runs off the right edge of the window, so the product sits in light that keeps going."
+    },
+    {
+      "file": "04-detalle-galeria.html",
+      "title": "Detalle · Galería",
+      "tradeoff": "The product page as the same white wall: the work hangs with no tile, its wall label (name, then one caption line) is the page's h1, and the four real photos sit under it as a numbered strip of small labels. The capacity selector and the one variant price live in the margin column. Quietest and most legible; the label copy carries a lot and the page gives the configurator little drama.",
+      "width": 1440,
+      "height": 900,
+      "signature": "The wall label: the short 1px tick draws to the full caption width on hover or keyboard focus, and every photo keeps its own small label."
+    },
+    {
+      "file": "05-detalle-indice.html",
+      "title": "Detalle · Índice",
+      "tradeoff": "The product page as one entry of the printed index: photos are numbered plates 01-04 down a ruled spine, capacities are a ruled ladder 01-03 that marks the chosen one with the word 'Elegida' and not only with colour, and the headline carries 3 counted from 0 as it enters. Dense and comparable at a glance; the most textual of the three and the last to feel like a store.",
+      "width": 1440,
+      "height": 900,
+      "signature": "The counted figure: three capacities set inside the headline, counting up as it scrolls into view, above a numeral spine that draws itself."
+    },
+    {
+      "file": "06-detalle-vitrina.html",
+      "title": "Detalle · Vitrina",
+      "tradeoff": "The product page on the black floor: the product sits in a lit case that leaves the content column and is cropped by the viewport, the variant price is the second display line of the block, and the four photos are small lit cases under a dark segmented capacity control. The strongest premium pull; the darkest, and a dark segmented pill is the least familiar control for an Argentine buyer.",
+      "width": 1440,
+      "height": 900,
+      "signature": "The case that leaves the page: the lit case runs off the right edge of the window, so the product sits in light that keeps going."
     }
   ],
-  "note": "Revision 2 (bolder pass): same palette, same three bets, larger display scale, one monument and one signature detail per direction."
+  "note": "Revision 2 (bolder pass): same palette, same three bets, larger display scale, one monument and one signature detail per direction. The standalone product page now exists in all three directions (04-06): same page, same real product, same three capacities and the same disabled cart, so the detail treatment can be compared across bets."
 }
