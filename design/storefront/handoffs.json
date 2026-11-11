@@ -3,13 +3,14 @@
   "chosen": "01-galeria.html",
   "handoffs": {
     "01-galeria.html": {
-      "status": "in_progress",
+      "status": "implemented",
       "queued": false,
       "sentAt": "2026-11-11T18:08:55.207Z",
       "startedAt": "2026-11-11T18:09:06.088Z",
-      "implementedAt": null,
+      "implementedAt": "2026-11-11T18:30:27.168Z",
       "feature": "odd/tasks/public-catalog-mvp.md",
-      "note": "Porting Galería to Next with real Prisma data for the featured products."
+      "note": "Landing implemented in Next: Galería ported with tokens from the system, 5 featured products from Prisma, icons and CSS-only mobile menu, prices formatted and tested.",
+      "previewUrl": "http://localhost:3000/"
     }
   }
 }
