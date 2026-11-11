@@ -1,9 +1,11 @@
 /* Floats over the page, so it must never take part in layout: `position: fixed`
    keeps it out of the flow and cannot introduce a horizontal scrollbar.
 
-   The mark alone, no container. The 4px of padding is invisible: it takes the
-   touch target from 40x40 to 48x48, which keeps it above the 44px minimum without
-   changing what anyone sees. */
+   The mark alone, no container. 48px is the ceiling for a glyph-only button: a
+   standard FAB is 56px of surface around a 24-28px glyph, so a 48px glyph already
+   carries the visual weight of a ~72px FAB. Past that the green starts competing
+   with the product photography it floats over.
+   The 4px of padding is invisible: it takes the touch target to 56x56. */
 .button {
 	position: fixed;
 	right: var(--s-4);
@@ -25,6 +27,6 @@
 /* The icon carries its own brand gradient, so it needs no colour from the palette. */
 .icon {
 	display: block;
-	width: 40px;
-	height: 40px;
+	width: 48px;
+	height: 48px;
 }

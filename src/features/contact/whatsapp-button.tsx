@@ -21,7 +21,7 @@ export function WhatsappButton() {
 			{...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
 		>
 			{/* eslint-disable-next-line @next/next/no-img-element */}
-			<img className={styles.icon} src="/whatsapp.svg" alt="" width={40} height={40} />
+			<img className={styles.icon} src="/whatsapp.svg" alt="" width={48} height={48} />
 		</a>
 	);
 }
