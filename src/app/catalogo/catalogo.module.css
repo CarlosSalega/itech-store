@@ -74,7 +74,20 @@
 		flex-wrap: nowrap;
 		overflow-x: auto;
 		overscroll-behavior-x: contain;
-		padding-bottom: var(--s-1);
+		scroll-snap-type: x proximity;
+		/* A focus ring is painted outside the chip, so the scroll container has to
+		   reserve room or it clips the ring above and below. The negative margin puts
+		   the chips back exactly where they were. The extra room on the right lets the
+		   last chip scroll clear of the edge fade. */
+		padding: var(--s-1);
+		padding-right: var(--s-6);
+		margin: calc(-1 * var(--s-1));
+		/* Slide affordance. The strip can cut exactly between two chips and then look
+		   complete, so the right edge fades to show there is more. Masking the
+		   container needs no extra element and no script, and the right padding above
+		   keeps the last chip out of the faded zone at the end of the scroll. */
+		-webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+		mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
 		scrollbar-width: none;
 	}
 
@@ -84,6 +97,7 @@
 
 	.filterRow > * {
 		flex: none;
+		scroll-snap-align: start;
 	}
 }
 
