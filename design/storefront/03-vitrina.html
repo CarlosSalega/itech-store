@@ -62,8 +62,17 @@
     padding:12px 20px;border-radius:var(--r-pill);min-height:44px;display:inline-flex;align-items:center;
     transition:top var(--dur-1) var(--ease-std)}
   .skip:focus{top:12px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
   .wrap{max-width:1200px;margin:0 auto;padding:0 var(--s-5)}
   @media (min-width:900px){.wrap{padding:0 var(--s-8)}}
+
+  /* icons: inline SVG, 24 grid, 1.6 stroke, sized by CSS only */
+  .ico{display:block;flex:none;width:20px;height:20px}
+  .ico-16{width:16px;height:16px}
+  .ico-20{width:20px;height:20px}
+  .ico-24{width:24px;height:24px}
+  .chev{display:inline-flex;align-items:center}
 
   /* header */
   .site-head{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.72);
@@ -79,16 +88,23 @@
     transform:scaleX(0);transform-origin:left;transition:transform var(--dur-2) var(--ease-std)}
   .nav-main a:hover::after,.nav-main a:focus-visible::after{transform:scaleX(1)}
   .head-tools{display:flex;align-items:center;gap:var(--s-4)}
-  .head-tools a{color:var(--ink-dark);font-size:var(--t-body-s);min-height:44px;display:inline-flex;align-items:center}
-  @media (max-width:479px){.head-tools a{display:none}}
+  .icon-btn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;
+    color:var(--ink-dark);border-radius:var(--r-pill);transition:background var(--dur-1) linear}
+  .icon-btn:hover{background:var(--surface-raised)}
+  @media (max-width:479px){.site-head .wrap{gap:var(--s-3)}.head-tools{gap:var(--s-2)}}
   .menu{position:relative}
   @media (min-width:900px){.menu{display:none}}
-  .menu summary{list-style:none;cursor:pointer;min-height:44px;padding:0 var(--s-3);display:inline-flex;align-items:center;
-    font-size:var(--t-body-s);border-radius:var(--r-pill);border:1px solid transparent}
+  .menu summary{list-style:none;cursor:pointer;min-height:44px;min-width:44px;padding:0 var(--s-3);
+    display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);
+    font-size:var(--t-body-s);border-radius:var(--r-pill);transition:background var(--dur-1) linear}
   .menu summary::-webkit-details-marker{display:none}
-  .menu[open] summary{border-color:var(--hairline-dark)}
-  .menu nav{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:var(--surface-dark);
-    border-radius:var(--r-lg);box-shadow:inset 0 0 0 1px var(--hairline-dark),var(--e-lift-dark);padding:var(--s-3);display:grid}
+  .menu summary:hover,.menu[open] summary{background:var(--surface-raised)}
+  /* the summary swaps its own icon with CSS: menu when closed, close when open */
+  .menu summary .i-close,.menu[open] summary .i-menu{display:none}
+  .menu[open] summary .i-close{display:block}
+  .menu nav{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;max-width:calc(100vw - 48px);
+    background:var(--surface-dark);border-radius:var(--r-lg);
+    box-shadow:inset 0 0 0 1px var(--hairline-dark),var(--e-lift-dark);padding:var(--s-3);display:grid}
   .menu nav a{color:var(--ink-dark);padding:0 var(--s-4);min-height:44px;display:flex;align-items:center;border-radius:var(--r-sm)}
   .menu nav a:hover{background:var(--surface-raised)}
 
@@ -254,10 +270,35 @@
       <a href="#familias">Accesorios</a>
     </nav>
     <div class="head-tools">
-      <a href="#catalogo">Buscar</a>
-      <a href="#detalle">Carrito</a>
+      <a class="icon-btn" href="#catalogo">
+        <svg class="ico ico-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <circle cx="10.5" cy="10.5" r="6.5"/>
+          <path d="M15.4 15.4 21 21"/>
+        </svg>
+        <span class="sr-only">Buscar</span>
+      </a>
+      <a class="icon-btn" href="#detalle">
+        <svg class="ico ico-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M5.6 8.2h12.8a1.6 1.6 0 0 1 1.6 1.6v9a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 18.8v-9a1.6 1.6 0 0 1 1.6-1.6Z"/>
+          <path d="M8.4 8.2V6.6a3.6 3.6 0 0 1 7.2 0v1.6"/>
+        </svg>
+        <span class="sr-only">Carrito</span>
+      </a>
       <details class="menu">
-        <summary aria-label="Abrir el menú">Menú</summary>
+        <summary>Menú
+          <svg class="ico ico-20 i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M4 8.5h16"/>
+            <path d="M4 15.5h16"/>
+          </svg>
+          <svg class="ico ico-20 i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M6.5 6.5 17.5 17.5"/>
+            <path d="M17.5 6.5 6.5 17.5"/>
+          </svg>
+        </summary>
         <nav aria-label="Principal en móvil">
           <a href="#familias">Mac</a>
           <a href="#familias">iPad</a>
@@ -285,7 +326,7 @@
           Correa Ocean Black. El precio que ves es el de esta variante, en pesos.</p>
         <div class="hero-actions enter" style="--i:2">
           <button class="btn" type="button">Agregar al carrito</button>
-          <a class="btn-2" href="#detalle">Ver la ficha <span class="chev" aria-hidden="true">›</span></a>
+          <a class="btn-2" href="#detalle">Ver la ficha <span class="chev" aria-hidden="true"><svg class="ico ico-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg></span></a>
         </div>
         <p class="hero-note enter" style="--i:3"><span>64 productos</span><span>68 variantes</span>
           <span>5 de 6 familias con stock</span></p>
@@ -434,7 +475,7 @@
 
           <div class="detail-actions">
             <button class="btn" type="button">Agregar al carrito</button>
-            <a class="btn-2" href="#catalogo">Ver el catálogo <span class="chev" aria-hidden="true">›</span></a>
+            <a class="btn-2" href="#catalogo">Ver el catálogo <span class="chev" aria-hidden="true"><svg class="ico ico-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg></span></a>
           </div>
           <p class="sku">SKU apple-ipad-11-a16-chip-wi-fi-128gb</p>
         </div>

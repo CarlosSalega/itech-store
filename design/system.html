@@ -80,6 +80,19 @@
   /* elevation */
   .elev{display:flex;gap:32px;flex-wrap:wrap}
   .elev div{width:200px;padding:20px;border-radius:var(--r-lg);background:var(--white);font-size:13px}
+  /* icons */
+  .ico{display:block;flex:none}
+  .ico-16{width:16px;height:16px}
+  .ico-20{width:20px;height:20px}
+  .ico-24{width:24px;height:24px}
+  .icons{list-style:none;margin:0;padding:0;border-top:1px solid var(--hairline)}
+  .icons li{display:grid;grid-template-columns:140px 64px 64px 64px minmax(0,1fr);gap:16px;align-items:center;
+    padding:12px 0;border-bottom:1px solid var(--hairline)}
+  .icons .use{font-size:13px;line-height:1.5;color:var(--muted)}
+  @media (max-width:719px){
+    .icons li{grid-template-columns:96px repeat(3,56px);row-gap:4px}
+    .icons .use{grid-column:1/-1}
+  }
   /* components */
   .row{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
   .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 24px;border-radius:var(--r-pill);border:0;background:var(--accent);color:#fff;font:500 15px/1 var(--font);cursor:pointer;transition:transform var(--dur-1) var(--ease-std),background var(--dur-1) linear}
@@ -148,7 +161,7 @@
   <span class="brand">iTech Store</span>
   <nav aria-label="Sistema">
     <a href="#color">Color</a><a href="#tipografia">Tipografía</a><a href="#espaciado">Espaciado</a>
-    <a href="#componentes">Componentes</a><a href="#composicion">Composición</a><a href="#precio">Precio</a>
+    <a href="#componentes">Componentes</a><a href="#iconos">Iconos</a><a href="#composicion">Composición</a><a href="#precio">Precio</a>
   </nav>
 </header>
 <main class="wrap" id="main">
@@ -192,7 +205,7 @@
       <div><span class="tag">--t-numeral<br>clamp(2rem,3.4vw,3.25rem)<br>0.95 / -.04em / 500 · tabular</span><span class="n1">64</span></div>
       <div><span class="tag">--t-title<br>clamp(1.375rem,2.2vw,1.875rem)<br>1.08 / -.022em / 500</span><span class="t1">Apple iPad 11" A16 Chip WI-FI</span></div>
       <div><span class="tag">--t-headline<br>1.3125rem<br>1.2 / -.012em / 600</span><span class="h1s">Apple Watch Ultra 3 - 49mm</span></div>
-      <div><span class="tag">--t-body<br>1.0625rem<br>1.47 / 0 / 400</span><span class="b1">64 productos cargados en el catálogo público.</span></div>
+      <div><span class="tag">--t-body<br>1.0625rem<br>1.47 / 0 / 400</span><span class="b1">64 productos cargados, cada uno con su precio por capacidad.</span></div>
       <div><span class="tag">--t-body-s<br>.9375rem<br>1.5 / 0 / 400</span><span class="b2">Elegí modelo y capacidad: el precio se actualiza en el lugar.</span></div>
       <div><span class="tag">--t-label<br>.8125rem<br>1.3 / .01em / 500</span><span class="l1">27 productos · MAC</span></div>
       <div><span class="tag">--t-caption<br>.75rem<br>1.35 / .015em / 400</span><span class="c1">Los precios de este catálogo son de ejemplo.</span></div>
@@ -242,7 +255,7 @@
     <h3>Botones — dos estilos, uno solo con relleno</h3>
     <div class="row">
       <button class="btn" type="button">Agregar al carrito</button>
-      <a class="btn2" href="#precio">Ver la ficha <span aria-hidden="true">›</span></a>
+      <a class="btn2" href="#precio">Ver la ficha <svg class="ico ico-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg></a>
     </div>
     <h3>Card de producto, precio simple y fallback</h3>
     <div class="row" style="align-items:flex-start">
@@ -271,6 +284,57 @@
       <span class="fam"><a class="empty" href="#componentes" aria-describedby="iph"><b>iPhone</b><em>0 productos</em></a></span>
     </div>
     <p id="iph" class="c1" style="margin-top:12px">iPhone todavía no está en el catálogo. Podés consultarnos.</p>
+  </section>
+
+  <section id="iconos" aria-labelledby="tii">
+    <h2 id="tii">Iconos</h2>
+    <p class="lede">Set propio, dibujado sobre una grilla de 24 con trazo de 1.6 y terminaciones
+      redondeadas. Hereda el color de la página con <code>currentColor</code> y se dimensiona por CSS —
+      16 en un botón de texto, 20 en la barra —, nunca con un
+      <code>width</code> dentro del SVG.</p>
+    <ul class="icons">
+      <li><span class="tag">nombre</span><span class="tag">16 px</span><span class="tag">20 px</span><span class="tag">24 px</span><span class="tag">uso</span></li>
+      <li>
+        <span class="tag">search</span>
+        <svg class="ico ico-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/></svg>
+        <svg class="ico ico-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/></svg>
+        <svg class="ico ico-24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/></svg>
+        <span class="use">Buscar. Botón de icono en la barra; el nombre accesible vive en el botón.</span>
+      </li>
+      <li>
+        <span class="tag">bag</span>
+        <svg class="ico ico-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5.6 8.2h12.8a1.6 1.6 0 0 1 1.6 1.6v9a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 18.8v-9a1.6 1.6 0 0 1 1.6-1.6Z"/><path d="M8.4 8.2V6.6a3.6 3.6 0 0 1 7.2 0v1.6"/></svg>
+        <svg class="ico ico-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5.6 8.2h12.8a1.6 1.6 0 0 1 1.6 1.6v9a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 18.8v-9a1.6 1.6 0 0 1 1.6-1.6Z"/><path d="M8.4 8.2V6.6a3.6 3.6 0 0 1 7.2 0v1.6"/></svg>
+        <svg class="ico ico-24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5.6 8.2h12.8a1.6 1.6 0 0 1 1.6 1.6v9a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 18.8v-9a1.6 1.6 0 0 1 1.6-1.6Z"/><path d="M8.4 8.2V6.6a3.6 3.6 0 0 1 7.2 0v1.6"/></svg>
+        <span class="use">Carrito. Lleva al detalle del pedido; nunca reemplaza el nombre del botón.</span>
+      </li>
+      <li>
+        <span class="tag">menu</span>
+        <svg class="ico ico-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8.5h16"/><path d="M4 15.5h16"/></svg>
+        <svg class="ico ico-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8.5h16"/><path d="M4 15.5h16"/></svg>
+        <svg class="ico ico-24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8.5h16"/><path d="M4 15.5h16"/></svg>
+        <span class="use">Menú cerrado. Estado inicial del <code>summary</code> en móvil.</span>
+      </li>
+      <li>
+        <span class="tag">close</span>
+        <svg class="ico ico-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6.5 6.5 17.5 17.5"/><path d="M17.5 6.5 6.5 17.5"/></svg>
+        <svg class="ico ico-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6.5 6.5 17.5 17.5"/><path d="M17.5 6.5 6.5 17.5"/></svg>
+        <svg class="ico ico-24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6.5 6.5 17.5 17.5"/><path d="M17.5 6.5 6.5 17.5"/></svg>
+        <span class="use">Menú abierto. El <code>summary</code> cambia de icono con CSS, sin JavaScript.</span>
+      </li>
+      <li>
+        <span class="tag">chevron-right</span>
+        <svg class="ico ico-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg>
+        <svg class="ico ico-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg>
+        <svg class="ico ico-24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg>
+        <span class="use">Decorativo. Acompaña a un enlace de texto y se corre 2px al pasar el puntero.</span>
+      </li>
+    </ul>
+    <p class="c1" style="margin-top:24px;max-width:64ch">El tamaño menor se usa en botones de texto; el
+      de 20 en la barra, incluido el <code>summary</code> del menú móvil. Todo icono va dentro de un
+      control de 44×44 px
+      como mínimo, con anillo de foco visible. El SVG es siempre <code>aria-hidden="true"</code> y
+      <code>focusable="false"</code>: el nombre accesible vive en el botón o enlace, nunca en el dibujo.</p>
   </section>
 
   <section id="composicion" aria-labelledby="tcomp">

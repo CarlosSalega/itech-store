@@ -249,11 +249,21 @@ shows exactly one price and one SKU). Never average, never show the max, never h
 + `backdrop-filter: blur(20px) saturate(180%)`, closed by a hairline bottom edge, never a hard
 divider. Content scrolls under it.
 `<nav aria-label="Principal">`; a skip link is the first tab stop; below 900px the links live in a
-`<details>` menu whose summary button states its own state ("Menú").
+`<details>` menu whose summary button states its own state ("Menú") and swaps its `menu` icon for
+`close` when `[open]`, in CSS only. Search and cart are icon buttons at 44×44, each named by visually
+hidden text rather than by a label on the glyph.
+
+**Icons** — one set, drawn in this repository: `search`, `bag`, `menu`, `close`, `chevron-right`. A
+24×24 viewBox, `stroke-width` 1.6, `stroke-linecap="round"`, `stroke-linejoin="round"`,
+`fill="none"` and `stroke="currentColor"`, so an icon inherits the palette of its ground. Size comes
+from CSS only — 16 in a text button, 20 in the header — never from a `width`
+or `height` inside the SVG. Every SVG is `aria-hidden="true"` and `focusable="false"`; the accessible
+name belongs to the button or link that contains it. `chevron-right` replaces the `›` glyph wherever
+it was decorative. Inline SVG only: no icon font, no sprite file, no downloaded asset.
 
 **Button** — two styles only. Primary: pill, `--accent` fill, white label, min-height 44px,
-`padding: 0 24px`, press `scale(.97)`. Secondary: text link, `--link`, with a `›` that moves 2px on
-hover. A text button is never styled as a bordered box.
+`padding: 0 24px`, press `scale(.97)`. Secondary: text link, `--link`, with a `chevron-right` that
+moves 2px on hover. A text button is never styled as a bordered box.
 
 **Product card** — `<article>`: image tile (`--surface`, `--r-lg`, 4:3, `object-fit: contain`,
 `padding: --s-5`), then name (`--t-headline`), then price block, then optional capacity note. The
@@ -304,4 +314,5 @@ Static checks that must pass before an artboard is handed over:
 5. One monument, one grid break, three section rhythms, one signature.
 6. `prefers-reduced-motion: reduce` in every file that has motion, and it must end in the finished
    state (drawn tick, final count, visible case).
-7. Visible focus on every control, 44px minimum target, 4.5:1 body text, readable at 375px.
+7. Visible focus on every control, 44px minimum target, 4.5:1 body text, readable at 375px. Icon
+   buttons keep the 44px target and their name in text, never only in the drawing.
