@@ -1,0 +1,250 @@
+[
+	{
+		"slug": "ip15",
+		"name": "iPhone 15 (usado)",
+		"description": "Batería indicada en cada variante.",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip15-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip15-128gb",
+				"storage": "128GB"
+			},
+			{
+				"sku": "ip15-256gb",
+				"storage": "256GB"
+			}
+		]
+	},
+	{
+		"slug": "ip16p",
+		"name": "iPhone 16 Pro (usado)",
+		"description": "Batería indicada en cada variante.",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip16p-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip16p-128gb",
+				"storage": "128GB"
+			}
+		]
+	},
+	{
+		"slug": "ip17",
+		"name": "iPhone 17 (usado)",
+		"description": "Batería indicada en cada variante.",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip17-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip17-512gb",
+				"storage": "512GB"
+			}
+		]
+	},
+	{
+		"slug": "ip17p",
+		"name": "iPhone 17 Pro (usado)",
+		"description": "Batería indicada en cada variante.",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip17p-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip17p-256gb",
+				"storage": "256GB"
+			}
+		]
+	},
+	{
+		"slug": "ip12pm",
+		"name": "iPhone 12 Pro Max (usado)",
+		"description": "Batería indicada en cada variante.",
+		"category": "IPHONE",
+		"images": [],
+		"variants": [
+			{
+				"sku": "ip12pm-128gb",
+				"storage": "128GB"
+			},
+			{
+				"sku": "ip12pm-256gb",
+				"storage": "256GB"
+			}
+		]
+	},
+	{
+		"slug": "ip16",
+		"name": "iPhone 16",
+		"description": "12 meses de garantía oficial Apple.",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip16-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip16-128gb",
+				"storage": "128GB"
+			}
+		]
+	},
+	{
+		"slug": "ip17e",
+		"name": "iPhone 17 e",
+		"description": "12 meses de garantía oficial Apple.",
+		"category": "IPHONE",
+		"images": [],
+		"variants": [
+			{
+				"sku": "ip17e-256gb",
+				"storage": "256GB"
+			}
+		]
+	},
+	{
+		"slug": "ip17pm",
+		"name": "iPhone 17 Pro Max",
+		"description": "12 meses de garantía oficial Apple.",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip17pm-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip17pm-256gb",
+				"storage": "256GB"
+			}
+		]
+	},
+	{
+		"slug": "ip13",
+		"name": "iPhone 13 (usado)",
+		"description": "",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip13-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip13-128gb",
+				"storage": "128GB"
+			}
+		]
+	},
+	{
+		"slug": "ip13p",
+		"name": "iPhone 13 Pro (usado)",
+		"description": "",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip13p-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip13p-128gb",
+				"storage": "128GB"
+			}
+		]
+	},
+	{
+		"slug": "ip13pm",
+		"name": "iPhone 13 Pro Max (usado)",
+		"description": "",
+		"category": "IPHONE",
+		"images": [],
+		"variants": [
+			{
+				"sku": "ip13pm-128gb",
+				"storage": "128GB"
+			},
+			{
+				"sku": "ip13pm-256gb",
+				"storage": "256GB"
+			}
+		]
+	},
+	{
+		"slug": "ip14",
+		"name": "iPhone 14 (usado)",
+		"description": "",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip14-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip14-128gb",
+				"storage": "128GB"
+			}
+		]
+	},
+	{
+		"slug": "ip14p",
+		"name": "iPhone 14 Pro (usado)",
+		"description": "",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip14p-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip14p-128gb",
+				"storage": "128GB"
+			},
+			{
+				"sku": "ip14p-256gb",
+				"storage": "256GB"
+			}
+		]
+	},
+	{
+		"slug": "ip14pm",
+		"name": "iPhone 14 Pro Max (usado)",
+		"description": "",
+		"category": "IPHONE",
+		"images": [],
+		"variants": [
+			{
+				"sku": "ip14pm-128gb",
+				"storage": "128GB"
+			}
+		]
+	},
+	{
+		"slug": "ip15pm",
+		"name": "iPhone 15 Pro Max (usado)",
+		"description": "",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip15pm-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip15pm-256gb",
+				"storage": "256GB"
+			}
+		]
+	},
+	{
+		"slug": "ip16pm",
+		"name": "iPhone 16 Pro Max (usado)",
+		"description": "",
+		"category": "IPHONE",
+		"images": [
+			"/products/ip16pm-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip16pm-256gb",
+				"storage": "256GB"
+			}
+		]
+	}
+]

@@ -1,5 +1,8 @@
 /**
- * Catalog seed — loads `prisma/seed/products.json` into the database.
+ * Catalog seed — loads `prisma/seed/products.json` (and, when present, the
+ * separately extracted `prisma/seed/products-iphone.json`) into the database.
+ * Both files are concatenated at load time: the phone extract is optional, so a
+ * clone without it seeds exactly what it did before.
  *
  * ============================================================================
  * SAMPLE DATA: PRICES AND STOCK ARE PLACEHOLDERS, NOT REAL VALUES.
@@ -35,13 +38,12 @@
 
 import "dotenv/config";
 
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import { PrismaPg } from "@prisma/adapter-pg";
 
 import { Category, PrismaClient } from "../src/generated/prisma/client";
-import catalogJson from "./seed/products.json";
 
 type SeedVariant = { sku: string; storage: string | null };
 
@@ -53,6 +55,33 @@ type SeedProduct = {
 	images: string[];
 	variants: SeedVariant[];
 };
+
+const SEED_DIR = path.join(process.cwd(), "prisma", "seed");
+const CATALOG_FILE = path.join(SEED_DIR, "products.json");
+/** Extracted from a second catalog source; absent unless that run happened. */
+const PHONE_CATALOG_FILE = path.join(SEED_DIR, "products-iphone.json");
+
+function readSeedFile(file: string): SeedProduct[] {
+	return JSON.parse(readFileSync(file, "utf8")) as SeedProduct[];
+}
+
+/**
+ * Concatenates every catalog file this project owns. The phone extract is
+ * optional and is skipped silently when absent, but the split is always
+ * reported so the seed output says where its products came from.
+ */
+export function loadSeedCatalog(): SeedProduct[] {
+	const base = readSeedFile(CATALOG_FILE);
+	const phones = existsSync(PHONE_CATALOG_FILE) ? readSeedFile(PHONE_CATALOG_FILE) : [];
+
+	console.log(
+		`Catalog files: ${base.length} products from products.json, ` +
+			`${phones.length} from products-iphone.json` +
+			(phones.length === 0 ? " (not present, skipped)" : ""),
+	);
+
+	return [...base, ...phones];
+}
 
 /** Base sample price per category, in integer cents (ARS). */
 const CATEGORY_BASE_CENTS: Record<Category, number> = {
@@ -147,7 +176,7 @@ async function main() {
 		adapter: new PrismaPg({ connectionString }),
 	});
 
-	const catalog = catalogJson as SeedProduct[];
+	const catalog = loadSeedCatalog();
 	const featured = featuredSlugs(catalog);
 
 	let productsUpserted = 0;
