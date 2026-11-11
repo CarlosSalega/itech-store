@@ -33,11 +33,6 @@
 	color: var(--ink);
 	/* The name is one unit: it must break the layout, never wrap mid-name. */
 	white-space: nowrap;
-	/* How far the mark rises to sit with the letters instead of the line box.
-	   Deliberately a variable: the exact value depends on the font's ascender
-	   and descender metrics, which differ per platform, so it is tuned against
-	   the rendered result rather than derived once and frozen. */
-	--logo-nudge: -2px;
 }
 
 /* Decorative: the link's accessible name is the store name beside it. */
@@ -46,7 +41,12 @@
 	flex: none;
 	width: 20px;
 	height: 20px;
-	transform: translateY(var(--logo-nudge));
+	/* Optical centring expressed in `em`, so it scales with the brand's own type
+	   size instead of needing a value per breakpoint. The gap between the line
+	   box centre and the cap-height midpoint is a fraction of the font size, so
+	   a fixed px value is only correct at one size: that is why the previous
+	   breakpoint override drifted. -0.12em is ~2px at 17px and ~1.8px at 15px. */
+	transform: translateY(-0.12em);
 }
 
 .nav {
@@ -148,8 +148,6 @@
 	   with room to spare instead of landing on the exact pixel. */
 	.brand {
 		font-size: var(--t-body-s);
-		/* Smaller type means a shorter climb to the cap-height midpoint. */
-		--logo-nudge: -1px;
 	}
 }
 
