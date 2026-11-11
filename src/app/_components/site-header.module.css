@@ -56,6 +56,12 @@
 		min-height: 64px;
 		padding-inline: calc(var(--s-8) - var(--s-4));
 	}
+
+	/* The bar padding is 48px from here up, so the full glyph inset can be
+	   compensated without the touch target leaving the pill. */
+	.tools {
+		--tools-outdent: var(--s-3);
+	}
 }
 
 @media (min-width: 900px) {
@@ -137,6 +143,14 @@
 	gap: var(--s-4);
 	/* The tools keep their size; the brand is what gives way when space runs out. */
 	flex: none;
+	/* Optical alignment. An icon button is 44px wide so the glyph is centred in it,
+	   which leaves the glyph 12px inside the button. Against a brand that starts at
+	   the content edge, that reads as uneven padding even though the CSS padding is
+	   identical. Pulling the group out by that inset lines the rightmost glyph up
+	   with the brand. The value is capped below by the available bar padding, so the
+	   touch target can never spill outside the pill. */
+	--tools-outdent: var(--s-2);
+	margin-right: calc(-1 * var(--tools-outdent));
 }
 
 .iconButton {
