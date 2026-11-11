@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SiteFooter } from "@/app/_components/site-footer";
 import { SiteHeader } from "@/app/_components/site-header";
 import { ChevronRightIcon } from "@/features/catalog/icons";
+import { EMAIL_CHANNEL, WHATSAPP_CHANNEL } from "@/features/contact/contact-channels";
 
 import styles from "./contacto.module.css";
 
@@ -13,23 +14,11 @@ export const metadata: Metadata = {
 		"Los canales de iTech Store para consultar por un producto del catálogo Apple.",
 };
 
-/*
- * Contact channels.
- *
- * The repository carries no phone number and no email address for the store, and
- * inventing one would send a real person to a number or a mailbox nobody reads.
- * Both stay `null`, the page says the channel is pending, and filling in the
- * value here turns the row into a link without touching the markup:
- *
- *   whatsapp: { href: "https://wa.me/54...", label: "+54 ..." }
- *   email: { href: "mailto:...", label: "..." }
- */
-const CONTACT: {
-	whatsapp: { href: string; label: string } | null;
-	email: { href: string; label: string } | null;
-} = {
-	whatsapp: null,
-	email: null,
+// Channels come from one shared module, so the contact page and the floating
+// WhatsApp button can never disagree about whether a number exists.
+const CONTACT = {
+	whatsapp: WHATSAPP_CHANNEL,
+	email: EMAIL_CHANNEL,
 };
 
 export default function ContactoPage() {

@@ -1,0 +1,40 @@
+/* Floats over the page, so it must never take part in layout: `position: fixed`
+   keeps it out of the flow and cannot introduce a horizontal scrollbar. */
+.button {
+	position: fixed;
+	right: var(--s-5);
+	bottom: calc(var(--s-5) + env(safe-area-inset-bottom, 0px));
+	z-index: 30;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	border-radius: var(--r-pill);
+	background: var(--white);
+	box-shadow:
+		var(--e-hairline),
+		var(--e-float);
+	transition: transform var(--dur-1) var(--ease-std);
+}
+
+.button:hover,
+.button:focus-visible {
+	transform: scale(1.04);
+}
+
+/* The icon carries its own brand gradient, so it needs no colour from the palette. */
+.icon {
+	display: block;
+	width: 30px;
+	height: 30px;
+}
+
+@media (max-width: 479px) {
+	.button {
+		right: var(--s-4);
+		bottom: calc(var(--s-4) + env(safe-area-inset-bottom, 0px));
+		width: 52px;
+		height: 52px;
+	}
+}
