@@ -3,11 +3,10 @@ import { WHATSAPP_NUMBER, whatsappHref } from "./contact-channels";
 import styles from "./whatsapp-button.module.css";
 
 /**
- * The floating WhatsApp action shown on the public pages.
- *
- * A WhatsApp button whose destination is not WhatsApp is worse than no button,
- * so while the store's number is unconfirmed this links to the contact page,
- * whose whole job is to say that the channel is pending. Filling
+ * The floating WhatsApp action shown on the public pages: the mark alone, no
+ * container. A WhatsApp button whose destination is not WhatsApp is worse than no
+ * button, so while the store's number is unconfirmed this links to the contact
+ * page, whose whole job is to say that the channel is pending. Filling
  * `WHATSAPP_NUMBER` upgrades it to a real chat with no change here.
  */
 export function WhatsappButton() {
@@ -22,10 +21,7 @@ export function WhatsappButton() {
 			{...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
 		>
 			{/* eslint-disable-next-line @next/next/no-img-element */}
-			<img className={styles.icon} src="/whatsapp.svg" alt="" width={34} height={34} />
-			<span className={styles.label} aria-hidden="true">
-				Escribinos
-			</span>
+			<img className={styles.icon} src="/whatsapp.svg" alt="" width={40} height={40} />
 		</a>
 	);
 }
