@@ -1,0 +1,220 @@
+/* The capacity selector and the variant price block, from the Detalle Galería
+   artboard: pills that fill with ink when selected, each carrying its price. */
+
+.fieldset {
+	min-width: 0;
+	margin: var(--s-7) 0 0;
+	padding: 0;
+	border: 0;
+}
+
+.legend {
+	margin-bottom: var(--s-3);
+	padding: 0;
+	font-size: var(--t-label);
+	font-weight: 500;
+	letter-spacing: 0.01em;
+	color: var(--muted);
+}
+
+.caps {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--s-3);
+}
+
+.cap {
+	position: relative;
+	display: block;
+	flex: 1 1 132px;
+	min-width: 132px;
+	max-width: 180px;
+	min-height: 44px;
+	padding: var(--s-3) var(--s-4);
+	border-radius: var(--r-pill);
+	background: var(--white);
+	box-shadow: inset 0 0 0 1px var(--hairline);
+	text-align: center;
+	cursor: pointer;
+	transition:
+		background var(--dur-1) linear,
+		box-shadow var(--dur-1) linear,
+		color var(--dur-1) linear;
+}
+
+.cap:hover {
+	box-shadow: inset 0 0 0 1px var(--muted);
+}
+
+/* The native radio stays in the label: arrows move between options, as native
+   radios do, and the focus ring is drawn on the label. */
+.input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+}
+
+.capName {
+	display: block;
+	font-size: var(--t-body-s);
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+.capPrice {
+	display: block;
+	margin-top: 2px;
+	font-size: var(--t-caption);
+	line-height: 1.35;
+	letter-spacing: 0.015em;
+	color: var(--muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.cap:has(.input:checked) {
+	background: var(--ink);
+	box-shadow: inset 0 0 0 1px var(--ink);
+	color: var(--white);
+}
+
+.cap:has(.input:checked) .capPrice {
+	color: rgba(255, 255, 255, 0.74);
+}
+
+.cap:focus-within {
+	outline: 3px solid var(--accent);
+	outline-offset: 3px;
+}
+
+@media (max-width: 479px) {
+	.cap {
+		flex: 1 1 100%;
+		max-width: none;
+	}
+}
+
+/* The live price of the selected variant, directly under its selector. */
+.priceBlock {
+	margin-top: var(--s-6);
+	padding-top: var(--s-4);
+	border-top: 1px solid var(--hairline);
+}
+
+.priceLead {
+	display: block;
+	font-size: var(--t-label);
+	letter-spacing: 0.01em;
+	color: var(--muted);
+}
+
+.amount {
+	display: block;
+	margin-top: var(--s-1);
+	font-size: var(--t-numeral);
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: -0.03em;
+	font-variant-numeric: tabular-nums;
+}
+
+.currency {
+	margin-right: 6px;
+	font-size: 0.6em;
+	color: var(--muted);
+}
+
+.priceNote {
+	max-width: 44ch;
+	margin-top: var(--s-2);
+	font-size: var(--t-caption);
+	line-height: 1.35;
+	letter-spacing: 0.015em;
+	color: var(--muted);
+}
+
+.sku {
+	margin-top: var(--s-5);
+	font-family: var(--font-mono);
+	font-size: var(--t-caption);
+	line-height: 1.4;
+	color: var(--muted);
+	word-break: break-all;
+}
+
+.skuValue {
+	color: var(--ink);
+}
+
+.stock {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--s-2);
+	margin-top: var(--s-5);
+	font-size: var(--t-body-s);
+	color: var(--ink);
+}
+
+.stock b {
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+.dot {
+	flex: none;
+	align-self: center;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--ink);
+}
+
+.sample {
+	font-size: var(--t-caption);
+	letter-spacing: 0.015em;
+	color: var(--muted);
+}
+
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--s-3) var(--s-5);
+	margin-top: var(--s-6);
+}
+
+.buy {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	padding: 0 var(--s-6);
+	border: 0;
+	border-radius: var(--r-pill);
+	font: 500 var(--t-body-s) / 1 var(--font-sans);
+}
+
+/* The cart does not exist yet: the action reads as inert, and the note says why. */
+.buy:disabled {
+	background: var(--surface);
+	box-shadow: inset 0 0 0 1px var(--hairline);
+	color: var(--muted);
+	cursor: not-allowed;
+}
+
+.soon {
+	max-width: 44ch;
+	margin-top: var(--s-3);
+	font-size: var(--t-caption);
+	line-height: 1.4;
+	letter-spacing: 0.015em;
+	color: var(--muted);
+}
+
+.noVariants {
+	max-width: 44ch;
+	margin-top: var(--s-7);
+	font-size: var(--t-body-s);
+	color: var(--muted);
+}

@@ -1,6 +1,10 @@
 import Link from "next/link";
 
-import { FAMILY_LABEL, NAV_FAMILIES } from "@/features/catalog/catalog";
+import {
+	FAMILY_LABEL,
+	NAV_FAMILIES,
+	catalogHref,
+} from "@/features/catalog/catalog";
 import {
 	BagIcon,
 	CloseIcon,
@@ -14,8 +18,8 @@ import styles from "./site-header.module.css";
  * Sticky header. Below 900px the links live in a `<details>` menu that swaps its
  * own icon in CSS, so the disclosure needs no JavaScript.
  *
- * The family entries are in-page anchors today: the family filter of `/catalogo`
- * arrives with that route.
+ * Each family links into the catalog with its filter applied, so the header
+ * reaches a real page from anywhere instead of an in-page anchor.
  */
 export function SiteHeader() {
 	return (
@@ -38,10 +42,17 @@ export function SiteHeader() {
 
 				<nav className={styles.nav} aria-label="Principal">
 					{NAV_FAMILIES.map((category) => (
-						<a className={styles.navLink} href="#familias" key={category}>
+						<Link
+							className={styles.navLink}
+							href={catalogHref({ family: category })}
+							key={category}
+						>
 							{FAMILY_LABEL[category]}
-						</a>
+						</Link>
 					))}
+					<Link className={styles.navLink} href="/contacto">
+						Contacto
+					</Link>
 				</nav>
 
 				<div className={styles.tools}>
@@ -72,12 +83,19 @@ export function SiteHeader() {
 						</summary>
 						<nav className={styles.menuNav} aria-label="Principal en móvil">
 							{NAV_FAMILIES.map((category) => (
-								<a className={styles.menuLink} href="#familias" key={category}>
+								<Link
+									className={styles.menuLink}
+									href={catalogHref({ family: category })}
+									key={category}
+								>
 									{FAMILY_LABEL[category]}
-								</a>
+								</Link>
 							))}
-							<Link className={styles.menuLink} href="/catalogo">
+							<Link className={styles.menuLink} href={catalogHref({})}>
 								Catálogo
+							</Link>
+							<Link className={styles.menuLink} href="/contacto">
+								Contacto
 							</Link>
 						</nav>
 					</details>

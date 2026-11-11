@@ -3,22 +3,26 @@ import Link from "next/link";
 import {
 	FAMILY_LABEL,
 	NAV_FAMILIES,
+	catalogHref,
 	type CatalogCard,
 } from "@/features/catalog/catalog";
 
 import styles from "./site-footer.module.css";
 
 type SiteFooterProps = {
-	products: readonly CatalogCard[];
+	/** The editorial picks, shown only on the landing. */
+	products?: readonly CatalogCard[];
 };
 
 /**
  * Footer. It carries the sample-data notice exactly once per page: the seeded
  * prices are examples, and saying so here is the only place they are marked.
  *
- * The family entries are in-page anchors today, as in the header.
+ * The family entries link into the catalog with the filter applied. The products
+ * column is the landing's editorial pick, so it is omitted on the catalog and
+ * contact pages instead of repeating the featured names everywhere.
  */
-export function SiteFooter({ products }: SiteFooterProps) {
+export function SiteFooter({ products = [] }: SiteFooterProps) {
 	return (
 		<footer className={styles.footer}>
 			<div className="wrap">
@@ -28,29 +32,34 @@ export function SiteFooter({ products }: SiteFooterProps) {
 						<ul>
 							{NAV_FAMILIES.map((category) => (
 								<li key={category}>
-									<a className={styles.link} href="#familias">
-										{FAMILY_LABEL[category]}
-									</a>
-								</li>
-							))}
-						</ul>
-					</div>
-
-					<div className={styles.col}>
-						<h2 className={styles.heading}>Destacados</h2>
-						<ul>
-							{products.map((product) => (
-								<li key={product.slug}>
 									<Link
 										className={styles.link}
-										href={`/catalogo/${product.slug}`}
+										href={catalogHref({ family: category })}
 									>
-										{product.name}
+										{FAMILY_LABEL[category]}
 									</Link>
 								</li>
 							))}
 						</ul>
 					</div>
+
+					{products.length > 0 ? (
+						<div className={styles.col}>
+							<h2 className={styles.heading}>Destacados</h2>
+							<ul>
+								{products.map((product) => (
+									<li key={product.slug}>
+										<Link
+											className={styles.link}
+											href={`/catalogo/${product.slug}`}
+										>
+											{product.name}
+										</Link>
+									</li>
+								))}
+							</ul>
+						</div>
+					) : null}
 
 					<div className={styles.col}>
 						<h2 className={styles.heading}>Contacto</h2>

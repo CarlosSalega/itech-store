@@ -11,7 +11,8 @@
 
 @media (min-width: 700px) {
 	.grid {
-		grid-template-columns: repeat(3, 1fr);
+		/* Three columns on the landing, two where there are no editorial picks. */
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 		gap: var(--s-6);
 	}
 }
