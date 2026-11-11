@@ -1,11 +1,11 @@
 /* Floats over the page, so it must never take part in layout: `position: fixed`
-   keeps it out of the flow and cannot introduce a horizontal scrollbar.
+   keeps it out of the flow and cannot introduce a horizontal scrollbar. It is also
+   the positioning context for the label.
 
-   The mark alone, no container. 48px is the ceiling for a glyph-only button: a
-   standard FAB is 56px of surface around a 24-28px glyph, so a 48px glyph already
-   carries the visual weight of a ~72px FAB. Past that the green starts competing
-   with the product photography it floats over.
-   The 4px of padding is invisible: it takes the touch target to 56x56. */
+   48px is the ceiling for a glyph-only button: a standard FAB is 56px of surface
+   around a 24-28px glyph, so a 48px glyph already carries the visual weight of a
+   ~72px FAB. The padding around it is the breathing room and the touch target:
+   48 + 2x8 = 64px of tappable area. */
 .button {
 	position: fixed;
 	right: var(--s-4);
@@ -14,14 +14,8 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	padding: var(--s-1);
+	padding: var(--s-2);
 	border-radius: var(--r-pill);
-	transition: transform var(--dur-1) var(--ease-std);
-}
-
-.button:hover,
-.button:focus-visible {
-	transform: scale(1.06);
 }
 
 /* The icon carries its own brand gradient, so it needs no colour from the palette. */
@@ -29,4 +23,45 @@
 	display: block;
 	width: 48px;
 	height: 48px;
+	transition: transform var(--dur-1) var(--ease-std);
+}
+
+.button:hover .icon,
+.button:focus-visible .icon {
+	transform: scale(1.05);
+}
+
+/* The label sits to the left of the mark and only appears on hover or keyboard
+   focus. Hidden below 600px: touch devices have no hover, and a label that needs
+   one would never be seen there while taking space from the icon. */
+.label {
+	position: absolute;
+	top: 50%;
+	right: calc(100% + var(--s-2));
+	display: none;
+	white-space: nowrap;
+	padding: var(--s-2) var(--s-3);
+	border-radius: var(--r-pill);
+	background: var(--ink);
+	color: var(--white);
+	font-size: var(--t-body-s);
+	font-weight: 600;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(-50%) translateX(var(--s-1));
+	transition:
+		opacity var(--dur-1) linear,
+		transform var(--dur-1) var(--ease-std);
+}
+
+@media (min-width: 600px) {
+	.label {
+		display: block;
+	}
+}
+
+.button:hover .label,
+.button:focus-visible .label {
+	opacity: 1;
+	transform: translateY(-50%) translateX(0);
 }
