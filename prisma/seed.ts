@@ -105,6 +105,23 @@ function formatArs(cents: number): string {
 	}).format(cents / 100);
 }
 
+/**
+ * Editorial pick for the landing, applied ONLY when a product is first created:
+ * the alphabetically first product of each family. The database is the source of
+ * truth afterwards, so a manual change is never overwritten by a re-seed.
+ */
+export function featuredSlugs(catalog: SeedProduct[]): Set<string> {
+	const firstPerCategory = new Map<string, string>();
+
+	for (const product of [...catalog].sort((a, b) => a.slug.localeCompare(b.slug))) {
+		if (!firstPerCategory.has(product.category)) {
+			firstPerCategory.set(product.category, product.slug);
+		}
+	}
+
+	return new Set(firstPerCategory.values());
+}
+
 const PUBLIC_DIR = path.resolve(process.cwd(), "public");
 
 /**
@@ -131,6 +148,7 @@ async function main() {
 	});
 
 	const catalog = catalogJson as SeedProduct[];
+	const featured = featuredSlugs(catalog);
 
 	let productsUpserted = 0;
 	let variantsUpserted = 0;
@@ -154,7 +172,7 @@ async function main() {
 
 			const record = await prisma.product.upsert({
 				where: { slug: product.slug },
-				create: { slug: product.slug, ...productData },
+				create: { slug: product.slug, ...productData, featured: featured.has(product.slug) },
 				update: productData,
 			});
 			productsUpserted += 1;

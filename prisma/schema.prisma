@@ -27,11 +27,14 @@ model Product {
   category    Category
   images      String[]
   specs       Json?
+  /// Editorial flag for the landing: no admin panel exists yet to toggle it.
+  featured    Boolean   @default(false)
   variants    Variant[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   @@index([category])
+  @@index([featured])
 }
 
 model Variant {
