@@ -27,7 +27,7 @@ export function WhatsappButton() {
 				Escribinos
 			</span>
 			{/* eslint-disable-next-line @next/next/no-img-element */}
-			<img className={styles.icon} src="/whatsapp.svg" alt="" width={48} height={48} />
+			<img className={styles.icon} src="/whatsapp.svg" alt="" width={56} height={56} />
 		</a>
 	);
 }

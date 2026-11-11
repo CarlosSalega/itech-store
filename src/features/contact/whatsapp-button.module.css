@@ -18,11 +18,14 @@
 	border-radius: var(--r-pill);
 }
 
-/* The icon carries its own brand gradient, so it needs no colour from the palette. */
+/* The icon carries its own brand gradient, so it needs no colour from the palette.
+   56px is large-FAB territory: at this size the mark overlays more product
+   photography, which is a deliberate choice rather than an oversight. The 8px of
+   padding around it takes the touch target to 72px. */
 .icon {
 	display: block;
-	width: 48px;
-	height: 48px;
+	width: 56px;
+	height: 56px;
 	transition: transform var(--dur-1) var(--ease-std);
 }
 
@@ -39,17 +42,19 @@
 	top: 50%;
 	right: calc(100% + var(--s-2));
 	display: none;
+	/* A fixed height instead of vertical padding: the pill has to measure exactly
+	   26px whatever the line box does, and centring the text inside it is what
+	   makes that stable across fonts. */
+	height: 26px;
+	align-items: center;
+	padding-inline: var(--s-3);
 	white-space: nowrap;
-	padding: var(--s-1) var(--s-3);
 	border-radius: var(--r-pill);
 	background: var(--ink);
 	color: var(--white);
-	/* One step below the UI label size and a tight line box: the pill has to read as
-	   a caption attached to the mark, never as a button of its own. At 13px with 4px
-	   of vertical padding it stands about 22px tall against the 48px mark. */
 	font-size: var(--t-label);
 	font-weight: 600;
-	line-height: 1.1;
+	line-height: 1;
 	opacity: 0;
 	pointer-events: none;
 	transform: translateY(-50%) translateX(var(--s-1));
@@ -60,7 +65,7 @@
 
 @media (min-width: 600px) {
 	.label {
-		display: block;
+		display: inline-flex;
 	}
 }
 
