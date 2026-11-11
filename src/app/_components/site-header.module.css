@@ -6,10 +6,14 @@
    No `overflow: hidden` here on purpose: the mobile menu panel hangs below the
    bar and would be clipped by it. */
 .header {
+	/* The pill's side inset, variable so narrow screens can trade it for real inner
+	   padding. Content sits at (inset + bar padding), and that sum must equal the
+	   page gutter for the brand to stay on the same axis as the page text. */
+	--header-inset: var(--s-4);
 	position: sticky;
 	top: var(--s-3);
 	z-index: 20;
-	width: min(1200px, calc(100% - 2 * var(--s-4)));
+	width: min(1200px, calc(100% - 2 * var(--header-inset)));
 	margin-top: var(--s-3);
 	margin-inline: auto;
 	/* Higher than the previous 72%: the bar now floats over content, and links
@@ -169,9 +173,15 @@
 @media (max-width: 479px) {
 	.bar {
 		gap: var(--s-3);
-		/* The page gutter is 16px here and the pill is inset 16px, so the inner
-		   padding that keeps the axes aligned is zero. */
-		padding-inline: 0;
+		/* At 320px the page gutter is 16px and the pill was inset 16px, which left
+		   zero inner padding: the mark sat against the rounded edge. Halving the
+		   inset buys 8px of real padding while the sum stays at 16, so the brand
+		   keeps the page axis. */
+		padding-inline: var(--s-2);
+	}
+
+	.header {
+		--header-inset: var(--s-2);
 	}
 
 	.tools {
