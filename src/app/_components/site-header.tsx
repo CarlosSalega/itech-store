@@ -54,8 +54,8 @@ export function SiteHeader() {
 					</button>
 
 					<details className={styles.menu}>
-						<summary className={styles.summary}>
-							<span>Menú</span>
+						<summary className={styles.summary} aria-label="Menú">
+							<span className={styles.menuLabel}>Menú</span>
 							<MenuIcon className={`${styles.icon} ${styles.iconMenu}`} />
 							<CloseIcon className={`${styles.icon} ${styles.iconClose}`} />
 						</summary>

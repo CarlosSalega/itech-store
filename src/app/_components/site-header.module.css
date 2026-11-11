@@ -30,6 +30,8 @@
 	font-weight: 600;
 	letter-spacing: -0.02em;
 	color: var(--ink);
+	/* The name is one unit: it must break the layout, never wrap mid-name. */
+	white-space: nowrap;
 }
 
 .nav {
@@ -76,6 +78,8 @@
 	display: flex;
 	align-items: center;
 	gap: var(--s-4);
+	/* The tools keep their size; the brand is what gives way when space runs out. */
+	flex: none;
 }
 
 .iconButton {
@@ -116,6 +120,13 @@
 
 	.tools {
 		gap: var(--s-2);
+	}
+
+	/* At 320px the word plus the icon does not fit and the trigger wrapped onto
+	   two lines. The icon alone stays, and the summary keeps its accessible name
+	   through aria-label in the markup. */
+	.menuLabel {
+		display: none;
 	}
 }
 

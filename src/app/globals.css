@@ -203,6 +203,15 @@ a {
 	}
 }
 
+/* The full-bleed hairline below is computed with viewport units, and those
+   include the width of the vertical scrollbar. Without this, the page grows a
+   horizontal scrollbar the moment the vertical one appears. `clip` rather than
+   `hidden` on purpose: it does not create a scroll container, so the sticky
+   header keeps sticking to the viewport. */
+html {
+	overflow-x: clip;
+}
+
 /* The full-bleed 1px rule is the structural device: it ignores the content column. */
 .rule {
 	height: 1px;
