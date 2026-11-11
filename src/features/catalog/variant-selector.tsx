@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { formatArsPrice } from "./format-price";
+import { resolveVariant, splitPrice } from "./variant-selection";
 
 import styles from "./variant-selector.module.css";
 
@@ -31,7 +32,7 @@ export type VariantOption = {
  */
 export function VariantSelector({ variants }: { variants: VariantOption[] }) {
 	const [selectedId, setSelectedId] = useState(variants[0]?.id ?? "");
-	const variant = variants.find((option) => option.id === selectedId) ?? variants[0];
+	const variant = resolveVariant(variants, selectedId);
 
 	if (variant === undefined) {
 		return (
@@ -44,7 +45,7 @@ export function VariantSelector({ variants }: { variants: VariantOption[] }) {
 
 	// The formatter owns the whole string ("$ 900.000"); splitting it lets the
 	// currency sign take the smaller, muted treatment of the design system.
-	const [currency, ...amount] = formatArsPrice(variant.price).split(" ");
+	const { currency, amount } = splitPrice(formatArsPrice(variant.price));
 
 	return (
 		<>
@@ -76,7 +77,7 @@ export function VariantSelector({ variants }: { variants: VariantOption[] }) {
 				</span>
 				<span className={styles.amount}>
 					<span className={styles.currency}>{currency}</span>
-					{amount.join(" ")}
+					{amount}
 				</span>
 				<p className={styles.priceNote}>
 					El precio es el de la capacidad elegida. No hay un precio general que
