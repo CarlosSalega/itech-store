@@ -1,0 +1,42 @@
+# Formatting scope is src/** ONLY (see the `format` / `format:check` scripts and
+# .husky/pre-commit). Everything below is a second line of defence, so that an
+# editor's format-on-save can never reach these paths either.
+#
+# The markdown in odd/, docs/, .agents/ and PRODUCT.md is evidence of record:
+# hand-aligned tables and hand-tuned prose. Prettier reflows tables and prose
+# wrapping, which silently rewrites the record. Never format it.
+
+# dependencies / build output
+node_modules/
+.next/
+out/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# tooling internals
+.husky/
+.codegraph/
+.atl/
+
+# vendored third-party agent skills (ship minified bundles we do not own)
+.agents/
+
+# evidence-of-record documents — hand-aligned tables, never reflow
+odd/
+docs/
+PRODUCT.md
+*.md
+
+# scripts are hand-tuned tooling, not product code
+scripts/
+
+# config, lockfiles and editor settings
+pnpm-lock.yaml
+pnpm-workspace.yaml
+skills-lock.json
+.vscode/
+*.config.mjs
+*.config.ts
+tsconfig.json

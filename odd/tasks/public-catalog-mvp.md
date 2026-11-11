@@ -1,0 +1,62 @@
+# Public catalog MVP
+
+First versionable milestone of iTech Store: a public Apple catalog (landing, listing, detail) backed by seeded Prisma Postgres data. Cart, MercadoPago Checkout Pro, authentication and admin are explicitly out of scope for this milestone and reserved for later ones.
+
+Branch: `main`. Each task below is a work unit and its own commit. T3 and T5 mutate remote data and data formats (`Risk: item 1`) and must stay as standalone commits.
+
+## Specs
+
+- **S1** — The project is "una web/ecommerce con catalogo de productos Apple, carrito de compras y mercadopago checkout pro". Cart, checkout and admin are the long-term scope, not this milestone.
+- **S2** — "las dependencias del proyecto deben de ser versiones exactas": every dependency is pinned, no `^` or `~`, enforced by `saveExact: true` in `pnpm-workspace.yaml` and the committed `pnpm-lock.yaml`.
+- **S3** — Milestone one is "la parte publica de landing + catalogo con seed de productos para popular la DB".
+- **S4** — Catalog images come from the store owner's own existing e-commerce site ("Es mi sitio, tengo los derechos"). Images are stored locally under `/public/products`; "sin integrar cloudinary de momento". The repository must contain **no reference to that source site**: no domain in code, no source URLs in data, no provenance fields, no site name in the README or in filenames.
+- **S5** — "ya tengo la variable DATABASE_URL en .env lista para conectar con el cloud de Prisma postgres": the database is Prisma Postgres in the cloud and must be consumed through `DATABASE_URL`.
+- **S6** — Product modeling follows "Producto + variantes (SKU)": a `Variant` carries its own SKU, storage, color, price and stock.
+- **S7** — Seed prices and stock are "De ejemplo, reales después": sample values must be visibly marked so they are never mistaken for real prices.
+- **S8** — Public UX/UI is built with the skills in `.agents`, following "Artboards primero, después código".
+- **S9** — Versioning starts with "git init + .agents/ ignorado": `.agents/` is untracked and `skills-lock.json` is the contract for reinstalling it.
+- **S10** — Authentication and the admin panel arrive "Después del checkout"; Better Auth and Cloudinary are phase 2.
+- **S11** — Public routes are `/`, `/catalogo`, `/catalogo/[slug]`, `/contacto` and `/login`; private routes are `/admin` and `/dashboard` with Better Auth email + password.
+- **S12** — `readme.md` "tiene una breve explicacón pero falta pulir" and must be written in English: "el readme.md debe de estar en ingles".
+
+## Tasks
+
+| ID | Task | Specs | Route | Commit |
+| --- | --- | --- | --- | --- |
+| T1 | Initialize repository: `git init`, `.gitignore`, `.npmrc` exact-version policy, `private: true`, correct `skills-lock.json` path | S2, S9, S12 | inline | foundation |
+| T2 | Validate and repair the scaffold: `pnpm build`, `pnpm dev`, Tailwind 4 and Vitest config | S2, S3 | inline | foundation (see L14) |
+| T3 | Prisma 7: `@prisma/client`, `prisma.config.ts`, `Product`/`Variant` schema, migration path validated against Prisma Postgres | S5, S6 | worker | catalog schema |
+| T4 | Extraction script for catalog images and data, reading the source base URL from an environment variable (never committed) and writing `public/products` (webp) plus `products.json` with no source URLs or provenance | S4 | worker | `feat: extract catalog assets` |
+| T5 | Seed the catalog from `products.json`, sample prices marked as such | S7 | worker | `feat: seed catalog data` |
+| T6 | `design/system.md` plus 2-3 visual directions for landing and catalog on the canvas | S8 | inline | `docs: add design directions` |
+| T7 | Implement the landing from the chosen artboard | S3, S8 | worker | `feat: implement landing` |
+| T8 | Implement `/catalogo`, `/catalogo/[slug]` with variant selector, and `/contacto` | S3, S6, S11 | worker | `feat: implement public catalog` |
+| T9 | Tests: ARS price formatting, catalog query, variant selection updates price | S2, S6 | inline | (with T8) |
+| T10 | Rewrite the README: real stack, routes including reserved cart/checkout, image provenance, sample-price warning | S1, S10, S11, S12 | inline | `docs: rewrite readme` |
+
+## Log
+
+- **L1** (original request, verbatim): "tenemos este proyecto el cual todavia tiene una estructura muy basica, la idea es ir versionando el proyecto. El proyecto trata de crear una web/ecommerce con catalogo de productos Apple, carrito de compras y mercadopago checkout pro, las dependencias del proyecto deben de ser versiones exactas, en .agents tienes los skills necesarios para la construcción de la UX/UI pública, el readme.md tiene una breve explicacón pero falta pulir. Evalua y hazme preguntas para comenzar a planear antes de escribir una linea de código"
+- **L2** (scope of milestone one, verbatim, source site redacted per L19): "lo primero es crear la parte publica de landing + catalogo con seed de productos para popular la DB, en [source site redacted] tenemos imagenes de productos apple la cual tenemos que scrapear para extraerlas, de momento solo seran imagenes en local de de /public/products (sin integrar cloudinary de momento)"
+- **L3** (database, verbatim): "ya tengo la variable DATABASE_URL en .env lista para conectar con el cloud de Prisma postgres"
+- **L4** (auth/admin timing, verbatim): "Después del checkout"
+- **L5** (versioning, verbatim): "git init + .agents/ ignorado"
+- **L6** (image rights, verbatim): "Es mi sitio, tengo los derechos"
+- **L7** (product model, verbatim): "Producto + variantes (SKU)"
+- **L8** (price data, verbatim): "De ejemplo, reales después"
+- **L9** (design flow, verbatim): "Artboards primero, después código"
+- **L10** (start order, verbatim): "Dale, arrancá con T1 y T2"
+- **L11** (README language, verbatim): "el readme.md debe de estar en ingles" — recorded as a change to S12; T10 reopens with the language requirement.
+- **L12** (remote repository, verbatim): "ya tengo este repor: https://github.com/CarlosSalega/itech-store" — the remote is public and carries a single `Initial commit` containing only `LICENSE`. The local branch adopts that commit instead of diverging, so no force push and no unrelated history is needed.
+- **L13** (environment example, verbatim): "Dejalo pendiente" — `.env.example` is deferred. The harness safety policy blocks writing any `.env*` path, so creating it requires the human. Debt noted: no environment-variable inventory exists until then.
+- **L14** (bookkeeping) — T1 and T2 share one commit: both are foundation scaffolding and together stay inside one reviewable slice. Verified before committing that `.env*`, `node_modules/` and `.agents/` are ignored and no secret enters the tree.
+
+### T3 decisions and evidence
+
+- **L15** (migration path, verbatim): "SQL revisable primero, deploy después" — the initial migration was generated offline with `prisma migrate diff --from-empty --to-schema` (7.x removed `--to-schema-datamodel`), committed as a reviewable `migration.sql`, and applied with `prisma migrate deploy`. No shadow database was required.
+- **L16** (connection, verbatim): "Todo por la directa (más simple)" and, for the variable name, "DATABASE_URL". Both migrations and runtime therefore use `DATABASE_URL` through `@prisma/adapter-pg`. Observed at deploy time: a direct connection to `db.prisma.io:5432`, so `migrate deploy` is permitted and no Accelerate URL is involved.
+- **L17** (correction to T1) — `.npmrc` with `save-exact=true` did **not** enforce anything under pnpm 12: `pnpm config get save-exact` returned `undefined` and `pnpm add -D dotenv` wrote `^18.0.10`. The enforcement lives in `pnpm-workspace.yaml` as `saveExact: true`, verified by adding a throwaway package (saved as `3.0.1`, not `^3.0.1`) and removing it. `.npmrc` remains for npm and documents why it is not the pnpm mechanism.
+- **L18** (T3 evidence) — `prisma generate` emits the client to `src/generated/prisma` (gitignored, so `postinstall: prisma generate` is required for a clone to build). `prisma migrate deploy` applied `20261111000000_init`; `prisma migrate status` reports the schema up to date. End-to-end client probe passed: create a product with a nested variant, `price` preserved as the integer `123456`, enum and `String[]` columns round-tripped, delete restored the previous count. `pnpm build`, `lint`, `typecheck` and `test` all pass afterwards.
+- **L19** (repository must not reference the source site) — the verbatim wording lives in project memory, not here, because the requirement itself names the site. Consequences for T4: the extraction script reads its base URL from an environment variable, `products.json` carries only local `/products/...` paths, images are named from the product slug, and no provenance field exists. The reference also existed in the first local commits, which were discarded by rebuilding the repository from a clean working tree.
+- **L20** (rule, reported by the human): the repository must not mention anything belonging to projects other than itech-store. The local `.git` was deleted and rebuilt from a clean working tree on top of the remote's `Initial commit`, so no rewritten-but-recoverable object survives. Commits in the table above are named instead of hashed because rebuilding changed every hash.
+- **L21** (bookkeeping) — the foundation work landed as a single commit: reconstructing an intermediate lockfile without the Prisma dependencies would have fabricated a history that never existed, and the combined change stays inside one reviewable slice.

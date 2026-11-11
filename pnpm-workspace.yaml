@@ -1,0 +1,8 @@
+# pnpm project settings. `saveExact` is the enforced half of the exact-version
+# policy: without it pnpm writes ^ranges into package.json.
+saveExact: true
+
+allowBuilds:
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
