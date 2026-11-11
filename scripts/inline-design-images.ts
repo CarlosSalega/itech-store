@@ -19,7 +19,11 @@ const SOURCE_DIR = path.join(ROOT, "design", "storefront");
 const SYSTEM_BOARD = path.join(ROOT, "design", "system.html");
 const OUT_DIR = path.join(ROOT, "design", "storefront-photos");
 
-const IMAGE_REFERENCE = /(?:\.\.\/)*public\/products\/[A-Za-z0-9._-]+\.webp|\/placeholder\.webp/g;
+// Order matters: the public-prefixed form must win, otherwise the shorter
+// `/placeholder.webp` alternative matches inside it and leaves `../../public`
+// glued to the data URI.
+const IMAGE_REFERENCE =
+	/(?:\.\.\/)*public\/(?:products\/)?[A-Za-z0-9._-]+\.webp|\/placeholder\.webp/g;
 
 const MIME: Record<string, string> = {
 	webp: "image/webp",
@@ -85,6 +89,16 @@ function inlineImages(html: string): Inline {
 
 function copyWithImages(sourceFile: string, outputFile: string): Inline {
 	const { html, inlined, missing } = inlineImages(readFileSync(sourceFile, "utf8"));
+
+	// A reference that survives inlining means the canvas would render a broken
+	// image silently, which is exactly the failure this script exists to avoid.
+	const leftover = html.match(/[^"'\s]*\.webp/g)?.filter((hit) => !hit.startsWith("data:")) ?? [];
+	if (leftover.length > 0) {
+		throw new Error(
+			`${path.basename(outputFile)} still references ${leftover.length} file(s), e.g. ${leftover[0]}`,
+		);
+	}
+
 	mkdirSync(path.dirname(outputFile), { recursive: true });
 	writeFileSync(outputFile, html, "utf8");
 
