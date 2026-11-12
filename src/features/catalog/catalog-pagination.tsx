@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Category } from "@/generated/prisma/enums";
 
 import { catalogHref } from "./catalog";
+import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
 
 import styles from "./catalog-pagination.module.css";
 
@@ -29,14 +30,22 @@ export function CatalogPagination({
 		<nav className={styles.pager} aria-label="Paginación del catálogo">
 			{page > 1 ? (
 				<Link
+					aria-label="Página anterior"
 					className={styles.step}
 					href={catalogHref({ family, page: page - 1 })}
 					rel="prev"
 				>
-					Anterior
+					<ChevronLeftIcon className={styles.stepIcon} />
 				</Link>
 			) : (
-				<span className={`${styles.step} ${styles.inert}`}>Anterior</span>
+				/* No destination to offer, so there is nothing for the keyboard to land
+				   on: the arrow stays for geometry but leaves the accessibility tree. */
+				<span
+					aria-hidden="true"
+					className={`${styles.step} ${styles.inert}`}
+				>
+					<ChevronLeftIcon className={styles.stepIcon} />
+				</span>
 			)}
 
 			<ol className={styles.pages}>
@@ -60,16 +69,32 @@ export function CatalogPagination({
 				))}
 			</ol>
 
+			{/* The narrow layout swaps the numbered strip for this, so the pager stays one
+			   row at 320px. Hidden by CSS above the tablet breakpoint. */}
+			<span className={styles.position}>
+				<span className="sr-only">Página </span>
+				{page}
+				<span aria-hidden="true"> / </span>
+				<span className="sr-only">de </span>
+				{pageCount}
+			</span>
+
 			{page < pageCount ? (
 				<Link
+					aria-label="Página siguiente"
 					className={styles.step}
 					href={catalogHref({ family, page: page + 1 })}
 					rel="next"
 				>
-					Siguiente
+					<ChevronRightIcon className={styles.stepIcon} />
 				</Link>
 			) : (
-				<span className={`${styles.step} ${styles.inert}`}>Siguiente</span>
+				<span
+					aria-hidden="true"
+					className={`${styles.step} ${styles.inert}`}
+				>
+					<ChevronRightIcon className={styles.stepIcon} />
+				</span>
 			)}
 		</nav>
 	);

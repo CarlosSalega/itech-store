@@ -57,6 +57,14 @@ export function CloseIcon({ className }: IconProps) {
 	);
 }
 
+export function ChevronLeftIcon({ className }: IconProps) {
+	return (
+		<svg {...iconProps} className={className}>
+			<path d="M14.5 5.5 8 12l6.5 6.5" />
+		</svg>
+	);
+}
+
 export function ChevronRightIcon({ className }: IconProps) {
 	return (
 		<svg {...iconProps} className={className}>

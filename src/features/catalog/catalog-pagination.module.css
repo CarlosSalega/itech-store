@@ -11,30 +11,59 @@
 	border-top: 1px solid var(--hairline);
 }
 
+/* The steps are arrows on a 44px target. Moving the words into `aria-label` means
+   the arrow alone carries the meaning, and the two steps stop taking width from
+   the numbered strip. */
 .step {
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
+	min-width: 44px;
 	min-height: 44px;
-	font-size: var(--t-body-s);
-	font-weight: 500;
+	border-radius: var(--r-pill);
 	color: var(--link);
+	transition: background var(--dur-1) linear;
 }
 
-.step:hover {
-	text-decoration: underline;
+.stepIcon {
+	display: block;
+	flex: none;
+	width: 20px;
+	height: 20px;
 }
 
-/* The step that does not exist on this page is text, never a dead link. */
+/* Only a step with a real destination reacts to the pointer. */
+a.step:hover {
+	background: var(--surface);
+}
+
+/* The step that does not exist on this page is never a dead link. It keeps its
+   place so the pager does not jump between pages, and reads as unavailable with
+   the same 0.45 the header uses for its disabled control. */
 .inert {
-	color: var(--muted);
-	font-weight: 400;
+	color: var(--ink);
+	opacity: 0.45;
+	cursor: default;
 }
 
+/* The numbered strip never wraps: a catalog can always grow, and a wrapped strip
+   pushes the step links apart into ragged rows. If a page count ever outgrows the
+   room, the strip scrolls sideways instead. The padding and its negative margin
+   keep a focus ring painted outside the number from being clipped. */
 .pages {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	align-items: center;
 	gap: var(--s-1);
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	padding: var(--s-1);
+	margin: calc(-1 * var(--s-1));
+	scrollbar-width: none;
+}
+
+.pages::-webkit-scrollbar {
+	display: none;
 }
 
 .page,
@@ -59,4 +88,35 @@
 	background: var(--ink);
 	color: var(--white);
 	font-weight: 500;
+}
+
+/* Where the visitor is, for the narrow layout that cannot show the strip. */
+.position {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	padding: 0 var(--s-2);
+	font-size: var(--t-body-s);
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	color: var(--ink);
+}
+
+/* Below the tablet breakpoint there is no honest way to show seven 44px targets:
+   they need 332px and 320px leaves the pager 272px. The strip is replaced by the
+   current position, so the pager stays one row and every target keeps its size. */
+@media (max-width: 599px) {
+	.pager {
+		gap: var(--s-3);
+	}
+
+	.pages {
+		display: none;
+	}
+
+	.position {
+		display: inline-flex;
+	}
 }
