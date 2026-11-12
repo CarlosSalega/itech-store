@@ -48,7 +48,7 @@ the table below is the inventory), then:
 
 ```bash
 pnpm exec prisma migrate deploy   # apply prisma/migrations to the database in DATABASE_URL
-pnpm exec prisma db seed          # runs prisma/seed.ts, which loads prisma/seed/products.json
+pnpm exec prisma db seed          # runs prisma/seed.ts, which loads every json file in prisma/seed
 pnpm dev                          # http://localhost:3000
 ```
 
@@ -60,6 +60,7 @@ Node.js is required and no `engines` field is declared yet.
 | --- | --- | --- |
 | `DATABASE_URL` | Yes | Prisma Postgres connection string. Read by `prisma.config.ts` (migrations), `prisma/seed.ts`, and `src/lib/prisma.ts` at runtime through `@prisma/adapter-pg`. |
 | `CATALOG_SOURCE_URL` | Only for `pnpm catalog:extract` | Base URL the catalog extraction reads from. Never committed; the script exits with an error when it is missing. |
+| `APPLE_SOURCE_URL` | Only for `pnpm catalog:extract:apple` | Base URL the Apple catalogue extension reads from. Never committed, never defaulted; the script exits with an error when it is missing. |
 
 `.env` is loaded with `dotenv/config` in `prisma.config.ts`, the seed and the scripts. `next`
 loads it on its own.
@@ -79,8 +80,8 @@ loads it on its own.
 
 - `?page=N` — 1-based page number. An out-of-range value clamps to the last page instead of 404ing.
 - `?familia=mac` — one of `mac`, `ipad`, `watch`, `airpods`, `accessory`, `iphone`. An unknown
-  value renders the whole catalogue instead of erroring. The seeded catalog has no iPhone products
-  yet, so that filter shows an honest empty state.
+  value renders the whole catalogue instead of erroring. Every family holds products today, so
+  each filter renders a real wall.
 
 Example: `/catalogo?familia=mac&page=2`. Page 1 omits `?page`, so `/catalogo` is the canonical
 first page.
@@ -114,6 +115,18 @@ The extraction writes `public/products/*.webp` and `prisma/seed/products.json` (
 `/products/...` paths only, no source URLs and no provenance). Production will need an external
 image host; Cloudinary is the plan for a later phase.
 
+The Apple catalogue extension is a second run with the same shape. Its list of products is fixed
+in `scripts/extract-apple-catalogue.ts`: it imports only the models this store does not already
+sell, so a model that another extraction brought in is never offered twice.
+
+```bash
+APPLE_SOURCE_URL=... pnpm catalog:extract:apple --dry-run   # report what would be imported
+APPLE_SOURCE_URL=... pnpm catalog:extract:apple             # then write it
+```
+
+It writes `public/products/*.webp` and `prisma/seed/products-apple.json`, and prints a requested
+product it could not find instead of dropping it in silence.
+
 ## Scripts
 
 | Script | What it does |
@@ -127,6 +140,7 @@ image host; Cloudinary is the plan for a later phase.
 | `pnpm test:watch` | Vitest in watch mode |
 | `pnpm postinstall` | `prisma generate` — writes the client to `src/generated/prisma`; runs automatically after `pnpm install` |
 | `pnpm catalog:extract` | Extract catalog data and webp photos into `prisma/seed/products.json` and `public/products`; needs `CATALOG_SOURCE_URL` |
+| `pnpm catalog:extract:apple` | Extract the Apple models the store lacks into `prisma/seed/products-apple.json` and `public/products`; needs `APPLE_SOURCE_URL`; supports `--dry-run` and `--limit=N` |
 | `pnpm design:photos` | Write `design/storefront-photos/` with product photos embedded as data URIs |
 
 ## Design
