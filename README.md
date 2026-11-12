@@ -67,8 +67,26 @@ cleanup, and needs its own decision.
 ## Setup
 
 ```bash
-pnpm install                # postinstall runs `prisma generate` into src/generated/prisma
+pnpm install                # postinstall runs `prisma generate`; prepare installs the git hooks
 ```
+
+`prepare` runs `husky`, which points `core.hooksPath` at `.husky/_` and activates the committed
+hook. That means a fresh clone is gated after one install, with nothing to remember.
+
+### Git hooks
+
+`.husky/pre-commit` runs `pnpm lint` and `pnpm typecheck` and aborts the commit when either fails.
+Husky executes the file through `sh -e`, so the first failure stops it.
+
+The test suite is deliberately **not** in the hook. It costs three seconds today, but a gate that
+grows with the suite is how a team ends up committing with `--no-verify` on every change, which
+leaves the hook worthless. `pnpm test` runs on demand and in review.
+
+Two consequences worth knowing: ESLint warnings do **not** block a commit — `pnpm lint` only exits
+non-zero on errors, so a warning passes the gate. And the hook is local: commits created on GitHub,
+such as a merge from a pull request, never pass through it.
+
+To skip it on purpose: `git commit --no-verify`.
 
 Create a `.env` file yourself (it is gitignored and there is no `.env.example` in this repository —
 the table below is the inventory), then:

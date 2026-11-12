@@ -12,6 +12,7 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"postinstall": "prisma generate",
+		"prepare": "husky || true",
 		"catalog:extract": "tsx scripts/extract-catalog.ts",
 		"catalog:extract:apple": "tsx scripts/extract-apple-catalogue.ts",
 		"design:photos": "tsx scripts/inline-design-images.ts"

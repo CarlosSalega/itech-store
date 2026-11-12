@@ -1,0 +1,14 @@
+# Runs before every commit, and blocks it when either gate fails.
+#
+# Deliberately not the test suite: 106 tests cost 3 seconds today, but a hook that
+# grows with the suite is how people end up committing with --no-verify, which
+# makes the whole gate worthless. Lint and types are the two failures that cost
+# the most to find later and the least to catch here.
+#
+# Tests run on demand (`pnpm test`). To skip this hook on purpose:
+#   git commit --no-verify
+#
+# Husky runs this file through `sh -e`, so the first failure stops the commit.
+
+pnpm lint
+pnpm typecheck
