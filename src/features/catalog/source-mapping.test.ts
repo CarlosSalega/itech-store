@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
 	collapseStorages,
 	displayName,
+	familyFolder,
 	imageAssetCandidates,
 	imageAssetPath,
 	imageDestination,
@@ -120,37 +121,78 @@ describe("skuFor", () => {
 	});
 });
 
+describe("familyFolder", () => {
+	it("names the folder after the family, so the file name stops carrying it", () => {
+		expect(familyFolder("ipad")).toBe("/products/ipad");
+		expect(familyFolder("ACCESSORY")).toBe("/products/accessory");
+	});
+
+	it("defaults to the phone family, because this module's source lists phones only", () => {
+		expect(familyFolder()).toBe("/products/iphone");
+	});
+
+	it("gives each of the six families its own folder", () => {
+		const folders = ([
+			"IPHONE",
+			"IPAD",
+			"MAC",
+			"WATCH",
+			"AIRPODS",
+			"ACCESSORY",
+		] as const).map((family) => familyFolder(family));
+
+		expect(folders).toEqual([
+			"/products/iphone",
+			"/products/ipad",
+			"/products/mac",
+			"/products/watch",
+			"/products/airpods",
+			"/products/accessory",
+		]);
+	});
+});
+
 describe("imageAssetPath", () => {
 	it("builds the site asset path from a name with spaces, quotes and accents", () => {
-		expect(imageAssetPath('iPhone 15 "Pro" Máx')).toBe("/products/iphone-15-pro-max.png");
+		expect(imageAssetPath('iPhone 15 "Pro" Máx')).toBe("/products/iphone/iphone-15-pro-max.png");
 	});
 
 	it("does not repeat the iphone prefix", () => {
-		expect(imageAssetPath("iPhone 13")).toBe("/products/iphone-13.png");
+		expect(imageAssetPath("iPhone 13")).toBe("/products/iphone/iphone-13.png");
 	});
 
 	it("prefixes a name that does not carry the family word", () => {
-		expect(imageAssetPath('15 Pro "Máx"')).toBe("/products/iphone-15-pro-max.png");
+		expect(imageAssetPath('15 Pro "Máx"')).toBe("/products/iphone/iphone-15-pro-max.png");
 	});
 });
 
 describe("imageAssetCandidates", () => {
 	it("tries the name as written first, keeping the condition suffix", () => {
-		expect(imageAssetCandidates("iPhone 15 (usado)")[0]).toBe("/products/iphone-15-usado.png");
+		expect(imageAssetCandidates("iPhone 15 (usado)")[0]).toBe(
+			"/products/iphone/iphone-15-usado.png",
+		);
 	});
 
 	it("falls back to the bare model, because the site serves one photo per model", () => {
-		expect(imageAssetCandidates("iPhone 15 (usado)")).toContain("/products/iphone-15.png");
+		expect(imageAssetCandidates("iPhone 15 (usado)")).toContain(
+			"/products/iphone/iphone-15.png",
+		);
 	});
 
 	it("does not repeat a candidate when there is no suffix to strip", () => {
-		expect(imageAssetCandidates("iPhone 16")).toEqual(["/products/iphone-16.png"]);
+		expect(imageAssetCandidates("iPhone 16")).toEqual(["/products/iphone/iphone-16.png"]);
 	});
 });
 
 describe("imageDestination", () => {
 	it("points at the local products directory, never at the source", () => {
-		expect(imageDestination("iphone-15-pro")).toBe("/products/iphone-15-pro-1.png");
+		expect(imageDestination("iphone-15-pro")).toBe("/products/iphone/iphone-15-pro-1.png");
+	});
+
+	it("writes into the folder of the family it is given", () => {
+		expect(imageDestination("pencil-pro", "accessory")).toBe(
+			"/products/accessory/pencil-pro-1.png",
+		);
 	});
 });
 
@@ -172,7 +214,7 @@ describe("mapSourceProduct", () => {
 			name: "iPhone 13 (usado)",
 			description: "iPhone 15 Pro sellado, 128GB.",
 			category: "IPHONE",
-			images: ["/products/iphone-13-1.png"],
+			images: ["/products/iphone/iphone-13-1.png"],
 			variants: [
 				{ sku: "iphone-13-128gb", storage: "128GB" },
 				{ sku: "iphone-13-256gb", storage: "256GB" },

@@ -26,7 +26,6 @@ import {
 
 const BASE_URL = process.env.IPHONE_SOURCE_URL;
 const ROOT = process.cwd();
-const IMAGE_DIR = path.join(ROOT, "public", "products");
 const DATA_FILE = path.join(ROOT, "prisma", "seed", "products-iphone.json");
 
 /** The single-page app references exactly one hashed bundle; the hash moves on deploy. */
@@ -265,7 +264,6 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	await mkdir(IMAGE_DIR, { recursive: true });
 	await mkdir(path.dirname(DATA_FILE), { recursive: true });
 
 	const written: CatalogProduct[] = [];
@@ -294,7 +292,10 @@ async function main(): Promise<void> {
 			}
 
 			const destination = imageDestination(product.slug);
-			await writeFile(path.join(IMAGE_DIR, path.basename(destination)), bytes);
+			// The reference carries the family folder, so the file is written there too.
+			const target = path.join(ROOT, "public", destination);
+			await mkdir(path.dirname(target), { recursive: true });
+			await writeFile(target, bytes);
 			images.push(destination);
 			imagesWritten += 1;
 		} catch (error) {

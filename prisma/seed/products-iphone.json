@@ -1,11 +1,30 @@
 [
 	{
+		"slug": "ip11",
+		"name": "iPhone 11 (usado)",
+		"description": "Batería indicada en cada variante.",
+		"category": "IPHONE",
+		"images": [
+			"/products/iphone/ip11-1.png"
+		],
+		"variants": [
+			{
+				"sku": "ip11-64gb",
+				"storage": "64GB"
+			},
+			{
+				"sku": "ip11-128gb",
+				"storage": "128GB"
+			}
+		]
+	},
+	{
 		"slug": "ip15",
 		"name": "iPhone 15 (usado)",
 		"description": "Batería indicada en cada variante.",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip15-1.png"
+			"/products/iphone/ip15-1.png"
 		],
 		"variants": [
 			{
@@ -24,7 +43,7 @@
 		"description": "Batería indicada en cada variante.",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip16p-1.png"
+			"/products/iphone/ip16p-1.png"
 		],
 		"variants": [
 			{
@@ -39,7 +58,7 @@
 		"description": "Batería indicada en cada variante.",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip17-1.png"
+			"/products/iphone/ip17-1.png"
 		],
 		"variants": [
 			{
@@ -54,7 +73,7 @@
 		"description": "Batería indicada en cada variante.",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip17p-1.png"
+			"/products/iphone/ip17p-1.png"
 		],
 		"variants": [
 			{
@@ -86,7 +105,7 @@
 		"description": "12 meses de garantía oficial Apple.",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip16-1.png"
+			"/products/iphone/ip16-1.png"
 		],
 		"variants": [
 			{
@@ -114,7 +133,7 @@
 		"description": "12 meses de garantía oficial Apple.",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip17pm-1.png"
+			"/products/iphone/ip17pm-1.png"
 		],
 		"variants": [
 			{
@@ -129,7 +148,7 @@
 		"description": "",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip13-1.png"
+			"/products/iphone/ip13-1.png"
 		],
 		"variants": [
 			{
@@ -144,7 +163,7 @@
 		"description": "",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip13p-1.png"
+			"/products/iphone/ip13p-1.png"
 		],
 		"variants": [
 			{
@@ -176,7 +195,7 @@
 		"description": "",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip14-1.png"
+			"/products/iphone/ip14-1.png"
 		],
 		"variants": [
 			{
@@ -191,7 +210,7 @@
 		"description": "",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip14p-1.png"
+			"/products/iphone/ip14p-1.png"
 		],
 		"variants": [
 			{
@@ -223,7 +242,7 @@
 		"description": "",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip15pm-1.png"
+			"/products/iphone/ip15pm-1.png"
 		],
 		"variants": [
 			{
@@ -238,7 +257,7 @@
 		"description": "",
 		"category": "IPHONE",
 		"images": [
-			"/products/ip16pm-1.png"
+			"/products/iphone/ip16pm-1.png"
 		],
 		"variants": [
 			{

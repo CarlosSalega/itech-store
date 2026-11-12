@@ -54,6 +54,30 @@ const USED_SUFFIX = " (usado)";
 /** Every phone asset on the source carries this prefix. */
 const ASSET_PREFIX = "iphone";
 
+/** The catalogue family, which is also the folder that holds its photography. */
+export type CatalogFamily =
+	| "iphone"
+	| "ipad"
+	| "mac"
+	| "watch"
+	| "airpods"
+	| "accessory";
+
+/** This module's own source lists phones only; every path builder defaults to them. */
+const DEFAULT_FAMILY: CatalogFamily = "iphone";
+
+/**
+ * The folder one family's photography is served from: `/products/<family>`, the
+ * category lowercased. The family rides in the folder so the file name stops having to
+ * repeat it, and a builder that forgets the family lands in the phone folder rather than
+ * at the flat root, where no file lives any more.
+ */
+export function familyFolder(
+	family: CatalogFamily | Uppercase<CatalogFamily> = DEFAULT_FAMILY,
+): string {
+	return `/products/${family.toLowerCase()}`;
+}
+
 /** Kebab-case a free text value, dropping accents and quotes. */
 export function kebab(text: string): string {
 	return text
@@ -139,13 +163,13 @@ export function skuFor(slug: string, storage: string | null): string {
  * convention: the family prefix plus the kebab-cased name. A name that already
  * carries the prefix is not prefixed twice.
  */
-export function imageAssetPath(name: string): string {
+export function imageAssetPath(name: string, family: CatalogFamily = DEFAULT_FAMILY): string {
 	const kebabName = kebab(name);
 	const asset = kebabName.startsWith(`${ASSET_PREFIX}-`) || kebabName === ASSET_PREFIX
 		? kebabName
 		: `${ASSET_PREFIX}-${kebabName}`;
 
-	return `/products/${asset}.png`;
+	return `${familyFolder(family)}/${asset}.png`;
 }
 
 /**
@@ -156,21 +180,27 @@ export function imageAssetPath(name: string): string {
  * however, serves one photo per model, so the bare model name is the fallback. The
  * caller keeps the first candidate that is actually an image.
  */
-export function imageAssetCandidates(name: string): string[] {
-	const candidates = [imageAssetPath(name)];
+export function imageAssetCandidates(
+	name: string,
+	family: CatalogFamily = DEFAULT_FAMILY,
+): string[] {
+	const candidates = [imageAssetPath(name, family)];
 	const bare = name.replace(/\s*\([^)]*\)\s*$/, "").trim();
 
 	if (bare.length > 0 && bare !== name) {
-		const fallback = imageAssetPath(bare);
+		const fallback = imageAssetPath(bare, family);
 		if (!candidates.includes(fallback)) candidates.push(fallback);
 	}
 
 	return candidates;
 }
 
-/** Where the downloaded file lands inside this project. */
-export function imageDestination(slug: string): string {
-	return `/products/${slug}-1.png`;
+/** Where the downloaded file lands inside this project, inside its family's folder. */
+export function imageDestination(
+	slug: string,
+	family: CatalogFamily = DEFAULT_FAMILY,
+): string {
+	return `${familyFolder(family)}/${slug}-1.png`;
 }
 
 /** One source record becomes one destination product, or nothing at all. */

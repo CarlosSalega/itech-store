@@ -3,6 +3,8 @@ import "dotenv/config";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import { familyFolder } from "../src/features/catalog/source-mapping";
+
 /**
  * One-off extraction of catalog facts (name, description, images, capacity)
  * from the store's existing site into files this project owns.
@@ -13,7 +15,6 @@ import path from "node:path";
 
 const BASE_URL = process.env.CATALOG_SOURCE_URL;
 const ROOT = process.cwd();
-const IMAGE_DIR = path.join(ROOT, "public", "products");
 const DATA_FILE = path.join(ROOT, "prisma", "seed", "products.json");
 
 const MAX_IMAGES_PER_PRODUCT = 5;
@@ -383,7 +384,6 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	await mkdir(IMAGE_DIR, { recursive: true });
 	await mkdir(path.dirname(DATA_FILE), { recursive: true });
 
 	const products: ExtractedProduct[] = [];
@@ -392,15 +392,21 @@ async function main(): Promise<void> {
 
 	for (const [index, group] of groups.entries()) {
 		const images: string[] = [];
+		// One folder per family: the reference and the file share the family, so a
+		// downloaded photograph can never land at the flat root again.
+		const folder = familyFolder(group.category);
+		const folderDir = path.join(ROOT, "public", folder);
+
+		await mkdir(folderDir, { recursive: true });
 
 		for (const [imageIndex, url] of group.imageUrls.entries()) {
 			const fileName = `${group.slug}-${imageIndex + 1}.webp`;
 			try {
 				const bytes = await fetchBinary(url);
-				await writeFile(path.join(IMAGE_DIR, fileName), bytes);
+				await writeFile(path.join(folderDir, fileName), bytes);
 				totalBytes += bytes.byteLength;
 				totalImages += 1;
-				images.push(`/products/${fileName}`);
+				images.push(`${folder}/${fileName}`);
 			} catch (error) {
 				console.warn(
 					`  image skipped for ${group.slug}: ${error instanceof Error ? error.message : error}`,
