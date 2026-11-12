@@ -1,8 +1,12 @@
 /**
- * Catalog seed — loads `prisma/seed/products.json` (and, when present, the
- * separately extracted `prisma/seed/products-iphone.json`) into the database.
- * Both files are concatenated at load time: the phone extract is optional, so a
- * clone without it seeds exactly what it did before.
+ * Catalog seed — loads `prisma/seed/products.json` (and, when present, the separately
+ * extracted `prisma/seed/products-iphone.json` and `prisma/seed/products-apple.json`)
+ * into the database. The files are concatenated at load time: each extract is optional,
+ * so a clone without them seeds exactly what it did before.
+ *
+ * The decisions that are silent when wrong — the file merge, the featured pick and the
+ * image filter — live in `src/features/catalog/seed-catalog.ts`, away from this script's
+ * `main()`, so they can be tested.
  *
  * ============================================================================
  * SAMPLE DATA: PRICES AND STOCK ARE PLACEHOLDERS, NOT REAL VALUES.
@@ -27,7 +31,7 @@
  * ============================================================================
  *
  * The seed is idempotent: products are upserted on `slug` and variants on
- * `sku`, so running it twice leaves 64 products and 68 variants. Rows are never
+ * `sku`, so running it twice leaves 89 products and 98 variants. Rows are never
  * deleted or recreated.
  *
  * Images are local-only and gitignored, so a clone has the image paths but not
@@ -38,50 +42,14 @@
 
 import "dotenv/config";
 
-import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import { PrismaPg } from "@prisma/adapter-pg";
 
 import { Category, PrismaClient } from "../src/generated/prisma/client";
-
-type SeedVariant = { sku: string; storage: string | null };
-
-type SeedProduct = {
-	slug: string;
-	name: string;
-	description: string;
-	category: Category;
-	images: string[];
-	variants: SeedVariant[];
-};
+import { buildSeedCatalog, resolveImages, type SeedProduct, type SeedVariant } from "../src/features/catalog/seed-catalog";
 
 const SEED_DIR = path.join(process.cwd(), "prisma", "seed");
-const CATALOG_FILE = path.join(SEED_DIR, "products.json");
-/** Extracted from a second catalog source; absent unless that run happened. */
-const PHONE_CATALOG_FILE = path.join(SEED_DIR, "products-iphone.json");
-
-function readSeedFile(file: string): SeedProduct[] {
-	return JSON.parse(readFileSync(file, "utf8")) as SeedProduct[];
-}
-
-/**
- * Concatenates every catalog file this project owns. The phone extract is
- * optional and is skipped silently when absent, but the split is always
- * reported so the seed output says where its products came from.
- */
-export function loadSeedCatalog(): SeedProduct[] {
-	const base = readSeedFile(CATALOG_FILE);
-	const phones = existsSync(PHONE_CATALOG_FILE) ? readSeedFile(PHONE_CATALOG_FILE) : [];
-
-	console.log(
-		`Catalog files: ${base.length} products from products.json, ` +
-			`${phones.length} from products-iphone.json` +
-			(phones.length === 0 ? " (not present, skipped)" : ""),
-	);
-
-	return [...base, ...phones];
-}
 
 /** Base sample price per category, in integer cents (ARS). */
 const CATEGORY_BASE_CENTS: Record<Category, number> = {
@@ -134,38 +102,6 @@ function formatArs(cents: number): string {
 	}).format(cents / 100);
 }
 
-/**
- * Editorial pick for the landing, applied ONLY when a product is first created:
- * the alphabetically first product of each family. The database is the source of
- * truth afterwards, so a manual change is never overwritten by a re-seed.
- */
-export function featuredSlugs(catalog: SeedProduct[]): Set<string> {
-	const firstPerCategory = new Map<string, string>();
-
-	for (const product of [...catalog].sort((a, b) => a.slug.localeCompare(b.slug))) {
-		if (!firstPerCategory.has(product.category)) {
-			firstPerCategory.set(product.category, product.slug);
-		}
-	}
-
-	return new Set(firstPerCategory.values());
-}
-
-const PUBLIC_DIR = path.resolve(process.cwd(), "public");
-
-/**
- * Images live under `public/` and are never committed. Keep only the references
- * whose file exists right now, so the database never advertises an image the
- * running app cannot serve.
- */
-export function resolveImages(images: string[]): string[] {
-	return images.filter((image) => {
-		if (!image.startsWith("/")) return false;
-
-		return existsSync(path.join(PUBLIC_DIR, image));
-	});
-}
-
 async function main() {
 	const connectionString = process.env["DATABASE_URL"];
 	if (!connectionString) {
@@ -176,8 +112,7 @@ async function main() {
 		adapter: new PrismaPg({ connectionString }),
 	});
 
-	const catalog = loadSeedCatalog();
-	const featured = featuredSlugs(catalog);
+	const { products: catalog, featured } = buildSeedCatalog(SEED_DIR);
 
 	let productsUpserted = 0;
 	let variantsUpserted = 0;
@@ -197,11 +132,19 @@ async function main() {
 				description: product.description,
 				category: product.category,
 				images,
+				/**
+				 * Derived from the seed data (the first two catalog files, one product per
+				 * family), which is why it is written on the update path as well as on
+				 * create: a database seeded before this rule converges on the next run
+				 * instead of keeping a stale flag. Manual curation of this column in the
+				 * database is not supported — the next seed reverts it.
+				 */
+				featured: featured.has(product.slug),
 			};
 
 			const record = await prisma.product.upsert({
 				where: { slug: product.slug },
-				create: { slug: product.slug, ...productData, featured: featured.has(product.slug) },
+				create: { slug: product.slug, ...productData },
 				update: productData,
 			});
 			productsUpserted += 1;
@@ -236,6 +179,9 @@ async function main() {
 		console.log("Seed summary (sample prices and stock, not real data)");
 		console.log(`Products upserted: ${productsUpserted}`);
 		console.log(`Variants upserted: ${variantsUpserted}`);
+		// Printed because it is written on every run now: the landing shows exactly these,
+		// so the output has to say which they are.
+		console.log(`Featured on the landing: ${[...featured].sort().join(", ")}`);
 		console.log(
 			`Price range written: ${formatArs(minPrice)} - ${formatArs(maxPrice)} ` +
 				`(${minPrice}-${maxPrice} cents)`,
