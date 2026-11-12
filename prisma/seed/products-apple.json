@@ -1,0 +1,141 @@
+[
+	{
+		"slug": "iphone-18-pro-256-gb",
+		"name": "iPhone 18 Pro - 256 GB",
+		"description": "iPhone. Consultanos por colores, capacidad y disponibilidad.",
+		"category": "IPHONE",
+		"images": [
+			"/products/iphone-18-pro-256-gb-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "iphone-18-pro-256-gb-256gb",
+				"storage": "256GB"
+			}
+		]
+	},
+	{
+		"slug": "iphone-18-pro-max",
+		"name": "iPhone 18 Pro Max",
+		"description": "iPhone. Consultanos por colores, capacidad y disponibilidad.",
+		"category": "IPHONE",
+		"images": [
+			"/products/iphone-18-pro-max-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "iphone-18-pro-max",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "iphone-duo-256-512-gb",
+		"name": "iPhone Duo 256 - 512 GB",
+		"description": "iPhone. Consultanos por colores, capacidad y disponibilidad.",
+		"category": "IPHONE",
+		"images": [
+			"/products/iphone-duo-256-512-gb-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "iphone-duo-256-512-gb-256gb",
+				"storage": "256GB"
+			},
+			{
+				"sku": "iphone-duo-256-512-gb-512gb",
+				"storage": "512GB"
+			}
+		]
+	},
+	{
+		"slug": "watch-se-3-40mm",
+		"name": "Apple Watch SE 3 40mm",
+		"description": "Apple Watch. Consultanos por correas y disponibilidad.",
+		"category": "WATCH",
+		"images": [
+			"/products/watch-se-3-40mm-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "watch-se-3-40mm",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "watch-se-3-40mm-starlight",
+		"name": "Apple Watch SE 3 40mm Starlight",
+		"description": "Apple Watch. Consultanos por correas y disponibilidad.",
+		"category": "WATCH",
+		"images": [
+			"/products/watch-se-3-40mm-starlight-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "watch-se-3-40mm-starlight",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "magic-keyboard-ipad-white",
+		"name": "Apple Magic Keyboard iPad White",
+		"description": "Accesorio de Apple. Consultanos por compatibilidad.",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/magic-keyboard-ipad-white-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "magic-keyboard-ipad-white",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "pencil-pro",
+		"name": "Apple Pencil Pro",
+		"description": "Accesorio de Apple. Consultanos por compatibilidad.",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/pencil-pro-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "pencil-pro",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "pencil-usb-c",
+		"name": "Apple PENCIL USB-C",
+		"description": "Accesorio de Apple. Consultanos por compatibilidad.",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/pencil-usb-c-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "pencil-usb-c",
+				"storage": null
+			}
+		]
+	},
+	{
+		"slug": "adaptador-20w-original",
+		"name": "Apple Adaptador 20w original",
+		"description": "Accesorio de Apple. Consultanos por compatibilidad.",
+		"category": "ACCESSORY",
+		"images": [
+			"/products/adaptador-20w-original-1.webp"
+		],
+		"variants": [
+			{
+				"sku": "adaptador-20w-original",
+				"storage": null
+			}
+		]
+	}
+]

@@ -13,6 +13,7 @@
 		"test:watch": "vitest",
 		"postinstall": "prisma generate",
 		"catalog:extract": "tsx scripts/extract-catalog.ts",
+		"catalog:extract:apple": "tsx scripts/extract-apple-catalogue.ts",
 		"design:photos": "tsx scripts/inline-design-images.ts"
 	},
 	"dependencies": {
