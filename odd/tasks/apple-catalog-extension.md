@@ -190,3 +190,16 @@ work). Commits: work units on this branch only; push, PR and merge stay the owne
   because the editorial pick is the alphabetically first slug of the family and `ip11` sorts first;
   and four iPhones still show the placeholder (12 Pro Max, 13 Pro Max, 14 Pro Max, 17 e), unchanged
   by decision L8.
+- **L13** (delivery, superseding the numbers in L7) — the branch is **six commits, 2360 authored
+  changed lines** excluding evidence and lockfile. The growth is L10-L12: the asset layout rewrites
+  191 references plus 47 in the design artboards, and that mechanical bulk is what pushes the branch
+  past anything a reviewer can hold at once. The honest split for a pull request is three: the
+  mapping and selection module first, then the extraction adapter with its data and the seed
+  correction, then the asset layout with the preservation rule — the last one is mostly one-line path
+  edits and reads fast once it is isolated. Nothing was merged.
+- **L14** (the pagination fix lives on main instead) — the owner asked for that commit and for the
+  repository to be pushed. The pager fix repairs already published behaviour and shares nothing with
+  this feature, so it was committed on `main` (`fix: keep the pager on one row and step it with
+  arrows`) rather than folded into these six commits, which keeps this branch's diff limited to the
+  catalogue. The branch was then pushed as its own ref, so the work is on GitHub without a merge
+  being decided here.
