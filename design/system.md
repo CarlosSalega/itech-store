@@ -1,10 +1,10 @@
 # iTech Store — design system
 
-Status: **proposed starter system**. The project has no token file, no component library and no
-theme beyond the Next.js scaffold, so only four neutral values and the two font families are
-inherited; everything else is proposed here and adopted by the artboards in
-`design/storefront/`. Accept or change it before implementation (`odd/tasks/public-catalog-mvp.md`,
-T6 → T7/T8).
+Status: **in force**. Approved by the owner, implemented in the Galería direction (T7/T8 of
+`odd/tasks/public-catalog-mvp.md`) and carried by the live site. The project began with no token file,
+no component library and no theme beyond the Next.js scaffold, so only four neutral values and the two
+font families were inherited; everything else below was proposed here, adopted by the artboards in
+`design/storefront/`, and then ported.
 
 Direction: faithful to Apple's visual language — large type, generous whitespace, the product as
 protagonist, restrained motion. The language is borrowed, the layout is not.
@@ -30,6 +30,30 @@ no other direction uses; those are listed under "Signatures".
 Two scaffold defects to fix at implementation, not in the artboards: `globals.css` sets
 `font-family: Arial…` on `body`, which discards the Geist faces loaded in `layout.tsx`; and
 `layout.tsx` declares `lang="en"` for a Spanish store.
+
+## How the system reaches the code
+
+The values on this page reach the product through Tailwind's theme layer, and the rules that use them
+are hand-written CSS Modules. The split is deliberate, and this is the only place that records it.
+
+| Layer | Owns | Lives in |
+| --- | --- | --- |
+| Tokens | Every value specified on this page | `src/app/globals.css`, inside `@theme static` |
+| Rules | Layout, type, motion, states | one `*.module.css` per component |
+
+`@theme static` rather than plain `@theme` is a requirement, not a preference: the modules read tokens
+through `var()`, so a pruned theme variable would break a module silently. The only Tailwind utility
+used in `src/` is `sr-only`, for text that must be read by a screen reader and not shown.
+
+**Why the rules are hand-written.** Each artboard is a single self-contained HTML file with inline
+CSS, because the canvas injects artboards through JavaScript and nothing there can be built. The
+implemented direction was ported from that block, and one scoped module per component is the direct
+translation of it. Expressing the same pages as utility classes would have re-decided values this
+document and the artboards had already agreed on, after the owner had approved them.
+
+**For whoever reads this next:** the absence of utility classes is the decision, not an unfinished
+migration. Converting the modules to utilities redesigns the whole presentation layer and needs its
+own approval; it is not a consistency fix.
 
 ## Colour
 

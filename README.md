@@ -37,6 +37,33 @@ No route in this repository lets a visitor add a product to a cart or pay for it
 does not work: pnpm 12 ignores `save-exact` there (verified — `pnpm config get save-exact` returns
 `undefined`). `.npmrc` is kept only for npm.
 
+### Styling: tokens in Tailwind, rules in CSS Modules
+
+Three layers, each doing one job. Worth reading before touching a stylesheet, because Tailwind does
+appear in the table above while **the only Tailwind utility used in `src/` is `sr-only`** — five times,
+for text a screen reader must read and a sighted reader must not see.
+
+| Layer | What it owns | Where |
+| --- | --- | --- |
+| Tokens | Colour, type, spacing, radii, elevation and motion, as CSS custom properties | `src/app/globals.css`, inside `@theme static` |
+| Component rules | Every layout and visual decision, one scoped module per component | 11 `*.module.css`, read through `styles.*` |
+| Utilities | One class: `sr-only` | 5 uses in TSX |
+
+`@theme static` rather than plain `@theme` is deliberate: the modules read every token through
+`var()`, so a pruned theme variable would quietly break a module that depends on it. Tailwind
+supplies the token layer, the preflight reset and that one accessibility utility, not the styling
+model.
+
+The rules are hand-written rather than utility classes because of where the design came from. The
+implemented direction arrived as an artboard, and the design tool's format requires every artboard
+to be one self-contained HTML file with inline CSS — the canvas injects artboards through
+JavaScript, so nothing there can be built. Porting that block into the real stack makes one scoped
+module per component the direct translation. Rewriting it as utilities would have re-made decisions
+that the artboard had already settled and the owner had already approved.
+
+So the mismatch is apparent, not real. Converting the modules to utilities is a redesign, not a
+cleanup, and needs its own decision.
+
 ## Setup
 
 ```bash
