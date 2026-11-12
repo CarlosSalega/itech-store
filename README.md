@@ -98,11 +98,12 @@ admin panel — and **do not exist in this repository**. Requesting them returns
 
 ## Product images
 
-Product photography lives in `public/products`, which is **gitignored**: the files exist only on
-the machine that ran the extraction and are never committed. The seed therefore keeps only image
-paths whose file is present on the current machine, so a fresh clone seeds the database with **no
-image references at all** and every product renders `/placeholder.webp`. That is intended, not a
-bug.
+Product photography lives in `public/products`, one folder per family (`iphone`, `ipad`, `mac`,
+`watch`, `airpods`, `accessory`), which is **gitignored**: the files exist only on the machine that
+ran the extraction and are never committed. Every reference points at the family folder that holds
+it, `/products/<family>/<file>`, and the seed keeps only the references whose file is present on the
+current machine, so a fresh clone seeds the database with **no image references at all** and every
+product renders `/placeholder.webp`. That is intended, not a bug.
 
 To regenerate the catalog data and photos:
 
@@ -111,7 +112,7 @@ CATALOG_SOURCE_URL=... pnpm catalog:extract   # or set it in .env
 pnpm exec prisma db seed
 ```
 
-The extraction writes `public/products/*.webp` and `prisma/seed/products.json` (local
+The extraction writes `public/products/<family>/*.webp` and `prisma/seed/products.json` (local
 `/products/...` paths only, no source URLs and no provenance). Production will need an external
 image host; Cloudinary is the plan for a later phase.
 
@@ -124,8 +125,8 @@ APPLE_SOURCE_URL=... pnpm catalog:extract:apple --dry-run   # report what would 
 APPLE_SOURCE_URL=... pnpm catalog:extract:apple             # then write it
 ```
 
-It writes `public/products/*.webp` and `prisma/seed/products-apple.json`, and prints a requested
-product it could not find instead of dropping it in silence.
+It writes `public/products/<family>/*.webp` and `prisma/seed/products-apple.json`, and prints a
+requested product it could not find instead of dropping it in silence.
 
 ## Scripts
 
@@ -139,8 +140,8 @@ product it could not find instead of dropping it in silence.
 | `pnpm test` | Vitest, single run |
 | `pnpm test:watch` | Vitest in watch mode |
 | `pnpm postinstall` | `prisma generate` — writes the client to `src/generated/prisma`; runs automatically after `pnpm install` |
-| `pnpm catalog:extract` | Extract catalog data and webp photos into `prisma/seed/products.json` and `public/products`; needs `CATALOG_SOURCE_URL` |
-| `pnpm catalog:extract:apple` | Extract the Apple models the store lacks into `prisma/seed/products-apple.json` and `public/products`; needs `APPLE_SOURCE_URL`; supports `--dry-run` and `--limit=N` |
+| `pnpm catalog:extract` | Extract catalog data and webp photos into `prisma/seed/products.json` and `public/products/<family>`; needs `CATALOG_SOURCE_URL` |
+| `pnpm catalog:extract:apple` | Extract the Apple models the store lacks into `prisma/seed/products-apple.json` and `public/products/<family>`; needs `APPLE_SOURCE_URL`; supports `--dry-run` and `--limit=N` |
 | `pnpm design:photos` | Write `design/storefront-photos/` with product photos embedded as data URIs |
 
 ## Design

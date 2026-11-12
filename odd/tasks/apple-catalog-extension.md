@@ -83,3 +83,110 @@ work). Commits: work units on this branch only; push, PR and merge stay the owne
   requested, and a new model is added by writing its name. The list is also the authoritative
   spelling, so the store owns the product name rather than inheriting the source's, which carries a
   doubled brand on some rows (`Apple Apple Watch SE 3 40mm`).
+- **L6** (T6 verification, and a defect it caught) — an independent read-only verifier returned the
+  verdicts and found one real blocker that this work introduced. `featured` was written only on
+  create and derived over every product, so a new ACCESSORY product whose slug sorts before
+  `apple-airtag` (it does) both stole the ACCESSORY feature on a fresh database and left two
+  accessories featured on an already-seeded one, because the flag is never rewritten. The landing
+  renders every featured product, so both halves were visible defects. The verifier's second blocker
+  is bookkeeping: S3 still described the rejected mechanism, and S3 outranks a log entry, so the spec
+  was amended rather than the code. Following its high finding, the seed's three pure decisions moved
+  to `src/features/catalog/seed-catalog.ts` so they are testable at all; `prisma/seed.ts` runs
+  `main()` on import and could never be imported by a test. `featured` is now derived from the first
+  two files only (so an extract can add products but never move a family's pick) and written on
+  update as well (so a stale flag converges). Both halves were then observed, not assumed: a re-seed
+  reported the six slugs it featured, with `apple-airtag` in and `adaptador-20w-original` out. The
+  requested list moved into the module so a non-Apple name added to it now fails a test; that test
+  also caught `Protector de pantalla iPhone 16` being filed as IPHONE, which the accessory vocabulary
+  now rejects. Final state: 89 products, 98 variants, 191 photographs kept, 92 tests.
+- **L7** (slice boundary, recorded because the commit slice went past the advisory budget) — the
+  feature is four commits on `feat/apple-catalog-extension`, 1359 authored changed lines excluding
+  evidence and lockfile: `feat: select the apple models the store lacks` (mapping module, 20 tests,
+  this document), `feat: extract the apple models the store does not sell` (adapter, the 9-product
+  data file, the npm script), `fix: keep the landing pick stable and make the seed decisions
+  testable` (seed module + 13 tests + the featured correction), and `docs: document the apple
+  extraction and its environment variable`. The line count is mostly two test files and this record,
+  but it is still past the 400-line slice a reviewer can hold at once, so the honest recommendation
+  to the owner is to open the pull request as at least two: mapping and selection first, then the
+  adapter, the data and the seed correction. Nothing was pushed, opened or merged — those stay the
+  owner's decisions.
+- **L8** (iPhone coverage audited, left open by the owner) — the owner asked whether the store holds
+  every iPhone from the 11 to the 18, and whether they carry photography. Measured after this
+  feature: **19 IPHONE products, 15 with a photograph, 4 with none**. Full by generation: 12 (only
+  the Pro Max, used), 13 (13, Pro, Pro Max, all used), 14 (14, Pro, Pro Max, all used), 15 (15 and
+  Pro Max, both used), 16 (16 new, Pro and Pro Max used), 17 (17 and Pro used, Pro Max and 17 e new),
+  18 (Pro and Pro Max, new), plus the Duo. **Generation 11 is absent entirely**, and the base models
+  the sources never listed are 12, 12 mini, 13 mini, 14 Plus, 15 Plus, 16 Plus and 17 Air. The four
+  products without a photograph are the iPhone 12 Pro Max, 13 Pro Max, 14 Pro Max and 17 e: the
+  first three are exactly the models the phone extract had no asset for, so they render the
+  placeholder and no available source can fix them, because the third one starts at the 15. The 17 e
+  is different and the distinction matters: the store already sells the model as a new 256GB unit
+  with no photograph, and the third source carries three colour rows of it, each with its own webp.
+  Filling it is therefore an **image-only** action on an existing product, not an import, and the
+  exclusion that shipped in T3 was right about not duplicating the product and wrong as a photography
+  criterion. Two further facts the owner may act on later: the third source lists new sealed 15, 16
+  and 17 units per colour, which are *not* the same product as the used entries already sold under
+  the same model number; and covering generation 11 or the missing base models needs a source none of
+  the three is. **Owner decision on 2026-11-12: "Nada por ahora, solo dejarlo anotado"** — no image
+  fill and no extra products, with the gap recorded here instead of acted on.
+- **L9** (owner-supplied photography, and the asset layout) — the owner added three photographs by hand
+  into `public/products`, unreferenced: `ip11-1.png`, `ip18p-1.png`, `ip18p-2.png`, bringing the
+  directory to 194 files against 191 references. Asked what to do with them, the owner chose
+  (a) create `iPhone 11 (usado)` with 64GB and 128GB variants — the capacities are an inference, not
+  data from any source, and are recorded as such — and (b) **add** his two iPhone 18 Pro photographs
+  to the generated one instead of replacing it, so that product carries a three-photo gallery. Both
+  land in the family folders per L10.
+
+  The layout request: `public/products` was flat and every reference was `/products/<file>`. Assets
+  now live in `/products/<family>/` where the family is the lowercased `Category`, so the folder
+  states the family and the filename stops carrying it. The move itself is local-only, because the
+  directory is gitignored; what gets committed is the reference form and the code that builds it, in
+  four places (the mapping module and the three extraction scripts). The reason this needed a test
+  rather than care: a path that no longer resolves is dropped by `resolveImages` without an error, so
+  a half-finished migration would have surfaced as products silently falling back to the placeholder.
+  The guard added to `seed-files.test.ts` asserts every reference matches
+  `/products/<family-of-that-product>/<file>`, which fails on the flat form and on a wrong family.
+
+  Consequence to keep in mind: hand-added photographs live in the same `images` array the extraction
+  script writes, and the script rewrites that file on every run. A re-extraction therefore drops the
+  owner's own additions unless the script learns to preserve images it did not produce — recorded as
+  a follow-up, not yet implemented.
+- **L10** (the asset layout, and what the move broke) — `public/products` went from flat to one
+  folder per family: `iphone`, `ipad`, `mac`, `watch`, `airpods`, `accessory`, 194 files, 191
+  references rewritten to `/products/<family>/<file>`. The move touches no committed binary, because
+  the directory is gitignored; what got committed is the reference form and the four places that
+  build it — `familyFolder` in `source-mapping.ts` feeding `imageAssetPath`, `imageAssetCandidates`
+  and `imageDestination`, plus the three extraction scripts. A guard in `seed-files.test.ts` pins the
+  convention and was RED before the migration with all 191 flat references listed. `resolveImages`
+  already accepted a nested path; it is now pinned instead of assumed.
+
+  Two regressions the move caused, both found and fixed rather than reported as fine. The design
+  artboards referenced the old flat paths in 44 places, and `design/system.html` in 3 more; all 47
+  are rewritten, and `pnpm design:photos` resolves again — its own guard, which refuses to finish
+  while a reference is unembedded, is what caught the system board after the storefront boards had
+  passed. The `design:photos` reference pattern also needed the family segment and `.png`: it only
+  matched `.webp`, so the phone photography had never been inlined.
+
+- **L11** (hand-added photography survives a re-run) — the extraction scripts rewrite a whole data
+  file from what they just downloaded, and the owner's own photographs live in the same `images`
+  array, so a re-run deleted them while reporting success. `src/features/catalog/image-preservation.ts`
+  now decides what survives: what the run downloaded keeps the first slots, entries already in the
+  file are appended in the owner's order, duplicates collapse, and anything that is not a local
+  `/products/...` path (a remote URL, a relative path, a `..` escape) is dropped. It deliberately
+  does not check whether a file exists — that is the seed's job and it already drops a missing
+  reference without failing. Seven tests, RED first, including idempotence.
+
+  Wired into **one** script, not three: after the move, `products-apple.json` is the only data file
+  that holds hand-added photographs, so it is the only writer that can destroy someone's work. The
+  owner's position is that the extraction has served its purpose and may be reused for other sources
+  later; growing the other two adapters today would be machinery for a run that is not planned.
+
+- **L12** (owner photography wired, and the iPhone 11) — the owner's three files are now products:
+  `iPhone 11 (usado)`, slug `ip11`, with 64GB and 128GB variants and `ip11-1.png` — the capacities
+  are an inference from the sibling entries, not data from a source, which is why they are stated
+  here; and the iPhone 18 Pro carries a three-photograph gallery, the downloaded one first and the
+  owner's two after it. Final: **90 products, 100 variants, 194 image references, 0 without a file**,
+  106 tests. Two consequences worth knowing: the featured iPhone moves from `ip12pm` to `ip11`,
+  because the editorial pick is the alphabetically first slug of the family and `ip11` sorts first;
+  and four iPhones still show the placeholder (12 Pro Max, 13 Pro Max, 14 Pro Max, 17 e), unchanged
+  by decision L8.

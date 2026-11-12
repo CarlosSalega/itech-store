@@ -21,9 +21,11 @@ const OUT_DIR = path.join(ROOT, "design", "storefront-photos");
 
 // Order matters: the public-prefixed form must win, otherwise the shorter
 // `/placeholder.webp` alternative matches inside it and leaves `../../public`
-// glued to the data URI.
+// glued to the data URI. The family folder is optional so both the nested layout
+// and any older flat reference still resolve, and png is included because the
+// phone photography is png.
 const IMAGE_REFERENCE =
-	/(?:\.\.\/)*public\/(?:products\/)?[A-Za-z0-9._-]+\.webp|\/placeholder\.webp/g;
+	/(?:\.\.\/)*public\/products\/(?:[A-Za-z0-9._-]+\/)?[A-Za-z0-9._-]+\.(?:webp|png)|\/placeholder\.webp/g;
 
 const MIME: Record<string, string> = {
 	webp: "image/webp",

@@ -125,6 +125,35 @@ describe("featuredSlugs", () => {
 });
 
 describe("resolveImages", () => {
+	it("keeps a reference nested in its family folder", () => {
+		const seen: string[] = [];
+		const kept = resolveImages(["/products/iphone/iphone-16-1.png"], (file) => {
+			seen.push(file);
+
+			return true;
+		});
+
+		expect(kept).toEqual(["/products/iphone/iphone-16-1.png"]);
+		// Resolved under `public/`, so the nested form is looked up and not dropped.
+		expect(seen).toHaveLength(1);
+		expect(seen[0]?.startsWith(path.join(process.cwd(), "public"))).toBe(true);
+		expect(seen[0]?.endsWith(path.join("products", "iphone", "iphone-16-1.png"))).toBe(true);
+	});
+
+	it("still rejects a nested reference that climbs out of its family folder", () => {
+		const kept = resolveImages(
+			[
+				"/products/iphone/../../outside.webp",
+				"/products/iphone/../watch/near-miss.webp",
+				"/other/iphone/away.webp",
+				"/products/iphone/kept.webp",
+			],
+			() => true,
+		);
+
+		expect(kept).toEqual(["/products/iphone/kept.webp"]);
+	});
+
 	it("drops exactly the path whose file is missing and keeps the rest", () => {
 		const kept = resolveImages(
 			["/products/kept-1.webp", "/products/gone-2.webp", "/products/kept-3.webp"],

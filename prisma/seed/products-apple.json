@@ -5,7 +5,9 @@
 		"description": "iPhone. Consultanos por colores, capacidad y disponibilidad.",
 		"category": "IPHONE",
 		"images": [
-			"/products/iphone-18-pro-256-gb-1.webp"
+			"/products/iphone/iphone-18-pro-256-gb-1.webp",
+			"/products/iphone/ip18p-1.png",
+			"/products/iphone/ip18p-2.png"
 		],
 		"variants": [
 			{
@@ -20,7 +22,7 @@
 		"description": "iPhone. Consultanos por colores, capacidad y disponibilidad.",
 		"category": "IPHONE",
 		"images": [
-			"/products/iphone-18-pro-max-1.webp"
+			"/products/iphone/iphone-18-pro-max-1.webp"
 		],
 		"variants": [
 			{
@@ -35,7 +37,7 @@
 		"description": "iPhone. Consultanos por colores, capacidad y disponibilidad.",
 		"category": "IPHONE",
 		"images": [
-			"/products/iphone-duo-256-512-gb-1.webp"
+			"/products/iphone/iphone-duo-256-512-gb-1.webp"
 		],
 		"variants": [
 			{
@@ -54,7 +56,7 @@
 		"description": "Apple Watch. Consultanos por correas y disponibilidad.",
 		"category": "WATCH",
 		"images": [
-			"/products/watch-se-3-40mm-1.webp"
+			"/products/watch/watch-se-3-40mm-1.webp"
 		],
 		"variants": [
 			{
@@ -69,7 +71,7 @@
 		"description": "Apple Watch. Consultanos por correas y disponibilidad.",
 		"category": "WATCH",
 		"images": [
-			"/products/watch-se-3-40mm-starlight-1.webp"
+			"/products/watch/watch-se-3-40mm-starlight-1.webp"
 		],
 		"variants": [
 			{
@@ -84,7 +86,7 @@
 		"description": "Accesorio de Apple. Consultanos por compatibilidad.",
 		"category": "ACCESSORY",
 		"images": [
-			"/products/magic-keyboard-ipad-white-1.webp"
+			"/products/accessory/magic-keyboard-ipad-white-1.webp"
 		],
 		"variants": [
 			{
@@ -99,7 +101,7 @@
 		"description": "Accesorio de Apple. Consultanos por compatibilidad.",
 		"category": "ACCESSORY",
 		"images": [
-			"/products/pencil-pro-1.webp"
+			"/products/accessory/pencil-pro-1.webp"
 		],
 		"variants": [
 			{
@@ -114,7 +116,7 @@
 		"description": "Accesorio de Apple. Consultanos por compatibilidad.",
 		"category": "ACCESSORY",
 		"images": [
-			"/products/pencil-usb-c-1.webp"
+			"/products/accessory/pencil-usb-c-1.webp"
 		],
 		"variants": [
 			{
@@ -129,7 +131,7 @@
 		"description": "Accesorio de Apple. Consultanos por compatibilidad.",
 		"category": "ACCESSORY",
 		"images": [
-			"/products/adaptador-20w-original-1.webp"
+			"/products/accessory/adaptador-20w-original-1.webp"
 		],
 		"variants": [
 			{

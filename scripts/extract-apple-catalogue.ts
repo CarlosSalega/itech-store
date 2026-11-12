@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import type { Category } from "../src/generated/prisma/enums";
@@ -12,6 +13,8 @@ import {
 	slugFromName,
 	storagesFromName,
 } from "../src/features/catalog/apple-catalogue";
+import { preserveLocalPhotographs } from "../src/features/catalog/image-preservation";
+import { familyFolder } from "../src/features/catalog/source-mapping";
 
 /**
  * Extraction of the Apple products this store does not sell yet into files the project
@@ -31,7 +34,6 @@ import {
 
 const BASE_URL = process.env.APPLE_SOURCE_URL;
 const ROOT = process.cwd();
-const IMAGE_DIR = path.join(ROOT, "public", "products");
 const DATA_FILE = path.join(ROOT, "prisma", "seed", "products-apple.json");
 
 /**
@@ -130,7 +132,11 @@ async function fetchText(address: string): Promise<string> {
 	return response.text();
 }
 
-async function downloadImage(row: SourceRow, slug: string): Promise<string> {
+async function downloadImage(
+	row: SourceRow,
+	slug: string,
+	family: Category,
+): Promise<string> {
 	const response = await fetch(row.image, {
 		headers: { "user-agent": "Mozilla/5.0 (compatible; catalogue-extraction)" },
 	});
@@ -147,11 +153,15 @@ async function downloadImage(row: SourceRow, slug: string): Promise<string> {
 		throw new Error("photograph is not a webp file");
 	}
 
-	const destination = path.join(IMAGE_DIR, `${slug}-1.webp`);
+	// The reference and the file share the family folder, so the photograph can never
+	// land at the flat root where nothing is served from any more.
+	const reference = `${familyFolder(family)}/${slug}-1.webp`;
+	const destination = path.join(ROOT, "public", reference);
 
+	await mkdir(path.dirname(destination), { recursive: true });
 	await writeFile(destination, bytes);
 
-	return `/products/${slug}-1.webp`;
+	return reference;
 }
 
 function flagValue(name: string): number | null {
@@ -198,6 +208,17 @@ async function main(): Promise<void> {
 	const products: CatalogueProduct[] = [];
 	const slugs = new Set<string>();
 	const skipped: string[] = [];
+	let preservedCount = 0;
+
+	// Photographs added by hand live in the same array this run rewrites, so a plain
+	// rewrite deletes the owner's work and reports success. Read what is there first.
+	const previousImages = new Map<string, string[]>();
+
+	if (!dryRun && existsSync(DATA_FILE)) {
+		for (const product of JSON.parse(readFileSync(DATA_FILE, "utf8")) as CatalogueProduct[]) {
+			previousImages.set(product.slug, product.images);
+		}
+	}
 
 	for (const name of wanted) {
 		const row = rowByName.get(normaliseName(name));
@@ -222,12 +243,20 @@ async function main(): Promise<void> {
 				? [{ sku: skuFor(slug, null), storage: null }]
 				: storages.map((storage) => ({ sku: skuFor(slug, storage), storage }));
 
+		const downloaded = dryRun ? [] : [await downloadImage(row, slug, category)];
+		const preserved = preserveLocalPhotographs(
+			downloaded,
+			previousImages.get(slug) ?? null,
+		);
+
+		preservedCount += preserved.preserved.length;
+
 		products.push({
 			slug,
 			name,
 			description: DESCRIPTION[category],
 			category,
-			images: dryRun ? [] : [await downloadImage(row, slug)],
+			images: preserved.images,
 			variants,
 		});
 
@@ -239,9 +268,9 @@ async function main(): Promise<void> {
 	if (dryRun) {
 		console.log("\nDry run: no photograph downloaded and no data written.");
 	} else {
-		await mkdir(IMAGE_DIR, { recursive: true });
 		await writeFile(DATA_FILE, `${JSON.stringify(products, null, "\t")}\n`);
 		console.log(`\nWrote ${products.length} product(s) and their photographs.`);
+		console.log(`Photographs kept from the existing file: ${preservedCount}`);
 	}
 
 	console.log(`Rows read from the listing: ${rows.length}`);
