@@ -32,6 +32,11 @@ No route in this repository lets a visitor add a product to a cart or pay for it
 | ESLint | `9.39.2` | with `eslint-config-next` `16.4.6` |
 | pnpm | `12.18.0` | `packageManager` field |
 
+`.gitattributes` marks `design/**` as `linguist-documentation`. The self-contained HTML artboards
+there outweigh the TypeScript sources in raw bytes, so without that override GitHub reported the
+repository as an HTML project instead of a TypeScript one. The artboards are design sources, not
+application code, and GitHub only recomputes language statistics on a push to the default branch.
+
 **Dependencies are pinned exactly** — no `^`, no `~`. This is enforced by `saveExact: true` in
 `pnpm-workspace.yaml`, together with the committed `pnpm-lock.yaml`. The same setting in `.npmrc`
 does not work: pnpm 12 ignores `save-exact` there (verified — `pnpm config get save-exact` returns
