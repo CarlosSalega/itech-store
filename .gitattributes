@@ -1,0 +1,8 @@
+# GitHub language statistics.
+#
+# design/ holds self-contained HTML artboards (plus the design-system board). Their byte
+# volume is larger than the TypeScript sources, so Linguist reported this repository as
+# "HTML" even though the application stack is Next.js 16 / React 19 / Prisma 7 / Tailwind 4.
+# Marking them as documentation keeps the artboards in the repository, out of the
+# language breakdown.
+design/** linguist-documentation
