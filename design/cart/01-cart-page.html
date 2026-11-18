@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carrito · Página con resumen — iTech Store</title>
+<style>
+	:root {
+		--white: #ffffff;
+		--ink: #171717;
+		--muted: #6e6e73;
+		--hairline: #d2d2d7;
+		--surface: #f5f5f7;
+		--canvas-dark: #0a0a0a;
+		--surface-dark: #101010;
+		--hairline-strong: #3a3a3d;
+		--ink-dark: #ededed;
+		--muted-dark: #a1a1a6;
+		--link: #0066cc;
+		--accent: #0071e3;
+		--accent-press: #0062c4;
+
+		--t-display-s: clamp(2rem, 4.6vw, 3.75rem);
+		--t-numeral: clamp(2rem, 3.4vw, 3.25rem);
+		--t-title: clamp(1.375rem, 2.2vw, 1.875rem);
+		--t-headline: 1.3125rem;
+		--t-body: 1.0625rem;
+		--t-body-s: 0.9375rem;
+		--t-label: 0.8125rem;
+		--t-caption: 0.75rem;
+
+		--s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+		--s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+		--s-9: 88px; --s-10: 120px;
+
+		--section: clamp(64px, 9vw, 112px);
+		--section-tight: clamp(40px, 5vw, 64px);
+
+		--r-sm: 8px; --r-md: 12px; --r-lg: 18px; --r-pill: 980px;
+
+		--e-float: 0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+
+		--dur-1: 120ms; --dur-2: 220ms; --dur-3: 420ms;
+		--ease-std: cubic-bezier(.28,.11,.32,1);
+		--ease-out: cubic-bezier(.22,1,.36,1);
+
+		--font: -apple-system, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto,
+			"Helvetica Neue", Arial, sans-serif;
+	}
+
+	* { box-sizing: border-box; }
+
+	html { -webkit-text-size-adjust: 100%; }
+
+	body {
+		margin: 0;
+		background: var(--white);
+		color: var(--ink);
+		font-family: var(--font);
+		font-size: var(--t-body);
+		line-height: 1.47;
+		font-optical-sizing: auto;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	a { color: var(--link); text-decoration: none; }
+	a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+	:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+		border-radius: var(--s-1);
+	}
+
+	.skip {
+		position: absolute;
+		left: var(--s-4);
+		top: -60px;
+		z-index: 20;
+		padding: var(--s-3) var(--s-5);
+		border-radius: var(--r-pill);
+		background: var(--ink);
+		color: var(--white);
+		font-size: var(--t-body-s);
+		transition: top var(--dur-1) var(--ease-out);
+	}
+	.skip:focus { top: var(--s-4); }
+
+	/* ---------- header ---------- */
+
+	.site-header {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: rgba(255,255,255,.72);
+		-webkit-backdrop-filter: blur(20px) saturate(180%);
+		backdrop-filter: blur(20px) saturate(180%);
+		border-bottom: 1px solid var(--hairline);
+	}
+
+	.header-inner {
+		display: flex;
+		align-items: center;
+		gap: var(--s-5);
+		min-height: 64px;
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 var(--s-8);
+	}
+
+	.brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-size: var(--t-body-s);
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		color: var(--ink);
+	}
+
+	.brand .logo { width: 20px; height: 20px; }
+
+	.main-nav { margin-inline-start: auto; }
+
+	.main-nav ul {
+		display: flex;
+		gap: var(--s-6);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.main-nav a {
+		position: relative;
+		display: inline-block;
+		padding: var(--s-2) 0;
+		color: var(--ink);
+		font-size: var(--t-body-s);
+		letter-spacing: -0.005em;
+	}
+
+	.main-nav a::after {
+		content: "";
+		position: absolute;
+		inset: auto 0 0 0;
+		height: 1px;
+		background: currentColor;
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform var(--dur-2) var(--ease-out);
+	}
+	.main-nav a:hover { text-decoration: none; }
+	.main-nav a:hover::after,
+	.main-nav a[aria-current="page"]::after { transform: scaleX(1); }
+
+	.header-actions { display: flex; align-items: center; gap: var(--s-1); }
+
+	.icon-button {
+		display: grid;
+		place-items: center;
+		width: 44px;
+		height: 44px;
+		border: 0;
+		border-radius: var(--r-pill);
+		background: none;
+		color: var(--ink);
+		cursor: pointer;
+		transition: background var(--dur-1) var(--ease-std);
+	}
+	.icon-button:hover { background: var(--surface); }
+	.icon-button svg { width: 20px; height: 20px; }
+	.icon-button .count { font-variant-numeric: tabular-nums; }
+
+	.cart-link { position: relative; }
+	.cart-link .badge {
+		position: absolute;
+		top: 6px;
+		right: 4px;
+		min-width: 16px;
+		height: 16px;
+		padding: 0 4px;
+		border-radius: var(--r-pill);
+		background: var(--accent);
+		color: var(--white);
+		font-size: 0.6875rem;
+		font-weight: 600;
+		line-height: 16px;
+		text-align: center;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.menu-toggle { display: none; }
+
+	@media (max-width: 899px) {
+		.header-inner { padding: 0 var(--s-5); min-height: 48px; gap: var(--s-3); }
+		.main-nav { display: none; }
+
+		.menu-toggle {
+			display: block;
+			position: relative;
+			margin-inline-start: auto;
+		}
+		.menu-toggle summary {
+			display: grid;
+			place-items: center;
+			width: 44px;
+			height: 44px;
+			list-style: none;
+			border-radius: var(--r-pill);
+			cursor: pointer;
+		}
+		.menu-toggle summary::-webkit-details-marker { display: none; }
+		.menu-toggle summary:hover { background: var(--surface); }
+		.menu-toggle .icon-close { display: none; }
+		.menu-toggle[open] .icon-close { display: block; }
+		.menu-toggle[open] .icon-menu { display: none; }
+
+		.menu-panel {
+			position: absolute;
+			inset: calc(100% + 1px) 0 auto 0;
+			padding: var(--s-3) var(--s-5) var(--s-5);
+			background: rgba(255,255,255,.96);
+			-webkit-backdrop-filter: blur(20px) saturate(180%);
+			backdrop-filter: blur(20px) saturate(180%);
+			border-bottom: 1px solid var(--hairline);
+			box-shadow: var(--e-float);
+		}
+		.menu-panel ul { margin: 0; padding: 0; list-style: none; }
+		.menu-panel a {
+			display: block;
+			padding: var(--s-3) 0;
+			color: var(--ink);
+			font-size: var(--t-body);
+			border-bottom: 1px solid var(--hairline);
+		}
+		.menu-panel li:last-child a { border-bottom: 0; }
+	}
+
+	.visually-hidden {
+		position: absolute;
+		width: 1px; height: 1px;
+		margin: -1px; padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	/* ---------- page ---------- */
+
+	main {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 var(--s-8);
+	}
+
+	.page-head { padding: var(--section-tight) 0 var(--s-6); }
+
+	h1 {
+		margin: 0;
+		font-size: var(--t-display-s);
+		font-weight: 600;
+		line-height: 1.02;
+		letter-spacing: -0.03em;
+	}
+
+	.page-head p {
+		margin: var(--s-3) 0 0;
+		color: var(--muted);
+		font-size: var(--t-body-s);
+	}
+
+	.full-bleed {
+		height: 1px;
+		margin-inline: calc(50% - 50vw);
+		background: var(--hairline);
+	}
+
+	.bag {
+		display: grid;
+		grid-template-columns: minmax(0, 1.6fr) minmax(0, .85fr);
+		gap: var(--s-8);
+		align-items: start;
+		padding: var(--section) 0 var(--section-tight);
+	}
+
+	/* ---------- the wall of lines ---------- */
+
+	.lines { margin: 0; padding: 0; list-style: none; }
+
+	.line {
+		display: grid;
+		grid-template-columns: 168px minmax(0, 1fr) auto;
+		gap: var(--s-6);
+		align-items: start;
+		padding: var(--s-6) 0;
+		border-top: 1px solid var(--hairline);
+	}
+	.line:first-child { border-top: 0; padding-top: 0; }
+
+	.line-media {
+		margin: 0;
+		display: grid;
+		place-items: center;
+	}
+	.line-media img {
+		width: 100%;
+		max-width: 640px;
+		height: auto;
+		aspect-ratio: 1;
+		object-fit: contain;
+		mix-blend-mode: multiply;
+		transition: transform var(--dur-2) var(--ease-std);
+	}
+	.line:hover .line-media img { transform: scale(1.02); }
+
+	.line-name {
+		display: block;
+		color: var(--ink);
+		font-size: var(--t-headline);
+		font-weight: 600;
+		line-height: 1.2;
+		letter-spacing: -0.012em;
+	}
+	.line:hover .line-name { color: var(--link); }
+
+	.line-variant {
+		margin: var(--s-2) 0 0;
+		color: var(--muted);
+		font-size: var(--t-label);
+		letter-spacing: 0.01em;
+	}
+
+	.line-controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-5);
+		margin-top: var(--s-4);
+	}
+
+	.qty {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		padding: 2px;
+		border: 1px solid var(--hairline);
+		border-radius: var(--r-pill);
+	}
+
+	.qty button {
+		display: grid;
+		place-items: center;
+		width: 40px;
+		height: 40px;
+		border: 0;
+		border-radius: var(--r-pill);
+		background: none;
+		color: var(--ink);
+		font-size: 1.125rem;
+		line-height: 1;
+		cursor: pointer;
+		transition: background var(--dur-1) var(--ease-std), transform var(--dur-1) var(--ease-std);
+	}
+	.qty button:hover { background: var(--surface); }
+	.qty button:active { transform: scale(.94); }
+
+	.qty output {
+		min-width: 32px;
+		text-align: center;
+		font-size: var(--t-body-s);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.text-button {
+		padding: var(--s-2) 0;
+		border: 0;
+		background: none;
+		color: var(--link);
+		font: inherit;
+		font-size: var(--t-body-s);
+		cursor: pointer;
+	}
+	.text-button:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+	.line-money {
+		display: grid;
+		justify-items: end;
+		gap: var(--s-1);
+		text-align: right;
+	}
+
+	.unit {
+		color: var(--muted);
+		font-size: var(--t-label);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.line-total {
+		font-size: var(--t-body);
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.01em;
+	}
+
+	.ordinal {
+		color: var(--muted);
+		font-size: var(--t-label);
+		font-variant-numeric: tabular-nums;
+		letter-spacing: 0.04em;
+	}
+
+	/* ---------- summary ---------- */
+
+	.summary {
+		position: sticky;
+		top: calc(64px + var(--s-5));
+		padding: var(--s-6);
+		border: 1px solid var(--hairline);
+		border-radius: var(--r-lg);
+	}
+
+	.summary h2 {
+		margin: 0 0 var(--s-5);
+		font-size: var(--t-body-s);
+		font-weight: 500;
+		letter-spacing: 0.01em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+
+	.summary-row {
+		display: flex;
+		justify-content: space-between;
+		gap: var(--s-4);
+		padding: var(--s-2) 0;
+		font-size: var(--t-body-s);
+	}
+
+	.summary-row dt { color: var(--ink); }
+	.summary-row dd {
+		margin: 0;
+		color: var(--ink);
+		font-variant-numeric: tabular-nums;
+	}
+	.summary-row dd.note {
+		color: var(--muted);
+		font-size: var(--t-label);
+	}
+
+	.summary-total {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--s-4);
+		margin: var(--s-4) 0 0;
+		padding-top: var(--s-4);
+		border-top: 1px solid var(--hairline);
+	}
+
+	.summary-total dt {
+		font-size: var(--t-body-s);
+		font-weight: 500;
+	}
+
+	.summary-total dd {
+		margin: 0;
+		font-size: var(--t-numeral);
+		font-weight: 500;
+		line-height: 1;
+		letter-spacing: -0.04em;
+		font-variant-numeric: tabular-nums;
+	}
+	.summary-total .currency {
+		margin-right: 2px;
+		font-size: 0.85em;
+		color: var(--muted);
+	}
+
+	.checkout {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		min-height: 44px;
+		margin-top: var(--s-5);
+		padding: 0 var(--s-5);
+		border: 0;
+		border-radius: var(--r-pill);
+		background: var(--accent);
+		color: var(--white);
+		font: inherit;
+		font-size: var(--t-body-s);
+		font-weight: 500;
+		cursor: pointer;
+		transition: background var(--dur-1) var(--ease-std), transform var(--dur-1) var(--ease-std);
+	}
+	.checkout:hover { background: var(--accent-press); }
+	.checkout:active { transform: scale(.97); }
+
+	.summary-links {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+		margin-top: var(--s-5);
+		font-size: var(--t-body-s);
+	}
+
+	.summary-links a {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+	}
+	.summary-links a svg {
+		width: 16px;
+		height: 16px;
+		transition: transform var(--dur-2) var(--ease-out);
+	}
+	.summary-links a:hover svg { transform: translateX(2px); }
+
+	.summary-caption {
+		margin: var(--s-5) 0 0;
+		color: var(--muted);
+		font-size: var(--t-caption);
+		line-height: 1.35;
+	}
+
+	/* ---------- empty state ---------- */
+
+	.empty {
+		display: none;
+		padding: var(--section) 0;
+		max-width: 62ch;
+	}
+
+	.empty_mark {
+		display: grid;
+		place-items: center;
+		width: 64px;
+		height: 64px;
+		border-radius: var(--r-pill);
+		background: var(--surface);
+		color: var(--muted);
+	}
+	.empty_mark svg { width: 24px; height: 24px; }
+
+	.empty h2 {
+		margin: var(--s-6) 0 var(--s-3);
+		font-size: var(--t-title);
+		font-weight: 600;
+		line-height: 1.08;
+		letter-spacing: -0.022em;
+	}
+
+	.empty p {
+		margin: 0 0 var(--s-6);
+		color: var(--muted);
+		font-size: var(--t-body);
+	}
+
+	.empty-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-5);
+		font-size: var(--t-body-s);
+	}
+
+	body[data-cart="empty"] .bag { display: none; }
+	body[data-cart="empty"] .empty { display: block; }
+	body[data-cart="empty"] .cart-link .badge { display: none; }
+
+	/* ---------- footer ---------- */
+
+	.site-footer {
+		border-top: 1px solid var(--hairline);
+		padding: var(--s-7) 0 var(--s-9);
+	}
+
+	.footer-inner {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 var(--s-8);
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-4) var(--s-7);
+		align-items: baseline;
+		justify-content: space-between;
+	}
+
+	.footer-inner p { margin: 0; }
+
+	.sample-notice {
+		color: var(--muted);
+		font-size: var(--t-caption);
+		line-height: 1.35;
+	}
+
+	.footer-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-5);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-size: var(--t-body-s);
+	}
+
+	/* ---------- canvas preview control (design harness, not product UI) ---------- */
+
+	.preview {
+		position: fixed;
+		left: var(--s-4);
+		bottom: var(--s-4);
+		z-index: 30;
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+		padding: var(--s-1);
+		border: 1px dashed var(--hairline);
+		border-radius: var(--r-pill);
+		background: rgba(255,255,255,.92);
+		-webkit-backdrop-filter: blur(12px);
+		backdrop-filter: blur(12px);
+		font-size: var(--t-caption);
+	}
+
+	.preview span {
+		padding-inline: var(--s-2);
+		color: var(--muted);
+		letter-spacing: 0.01em;
+	}
+
+	.preview button {
+		min-height: 32px;
+		padding: 0 var(--s-3);
+		border: 0;
+		border-radius: var(--r-pill);
+		background: none;
+		color: var(--ink);
+		font: inherit;
+		cursor: pointer;
+	}
+	.preview button[aria-pressed="true"] {
+		background: var(--ink);
+		color: var(--white);
+	}
+
+	@media (max-width: 1023px) {
+		.bag { grid-template-columns: minmax(0, 1fr); gap: var(--s-7); }
+		.summary { position: static; }
+	}
+
+	@media (max-width: 639px) {
+		main, .footer-inner { padding: 0 var(--s-5); }
+
+		.line {
+			grid-template-columns: 96px minmax(0, 1fr);
+			gap: var(--s-4);
+		}
+		.line-money {
+			grid-column: 2;
+			justify-items: start;
+			text-align: left;
+			margin-top: var(--s-2);
+		}
+		.ordinal { grid-column: 1; grid-row: 2; align-self: end; }
+		.line-controls { gap: var(--s-4); }
+		.summary { padding: var(--s-5); }
+		.preview { display: none; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		*, *::before, *::after {
+			animation-duration: 0.001ms !important;
+			transition-duration: 0.001ms !important;
+		}
+		.line:hover .line-media img { transform: none; }
+	}
+</style>
+</head>
+<body data-cart="filled">
+
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="site-header">
+	<div class="header-inner">
+		<a class="brand" href="/">
+			<svg class="logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+			iTech Store
+		</a>
+
+		<nav class="main-nav" aria-label="Principal">
+			<ul>
+				<li><a href="/catalogo?familia=mac">Mac</a></li>
+				<li><a href="/catalogo?familia=ipad">iPad</a></li>
+				<li><a href="/catalogo?familia=watch">Watch</a></li>
+				<li><a href="/catalogo?familia=airpods">AirPods</a></li>
+				<li><a href="/catalogo?familia=accessory">Accesorios</a></li>
+				<li><a href="/contacto">Contacto</a></li>
+			</ul>
+		</nav>
+
+		<details class="menu-toggle">
+			<summary aria-label="Menú">
+				<svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 8h16M4 16h16"/></svg>
+				<svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+			</summary>
+			<div class="menu-panel">
+				<nav aria-label="Principal">
+					<ul>
+						<li><a href="/catalogo?familia=mac">Mac</a></li>
+						<li><a href="/catalogo?familia=ipad">iPad</a></li>
+						<li><a href="/catalogo?familia=watch">Watch</a></li>
+						<li><a href="/catalogo?familia=airpods">AirPods</a></li>
+						<li><a href="/catalogo?familia=accessory">Accesorios</a></li>
+						<li><a href="/contacto">Contacto</a></li>
+					</ul>
+				</nav>
+			</div>
+		</details>
+
+		<div class="header-actions">
+			<button class="icon-button" type="button">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+				<span class="visually-hidden">Buscar</span>
+			</button>
+
+			<a class="icon-button cart-link" href="/carrito" aria-current="page">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"/></svg>
+				<span class="visually-hidden">Carrito</span>
+				<span class="badge" aria-hidden="true">5</span>
+			</a>
+		</div>
+	</div>
+</header>
+
+<main id="contenido">
+	<div class="page-head">
+		<h1>Tu carrito</h1>
+		<p id="bag-count">4 productos · 5 unidades</p>
+	</div>
+	<div class="full-bleed"></div>
+
+	<div class="bag">
+		<section aria-labelledby="lines-heading">
+			<h2 id="lines-heading" class="visually-hidden">Productos en el carrito</h2>
+
+			<ol class="lines">
+				<li class="line">
+					<figure class="line-media">
+						<img src="/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp"
+							alt="Apple iPad 11 pulgadas A16 en color azul, de frente"
+							width="640" height="640">
+					</figure>
+
+					<div>
+						<a class="line-name" href="/catalogo/apple-ipad-11-a16-chip-wi-fi">Apple iPad 11&quot; A16 Chip WI-FI</a>
+						<p class="line-variant">Capacidad 256 GB</p>
+
+						<div class="line-controls">
+							<div class="qty" role="group" aria-label="Cantidad de Apple iPad 11 pulgadas A16">
+								<button type="button" aria-label="Quitar una unidad de Apple iPad 11 pulgadas A16">−</button>
+								<output aria-live="polite">1</output>
+								<button type="button" aria-label="Agregar una unidad de Apple iPad 11 pulgadas A16">+</button>
+							</div>
+							<button class="text-button" type="button">Quitar del carrito</button>
+						</div>
+					</div>
+
+					<div class="line-money">
+						<span class="unit">$ 1.035.000 c/u</span>
+						<span class="line-total"><span class="visually-hidden">Total de la línea: </span>$ 1.035.000</span>
+						<span class="ordinal" aria-hidden="true">01</span>
+					</div>
+				</li>
+
+				<li class="line">
+					<figure class="line-media">
+						<img src="/products/mac/apple-13-macbook-air-chip-m5-1.webp"
+							alt="Apple MacBook Air de 13 pulgadas con chip M5, abierta de frente"
+							width="640" height="640">
+					</figure>
+
+					<div>
+						<a class="line-name" href="/catalogo/apple-13-macbook-air-chip-m5">Apple 13&quot; MacBook Air - Chip M5</a>
+						<p class="line-variant">Mac</p>
+
+						<div class="line-controls">
+							<div class="qty" role="group" aria-label="Cantidad de Apple 13 pulgadas MacBook Air">
+								<button type="button" aria-label="Quitar una unidad de Apple 13 pulgadas MacBook Air">−</button>
+								<output aria-live="polite">1</output>
+								<button type="button" aria-label="Agregar una unidad de Apple 13 pulgadas MacBook Air">+</button>
+							</div>
+							<button class="text-button" type="button">Quitar del carrito</button>
+						</div>
+					</div>
+
+					<div class="line-money">
+						<span class="unit">$ 2.000.000 c/u</span>
+						<span class="line-total"><span class="visually-hidden">Total de la línea: </span>$ 2.000.000</span>
+						<span class="ordinal" aria-hidden="true">02</span>
+					</div>
+				</li>
+
+				<li class="line">
+					<figure class="line-media">
+						<img src="/products/watch/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-1.webp"
+							alt="Apple Watch Series 11 con caja de aluminio negro y correa deportiva negra"
+							width="640" height="640">
+					</figure>
+
+					<div>
+						<a class="line-name" href="/catalogo/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra">Apple Watch Series 11 - Caja Aluminio Negro - Correa Deportiva Negra</a>
+						<p class="line-variant">Watch</p>
+
+						<div class="line-controls">
+							<div class="qty" role="group" aria-label="Cantidad de Apple Watch Series 11">
+								<button type="button" aria-label="Quitar una unidad de Apple Watch Series 11">−</button>
+								<output aria-live="polite">1</output>
+								<button type="button" aria-label="Agregar una unidad de Apple Watch Series 11">+</button>
+							</div>
+							<button class="text-button" type="button">Quitar del carrito</button>
+						</div>
+					</div>
+
+					<div class="line-money">
+						<span class="unit">$ 600.000 c/u</span>
+						<span class="line-total"><span class="visually-hidden">Total de la línea: </span>$ 600.000</span>
+						<span class="ordinal" aria-hidden="true">03</span>
+					</div>
+				</li>
+
+				<li class="line">
+					<figure class="line-media">
+						<img src="/products/accessory/apple-homepod-mini-2da-generacion-1.webp"
+							alt="Apple HomePod Mini de segunda generación, en gris espacial"
+							width="640" height="640">
+					</figure>
+
+					<div>
+						<a class="line-name" href="/catalogo/apple-homepod-mini-2da-generacion">Apple HomePod Mini (2da Generación)</a>
+						<p class="line-variant">Accesorios</p>
+
+						<div class="line-controls">
+							<div class="qty" role="group" aria-label="Cantidad de Apple HomePod Mini de segunda generación">
+								<button type="button" aria-label="Quitar una unidad de Apple HomePod Mini de segunda generación">−</button>
+								<output aria-live="polite">2</output>
+								<button type="button" aria-label="Agregar una unidad de Apple HomePod Mini de segunda generación">+</button>
+							</div>
+							<button class="text-button" type="button">Quitar del carrito</button>
+						</div>
+					</div>
+
+					<div class="line-money">
+						<span class="unit">$ 30.000 c/u</span>
+						<span class="line-total"><span class="visually-hidden">Total de la línea: </span>$ 60.000</span>
+						<span class="ordinal" aria-hidden="true">04</span>
+					</div>
+				</li>
+			</ol>
+		</section>
+
+		<aside class="summary" aria-labelledby="summary-heading">
+			<h2 id="summary-heading">Resumen</h2>
+
+			<dl>
+				<div class="summary-row">
+					<dt>Subtotal</dt>
+					<dd>$ 3.695.000</dd>
+				</div>
+				<div class="summary-row">
+					<dt>Envío</dt>
+					<dd class="note">Se coordina al finalizar</dd>
+				</div>
+			</dl>
+
+			<dl class="summary-total">
+				<dt>Total</dt>
+				<dd><span class="currency">$</span>3.695.000</dd>
+			</dl>
+
+			<button class="checkout" type="button">Finalizar compra</button>
+
+			<div class="summary-links">
+				<a href="/catalogo">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"/></svg>
+					Seguir comprando
+				</a>
+				<a href="/contacto">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"/></svg>
+					Consultar por una compra
+				</a>
+			</div>
+
+			<p class="summary-caption">El pago se hace con MercadoPago en el paso siguiente. Los precios están en pesos argentinos.</p>
+		</aside>
+	</div>
+
+	<section class="empty" aria-labelledby="empty-heading">
+		<div class="empty_mark" aria-hidden="true">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"/></svg>
+		</div>
+		<h2 id="empty-heading">Todavía no hay nada en tu carrito</h2>
+		<p>Cuando agregues un producto lo vas a ver acá, con su capacidad, la cantidad y el total antes de pagar.</p>
+		<div class="empty-links">
+			<a href="/catalogo">Ver todo el catálogo</a>
+			<a href="/catalogo?familia=mac">Explorar Mac</a>
+			<a href="/contacto">Consultarnos</a>
+		</div>
+	</section>
+</main>
+
+<footer class="site-footer">
+	<div class="footer-inner">
+		<p class="sample-notice">Los precios de este catálogo son de ejemplo y no son precios de venta.</p>
+		<ul class="footer-links">
+			<li><a href="/contacto">Contacto</a></li>
+			<li><a href="/catalogo">Catálogo</a></li>
+		</ul>
+	</div>
+</footer>
+
+<div class="preview" role="group" aria-label="Vista previa del estado del carrito">
+	<span>Vista previa</span>
+	<button type="button" aria-pressed="true" data-state="filled">Con productos</button>
+	<button type="button" aria-pressed="false" data-state="empty">Vacío</button>
+</div>
+
+<script>
+	document.querySelectorAll('.preview button').forEach(function (button) {
+		button.addEventListener('click', function () {
+			document.body.dataset.cart = button.dataset.state;
+			document.querySelectorAll('.preview button').forEach(function (other) {
+				other.setAttribute('aria-pressed', String(other === button));
+			});
+		});
+	});
+</script>
+</body>
+</html>
