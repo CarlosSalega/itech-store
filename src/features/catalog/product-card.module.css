@@ -89,7 +89,11 @@
 	color: inherit;
 }
 
-.name a:hover {
+/* The whole work is the target, not just its name: hovering anywhere on the
+   card — photograph, label or price — announces that the wall label is a link.
+   `focus-within` keeps the keyboard path identical to the pointer one. */
+.work:hover .name a,
+.work:focus-within .name a {
 	color: var(--link);
 }
 

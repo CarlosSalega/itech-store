@@ -291,7 +291,9 @@ moves 2px on hover. A text button is never styled as a bordered box.
 
 **Product card** — `<article>`: image tile (`--surface`, `--r-lg`, 4:3, `object-fit: contain`,
 `padding: --s-5`), then name (`--t-headline`), then price block, then optional capacity note. The
-whole card is not a link: the name is, and the tile is inside it. Card lift + photo `1.02` on hover.
+whole card is not a link: the name is, and the tile is inside it. Card lift + photo `1.02` on hover,
+and hovering anywhere on the card turns the name `--link` (`:focus-within` on the card keeps the
+keyboard path the same), so the card announces its link before you reach the name.
 A direction may change the container: Galería hangs the photo on the page with no tile and captions
 it (wall label), and Vitrina puts the dominant product in a case at 2×2 while its neighbours stay
 1×1. The name / price / capacity order and the link rules never change.
