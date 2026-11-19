@@ -32,12 +32,27 @@ S13 — Copy is Argentine Spanish with voseo, quoted here verbatim where it is f
 
 ## Tasks
 
-- T1 — Cart domain and storage: types, pure reducers, totals, summary label, versioned `localStorage` repository with defensive parsing. Route: inline. Tests first. Commit: `feat(cart): add the cart domain and a defensive local repository`. Specs: S4, S5, S6, S8, S12.
-- T2 — Panel component: dialog semantics, focus trap, scroll lock, lines, stepper, remove, `Recién agregado`, empty state, footer, tokens from `design/system.md`. Route: inline. Commit: `feat(cart): build the side drawer over the cart domain`. Specs: S1–S7, S13.
-- T3 — Wiring: cart provider in the layout, live header trigger with badge, `Agregar al carrito` in the variant selector. Route: inline. Commit: `feat(cart): open the drawer from the header and the product page`. Specs: S10, S13.
-- T4 — Price revalidation server action and its UI states. Route: inline. Commit: `feat(cart): revalidate stored prices against the catalogue`. Specs: S9, S12.
-- T5 — `/finalizar-compra` placeholder page. Route: inline. Commit: `feat(cart): add the checkout placeholder route`. Specs: S11, S13.
-- T6 — Verification: unit tests for the domain, storage and revalidation rules, `pnpm lint`, `pnpm typecheck`, `pnpm build`, structural readback of the panel against the artboard, and `design.json` updated with the chosen artboard and this feature.
+- T1 — Cart domain and storage: types, pure reducers, totals, summary label, versioned `localStorage` repository with defensive parsing. Route: inline. Tests first. Commit: `0f29bea feat(cart): add the cart domain and a defensive local repository` — done. Specs: S4, S5, S6, S8, S12.
+- T2 — Panel component: dialog semantics, focus trap, scroll lock, lines, stepper, remove, `Recién agregado`, empty state, footer, tokens from `design/system.md`. Route: inline. Commit: `6b60dbf feat(cart): build the side drawer over the cart domain` — done. Specs: S1–S7, S13.
+- T3 — Wiring: cart provider in the layout, live header trigger with badge, `Agregar al carrito` in the variant selector. Route: inline. Commit: `f1861aa feat(cart): open the drawer from the header and the product page` — done. Specs: S10, S13.
+- T4 — Price revalidation server action and its UI states. Route: inline. Commit: `54f327b feat(cart): revalidate stored prices against the catalogue` — done. Specs: S9, S12.
+- T5 — `/finalizar-compra` placeholder page. Route: inline. Commit: `1a3c22a feat(cart): add the checkout placeholder route` — done. Specs: S11, S13.
+- T6 — Verification and evidence. Route: inline. Commit: `6a7423a feat(cart): keep the newest line editable inside its confirmation block`, plus the evidence commit that adds `feature` to `design.json`. Specs: S1–S13.
+
+## Verification
+
+Run on `feat/cart`:
+
+- `pnpm test` — 15 files, 144 tests, all green. The cart's own: `cart.test.ts` (15), `cart-storage.test.ts` (10), `cart-store.test.ts` (6), `cart-revalidation.test.ts` (7).
+- `pnpm typecheck` — clean.
+- `pnpm lint` — clean. The first provider draft hydrated through a `useEffect` and the React 19 compiler rule `react-hooks/set-state-in-effect` rejected it; the cart became an external store read through `useSyncExternalStore` (`cart-store.ts`), which is also why the server renders the empty cart and the browser the stored one with no hydration mismatch.
+- `pnpm build` — clean; `/finalizar-compra` appears as a static route.
+- Structural readback of the panel against the artboard: 16/16 required strings and attributes present (dialog role and `aria-modal`, the close label, the count, `Recién agregado`, the empty-state copy, the total label, both CTAs, the shipping caption); the drawer carries no `h1` because the page owns it, and it uses one `h2` and one `h3`.
+- **Not verified**: the browser pass. The owner runs every dev server and none was running for this session, so there is no screenshot comparison between the drawer and `02-cart-drawer.html` yet, and stored-cart behaviour was proven against a fake `localStorage`, not a real browser profile.
+
+## Delivery
+
+Branch `feat/cart`, 8 commits ahead of `origin/main`, not pushed. The feature totals roughly 5.5k authored changed lines, far past the ~400-line review slice, because it is a whole feature rather than a single work unit: publishing it needs a stacked-PR or `size:exception` decision from the owner. The natural cuts are T1+T2 (domain, storage and the panel), T3 (wiring), T4 (revalidation) and T5 (placeholder route).
 
 ## Log
 
@@ -47,3 +62,5 @@ S13 — Copy is Argentine Spanish with voseo, quoted here verbatim where it is f
 - L4 (owner, verbatim): "sigamos con el artboard del carrito donde nos quedamos" — resume point: three artboards existed, direction undecided.
 - L5 (owner, decisions, verbatim option labels): direction `02 · Panel lateral 480px`; shipping `Mantener "se coordina al finalizar"`; checkout CTA `Activo, apunta hacia adelante`.
 - L6 (owner, verbatim, on persistence): "lee la memoria, en engram esta la info del proyecto". Evidence read: `prisma/schema.prisma` has only `Product` and `Variant`, no cart table and no user model, and Better Auth is not implemented; Engram records persistence as an open decision, never taken. Derived and recorded as S8: `localStorage` behind a repository module, database later without touching components.
+- L7 (implementation decision): the artboard's `Recién agregado` card carries no controls, so a cart holding a single product would have had no stepper and no remove button until the panel was closed. The card now owns that line's controls while the marker is set (`6a7423a`). This is the one deliberate deviation from the artboard's pixels, and it exists so the newest line is never a dead card.
+- L8 (verification finding): the storage envelope required a `version` field the tests did not write. The key already carries the version, so a missing field is accepted and a different one is rejected; the rule lives in `parseCart` with a comment.
