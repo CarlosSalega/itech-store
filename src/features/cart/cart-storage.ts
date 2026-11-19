@@ -205,16 +205,26 @@ export function readStoredCart(storage: ReadableStorage | null | undefined): Car
 	}
 }
 
-/** Writes the cart; a full or unavailable storage never breaks the page. */
-export function writeStoredCart(storage: WritableStorage | null | undefined, cart: Cart): void {
+/**
+ * Writes the cart. Returns whether the storage accepted it: a full or
+ * unavailable storage never breaks the page, and the caller needs to know that
+ * the session copy is now the only copy.
+ */
+export function writeStoredCart(
+	storage: WritableStorage | null | undefined,
+	cart: Cart,
+): boolean {
 	if (storage === null || storage === undefined) {
-		return;
+		return false;
 	}
 
 	try {
 		storage.setItem(CART_STORAGE_KEY, serializeCart(cart));
+
+		return true;
 	} catch {
 		// Quota, private mode, a disabled store: the cart still works in memory.
+		return false;
 	}
 }
 

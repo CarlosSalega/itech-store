@@ -72,3 +72,35 @@ export function ChevronRightIcon({ className }: IconProps) {
 		</svg>
 	);
 }
+
+export function CheckIcon({ className }: IconProps) {
+	return (
+		<svg {...iconProps} className={className}>
+			<path d="M5 12.5 9.5 17 19 7.5" />
+		</svg>
+	);
+}
+
+export function MinusIcon({ className }: IconProps) {
+	return (
+		<svg {...iconProps} className={className}>
+			<path d="M6 12h12" />
+		</svg>
+	);
+}
+
+export function PlusIcon({ className }: IconProps) {
+	return (
+		<svg {...iconProps} className={className}>
+			<path d="M12 6v12M6 12h12" />
+		</svg>
+	);
+}
+
+export function TrashIcon({ className }: IconProps) {
+	return (
+		<svg {...iconProps} className={className}>
+			<path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" />
+		</svg>
+	);
+}
