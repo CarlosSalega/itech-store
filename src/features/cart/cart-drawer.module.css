@@ -455,3 +455,19 @@
 	line-height: 1.4;
 	text-align: center;
 }
+
+/* A line the catalogue no longer sells: visible, removable, out of the total. */
+.unavailable {
+	margin: var(--s-2) 0 0;
+	color: var(--muted);
+	font-size: var(--t-caption);
+	line-height: 1.4;
+}
+
+/* Price verification state, above the total. */
+.notice {
+	margin: 0 0 var(--s-3);
+	color: var(--muted);
+	font-size: var(--t-caption);
+	line-height: 1.4;
+}

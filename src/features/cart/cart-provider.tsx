@@ -27,6 +27,8 @@ import {
 	getCartSnapshot,
 	subscribeCart,
 } from "./cart-store";
+import { revalidateCart } from "./cart-actions";
+import { applyRevalidation } from "./cart-revalidation";
 
 /**
  * The cart's client state: one provider at the root, so the header badge, the
@@ -37,11 +39,19 @@ import {
  * and every mutation is a write through the store. Only the panel's open flag is
  * React state, because nothing outside the browser owns it.
  */
+/**
+ * Whether the prices the panel shows were checked against the catalogue when the
+ * panel opened (§S9). `failed` means the snapshot is on screen and the panel says
+ * so; it never means the snapshot is current.
+ */
+export type PriceVerification = "idle" | "checking" | "verified" | "failed";
+
 type CartContextValue = {
 	cart: Cart;
 	totals: CartTotals;
 	lastAdded: CartLine | undefined;
 	isOpen: boolean;
+	verification: PriceVerification;
 	addLine: (line: CartLine) => void;
 	setQuantity: (variantId: string, quantity: number) => void;
 	removeLine: (variantId: string) => void;
@@ -64,6 +74,7 @@ export function useCart(): CartContextValue {
 export function CartProvider({ children }: { children: ReactNode }) {
 	const cart = useSyncExternalStore(subscribeCart, getCartSnapshot, getCartServerSnapshot);
 	const [isOpen, setIsOpen] = useState(false);
+	const [verification, setVerification] = useState<PriceVerification>("idle");
 
 	// Every mutation reads the freshest snapshot instead of a captured render:
 	// two clicks before a re-render must not both start from the same cart.
@@ -81,6 +92,31 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
 	const openCart = useCallback(() => {
 		setIsOpen(true);
+
+		const current = getCartSnapshot();
+
+		if (current.lines.length === 0) {
+			setVerification("idle");
+			return;
+		}
+
+		// Revalidating on open, not on render: the panel opens immediately with the
+		// snapshot and corrects itself when the answer arrives.
+		setVerification("checking");
+
+		void revalidateCart(current.lines.map((line) => line.variantId))
+			.then((result) => {
+				if (!result.ok) {
+					setVerification("failed");
+					return;
+				}
+
+				commitCart(applyRevalidation(getCartSnapshot(), result));
+				setVerification("verified");
+			})
+			.catch(() => {
+				setVerification("failed");
+			});
 	}, []);
 
 	const closeCart = useCallback(() => {
@@ -95,13 +131,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 			totals: cartTotals(cart),
 			lastAdded: lastAddedLine(cart),
 			isOpen,
+			verification,
 			addLine,
 			setQuantity,
 			removeLine,
 			openCart,
 			closeCart,
 		}),
-		[cart, isOpen, addLine, setQuantity, removeLine, openCart, closeCart],
+		[cart, isOpen, verification, addLine, setQuantity, removeLine, openCart, closeCart],
 	);
 
 	return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

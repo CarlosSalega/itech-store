@@ -41,7 +41,8 @@ const FOCUSABLE =
  * it.
  */
 export function CartDrawer() {
-	const { cart, totals, lastAdded, isOpen, closeCart, setQuantity, removeLine } = useCart();
+	const { cart, totals, lastAdded, isOpen, verification, closeCart, setQuantity, removeLine } =
+		useCart();
 	const panelRef = useRef<HTMLElement | null>(null);
 	const openerRef = useRef<HTMLElement | null>(null);
 
@@ -190,6 +191,11 @@ export function CartDrawer() {
 											{line.productName}
 										</Link>
 										<p className={styles.lineVariant}>{variantLabelOf(line)}</p>
+										{line.available ? null : (
+											<p className={styles.unavailable}>
+												Ya no está disponible. Quitalo para seguir con la compra.
+											</p>
+										)}
 										<div className={styles.lineBottom}>
 											<div
 												aria-label={`Cantidad de ${line.productName}`}
@@ -198,7 +204,7 @@ export function CartDrawer() {
 											>
 												<button
 													aria-label={`Quitar una unidad de ${line.productName}`}
-													disabled={line.quantity <= 1}
+													disabled={!line.available || line.quantity <= 1}
 													onClick={() => setQuantity(line.variantId, line.quantity - 1)}
 													type="button"
 												>
@@ -207,7 +213,7 @@ export function CartDrawer() {
 												<output aria-live="polite">{line.quantity}</output>
 												<button
 													aria-label={`Agregar una unidad de ${line.productName}`}
-													disabled={line.quantity >= MAX_LINE_QUANTITY}
+													disabled={!line.available || line.quantity >= MAX_LINE_QUANTITY}
 													onClick={() => setQuantity(line.variantId, line.quantity + 1)}
 													type="button"
 												>
@@ -248,6 +254,16 @@ export function CartDrawer() {
 				)}
 
 				<footer className={styles.foot}>
+					{verification === "checking" ? (
+						<p aria-live="polite" className={styles.notice}>
+							Verificando los precios contra el catálogo…
+						</p>
+					) : null}
+					{verification === "failed" ? (
+						<p aria-live="polite" className={styles.notice}>
+							No pudimos verificar los precios. Mostramos los últimos que vimos.
+						</p>
+					) : null}
 					{hasLines ? (
 						<>
 							<dl className={styles.totals}>
