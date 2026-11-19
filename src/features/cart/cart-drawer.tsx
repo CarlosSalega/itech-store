@@ -53,12 +53,27 @@ export function CartDrawer() {
 		openerRef.current =
 			document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
-		const body = document.body;
-		const previousOverflow = body.style.overflow;
-		// The page behind must not scroll while the panel is open, and it keeps its
-		// position because nothing scrolls — the panel scrolls itself.
-		body.style.overflow = "hidden";
-		panelRef.current?.focus();
+		/* The document scroller is <html>, not <body>: `globals.css` sets
+		   `overflow-x: clip` on it so the full-bleed rules never grow a horizontal
+		   bar, and that is also why the body can never lock the page — its overflow
+		   does not propagate to the viewport. Locking the body anyway does real
+		   damage: body becomes a scroll container, the sticky header stops sticking
+		   to the viewport and drops to its static position, which moves it up by the
+		   whole scroll offset (a few pixels at the top of a page, off-screen further
+		   down). So the lock goes on the element that actually scrolls, and the
+		   scrollbar's width is handed back as padding so nothing shifts sideways. */
+		const root = document.documentElement;
+		const scrollbarGutter = window.innerWidth - root.clientWidth;
+		const previousOverflowY = root.style.overflowY;
+		const previousPaddingRight = root.style.paddingRight;
+
+		root.style.overflowY = "hidden";
+
+		if (scrollbarGutter > 0) {
+			root.style.paddingRight = `${scrollbarGutter}px`;
+		}
+
+		panelRef.current?.focus({ preventScroll: true });
 
 		function onKeyDown(event: KeyboardEvent) {
 			if (event.key === "Escape") {
@@ -105,8 +120,9 @@ export function CartDrawer() {
 
 		return () => {
 			document.removeEventListener("keydown", onKeyDown);
-			body.style.overflow = previousOverflow;
-			openerRef.current?.focus();
+			root.style.overflowY = previousOverflowY;
+			root.style.paddingRight = previousPaddingRight;
+			openerRef.current?.focus({ preventScroll: true });
 		};
 	}, [isOpen, closeCart]);
 
