@@ -1,0 +1,26 @@
+/* The badge sits on the bag glyph's shoulder, inside the 44px touch target. */
+
+.trigger {
+	position: relative;
+	color: var(--ink);
+	cursor: pointer;
+}
+
+.badge {
+	position: absolute;
+	top: 6px;
+	right: 2px;
+	display: grid;
+	place-items: center;
+	min-width: 16px;
+	height: 16px;
+	padding: 0 4px;
+	border-radius: var(--r-pill);
+	background: var(--accent);
+	color: var(--white);
+	font-size: 10px;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+	pointer-events: none;
+}

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 
+import { CartProvider } from "@/features/cart/cart-provider";
+import { CartDrawer } from "@/features/cart/cart-drawer";
 import { WhatsappButton } from "@/features/contact/whatsapp-button";
 
 export const metadata: Metadata = {
@@ -14,7 +16,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 	return (
 		<html lang="es-AR">
 			<body>
-				{children}
+				{/* The cart outlives every page: one provider, one drawer, both at the root. */}
+				<CartProvider>
+					{children}
+					<CartDrawer />
+				</CartProvider>
 				{/* Public pages only today: no private route exists yet. When auth lands
 				    these pages move into a (public) route group, and this moves with them. */}
 				<WhatsappButton />

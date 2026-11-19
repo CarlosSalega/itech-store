@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { useCart } from "@/features/cart/cart-provider";
+
 import { formatArsPrice } from "./format-price";
 import { resolveVariant, splitPrice } from "./variant-selection";
 
@@ -16,9 +18,20 @@ export type VariantOption = {
 	sku: string;
 	/** Capacity, colour, or a single-presentation label. */
 	label: string;
+	/** `Capacidad 256 GB`-style capacity, or `null` when the variant has none. */
+	variantLabel: string | null;
 	/** Integer ARS cents. */
 	price: number;
 	stock: number;
+};
+
+/** What the cart needs to know about the product this variant belongs to. */
+export type SelectorProduct = {
+	slug: string;
+	name: string;
+	/** The family label, used by the cart when the variant has no capacity. */
+	familyLabel: string;
+	imageUrl: string | null;
 };
 
 /**
@@ -27,11 +40,19 @@ export type VariantOption = {
  * are already server-rendered for the first variant, so the page reads correctly
  * before hydration.
  *
- * The cart does not exist in this milestone, so the action is disabled and says
- * so in text. Nothing here fakes a flow or a success state.
+ * The cart does exist now: the action adds the chosen variant and opens the
+ * drawer, and a variant with no stock keeps the action disabled and says so
+ * instead of faking a flow.
  */
-export function VariantSelector({ variants }: { variants: VariantOption[] }) {
+export function VariantSelector({
+	variants,
+	product,
+}: {
+	variants: VariantOption[];
+	product: SelectorProduct;
+}) {
 	const [selectedId, setSelectedId] = useState(variants[0]?.id ?? "");
+	const { addLine, openCart } = useCart();
 	const variant = resolveVariant(variants, selectedId);
 
 	if (variant === undefined) {
@@ -105,18 +126,38 @@ export function VariantSelector({ variants }: { variants: VariantOption[] }) {
 
 			<div className={styles.actions}>
 				<button
-					aria-describedby="cart-note"
+					aria-describedby={variant.stock === 0 ? "cart-note" : undefined}
 					className={styles.buy}
-					disabled
+					disabled={variant.stock === 0}
+					onClick={() => {
+						addLine({
+							variantId: variant.id,
+							sku: variant.sku,
+							productSlug: product.slug,
+							productName: product.name,
+							familyLabel: product.familyLabel,
+							variantLabel: variant.variantLabel,
+							imageUrl: product.imageUrl,
+							imageAlt: `${product.name}, ${variant.label}`,
+							unitPriceCents: variant.price,
+							quantity: 1,
+							// The snapshot claims nothing about the database: opening the cart
+							// revalidates it against the catalogue.
+							available: true,
+						});
+						openCart();
+					}}
 					type="button"
 				>
 					Agregar al carrito
 				</button>
 			</div>
-			<p className={styles.soon} id="cart-note">
-				Próximamente: el carrito todavía no existe en esta versión del catálogo,
-				así que este botón está desactivado a propósito y no se envía nada.
-			</p>
+			{variant.stock === 0 ? (
+				<p className={styles.soon} id="cart-note">
+					Esta presentación no tiene stock de muestra, así que no se puede
+					agregar al carrito.
+				</p>
+			) : null}
 		</>
 	);
 }

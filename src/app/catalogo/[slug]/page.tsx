@@ -87,6 +87,9 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 		id: variant.id,
 		sku: variant.sku,
 		label: variantLabel(variant.storage, variant.color),
+		// The cart names the capacity and falls back to the family label when the
+		// variant has none, so a colour-only variant never reads as "Única presentación".
+		variantLabel: formatStorage(variant.storage),
 		price: variant.price,
 		stock: variant.stock,
 	}));
@@ -194,7 +197,15 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 							<div className={styles.body}>
 								<p className={styles.lead}>{product.description}</p>
 
-								<VariantSelector variants={selectorVariants} />
+								<VariantSelector
+									product={{
+										slug: product.slug,
+										name: product.name,
+										familyLabel: FAMILY_LABEL[product.category],
+										imageUrl: product.images[0] ?? null,
+									}}
+									variants={selectorVariants}
+								/>
 							</div>
 						</div>
 					</div>
