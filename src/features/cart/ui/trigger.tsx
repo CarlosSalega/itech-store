@@ -2,16 +2,10 @@
 
 import { BagIcon } from "@/features/catalog/icons";
 
-import { useCart } from "./cart-provider";
+import { useCart } from "./provider";
 
-import styles from "./cart-trigger.module.css";
+import styles from "./trigger.module.css";
 
-/**
- * The header's bag, now that there is a cart behind it. It is a client component
- * only because of the count and the panel: during hydration React renders the
- * server snapshot (an empty cart, no badge) and immediately re-reads the stored
- * one, so no markup ever disagrees.
- */
 export function CartTrigger({
 	className,
 	iconClassName,

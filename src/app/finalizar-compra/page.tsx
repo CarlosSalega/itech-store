@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { SiteFooter } from "@/app/_components/site-footer";
 import { SiteHeader } from "@/app/_components/site-header";
-import { CheckoutSummary } from "@/features/cart/checkout-summary";
+import { CheckoutSummary } from "@/features/cart/ui/checkout-summary";
 
 import styles from "./finalizar-compra.module.css";
 

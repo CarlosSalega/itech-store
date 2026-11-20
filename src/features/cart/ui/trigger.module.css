@@ -1,5 +1,3 @@
-/* The badge sits on the bag glyph's shoulder, inside the 44px touch target. */
-
 .trigger {
 	position: relative;
 	color: var(--ink);

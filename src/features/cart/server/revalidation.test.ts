@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { cartTotals, type Cart, type CartLine } from "./cart";
-import { applyRevalidation, type CatalogVariant } from "./cart-revalidation";
+import { cartTotals, type Cart, type CartLine } from "../domain/cart";
+import { applyRevalidation, type CatalogVariant } from "./revalidation";
 
 function line(overrides: Partial<CartLine> = {}): CartLine {
 	return {

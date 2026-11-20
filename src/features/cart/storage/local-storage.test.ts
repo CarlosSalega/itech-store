@@ -5,14 +5,14 @@ import {
 	MAX_LINE_QUANTITY,
 	type Cart,
 	type CartLine,
-} from "./cart";
+} from "../domain/cart";
 import {
 	CART_STORAGE_KEY,
 	parseCart,
 	readStoredCart,
 	serializeCart,
 	writeStoredCart,
-} from "./cart-storage";
+} from "./local-storage";
 
 function line(overrides: Partial<CartLine> = {}): CartLine {
 	return {

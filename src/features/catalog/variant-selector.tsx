@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { useCart } from "@/features/cart/cart-provider";
+import { useCart } from "@/features/cart/ui/provider";
 
 import { formatArsPrice } from "./format-price";
 import { resolveVariant, splitPrice } from "./variant-selection";
