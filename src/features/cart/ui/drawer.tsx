@@ -22,24 +22,14 @@ import {
 	lineContextLabel,
 	variantLabelOf,
 	type CartLine,
-} from "./cart";
-import { useCart } from "./cart-provider";
+} from "../domain/cart";
+import { useCart } from "./provider";
 
-import styles from "./cart-drawer.module.css";
+import styles from "./drawer.module.css";
 
 const FOCUSABLE =
 	'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-/**
- * The side drawer of `design/cart/02-cart-drawer.html`, the owner's chosen
- * direction: the cart is edited over whatever the visitor was reading.
- *
- * It is a modal dialog by hand rather than by dependency: `role="dialog"` with
- * `aria-modal`, focus moved in and trapped, the page behind locked, Escape and a
- * scrim click to close, and focus returned to whatever opened it. The animation
- * is CSS only, so `prefers-reduced-motion` in `globals.css` already neutralises
- * it.
- */
 export function CartDrawer() {
 	const { cart, totals, lastAdded, isOpen, verification, closeCart } = useCart();
 	const panelRef = useRef<HTMLElement | null>(null);
@@ -53,15 +43,6 @@ export function CartDrawer() {
 		openerRef.current =
 			document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
-		/* The document scroller is <html>, not <body>: `globals.css` sets
-		   `overflow-x: clip` on it so the full-bleed rules never grow a horizontal
-		   bar, and that is also why the body can never lock the page — its overflow
-		   does not propagate to the viewport. Locking the body anyway does real
-		   damage: body becomes a scroll container, the sticky header stops sticking
-		   to the viewport and drops to its static position, which moves it up by the
-		   whole scroll offset (a few pixels at the top of a page, off-screen further
-		   down). So the lock goes on the element that actually scrolls, and the
-		   scrollbar's width is handed back as padding so nothing shifts sideways. */
 		const root = document.documentElement;
 		const scrollbarGutter = window.innerWidth - root.clientWidth;
 		const previousOverflowY = root.style.overflowY;
@@ -131,8 +112,6 @@ export function CartDrawer() {
 	}
 
 	const hasLines = cart.lines.length > 0;
-	// The last thing added is confirmed at the top of its own, so it does not also
-	// repeat in the list below (S5).
 	const listLines = lastAdded
 		? cart.lines.filter((line) => line.variantId !== lastAdded.variantId)
 		: cart.lines;
@@ -274,11 +253,6 @@ export function CartDrawer() {
 	);
 }
 
-/**
- * Quantity, removal and total of one line. Shared, because the promoted
- * "Recién agregado" line must stay editable: with a single product in the cart it
- * would otherwise be a card with no controls until the panel is closed.
- */
 function LineControls({ line }: { line: CartLine }) {
 	const { setQuantity, removeLine } = useCart();
 
@@ -320,12 +294,9 @@ function LineControls({ line }: { line: CartLine }) {
 	);
 }
 
-/** The photograph of a line, or the catalogue placeholder when it has none. */
 function LineImage({ line, size }: { line: CartLine; size: "line" | "recent" }) {
 	const className = size === "recent" ? styles.recentMedia : styles.lineMedia;
 
-	// A plain <img> for the reason the product card gives: `public/products` is
-	// gitignored, so the build must not depend on those files existing.
 	return (
 		<figure className={className}>
 			{/* eslint-disable-next-line @next/next/no-img-element */}

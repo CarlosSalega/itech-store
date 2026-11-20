@@ -3,20 +3,8 @@ import {
 	MAX_LINE_QUANTITY,
 	type Cart,
 	type CartLine,
-} from "./cart";
+} from "../domain/cart";
 
-/**
- * The cart's only persistence, for now: `localStorage` behind this module, so the
- * day the cart moves to the database only this file and its callers' wiring
- * change — no component reads storage directly.
- *
- * Everything here is defensive on purpose. Stored data is attacker- and
- * corruption-reachable, a half-written object is common, and losing a cart is a
- * nuisance while taking a page down is a defect: a value that does not parse
- * degrades to the empty cart.
- */
-
-/** Versioned: a future shape change bumps the suffix instead of guessing. */
 export const CART_STORAGE_KEY = "itech-store.cart.v1";
 
 const CART_STORAGE_VERSION = 1;
@@ -47,7 +35,6 @@ function readQuantity(value: unknown): number | null {
 	return Math.min(MAX_LINE_QUANTITY, value);
 }
 
-/** One stored line, or `null` when anything about it is not trustworthy. */
 function parseLine(value: unknown): CartLine | null {
 	if (!isRecord(value)) {
 		return null;
@@ -98,10 +85,12 @@ function parseLine(value: unknown): CartLine | null {
 		imageAlt,
 		unitPriceCents,
 		quantity,
-		// Availability is a claim about the database, never about stored data:
-		// a restored cart has to be revalidated before it can say it is buyable.
-		available: value.available === false ? false : true,
+		available: value.available !== false,
 	};
+}
+
+function acceptsStoredVersion(version: unknown): boolean {
+	return version === undefined || version === CART_STORAGE_VERSION;
 }
 
 function parseEnvelope(raw: string | null): Envelope | null {
@@ -116,9 +105,7 @@ function parseEnvelope(raw: string | null): Envelope | null {
 			return null;
 		}
 
-		// The key already carries the version, so a value written without the field
-		// is still the shape this module reads. A *different* version is not.
-		if (parsed.version !== undefined && parsed.version !== CART_STORAGE_VERSION) {
+		if (!acceptsStoredVersion(parsed.version)) {
 			return null;
 		}
 
@@ -132,11 +119,6 @@ function parseEnvelope(raw: string | null): Envelope | null {
 	}
 }
 
-/**
- * Parses a stored value into a cart that is safe to render. Invalid lines are
- * dropped one by one rather than discarding the whole cart, and duplicated
- * variants collapse into the first line with their units summed.
- */
 export function parseCart(raw: string | null): Cart {
 	const envelope = parseEnvelope(raw);
 
@@ -192,7 +174,6 @@ export function serializeCart(cart: Cart): string {
 type ReadableStorage = Pick<Storage, "getItem">;
 type WritableStorage = Pick<Storage, "setItem">;
 
-/** Reads the stored cart; a storage that throws or is absent yields an empty one. */
 export function readStoredCart(storage: ReadableStorage | null | undefined): Cart {
 	if (storage === null || storage === undefined) {
 		return EMPTY_CART;
@@ -205,11 +186,6 @@ export function readStoredCart(storage: ReadableStorage | null | undefined): Car
 	}
 }
 
-/**
- * Writes the cart. Returns whether the storage accepted it: a full or
- * unavailable storage never breaks the page, and the caller needs to know that
- * the session copy is now the only copy.
- */
 export function writeStoredCart(
 	storage: WritableStorage | null | undefined,
 	cart: Cart,
@@ -223,12 +199,10 @@ export function writeStoredCart(
 
 		return true;
 	} catch {
-		// Quota, private mode, a disabled store: the cart still works in memory.
 		return false;
 	}
 }
 
-/** The browser's storage, or `null` when the code is not running in a browser. */
 export function browserStorage(): Storage | null {
 	if (typeof window === "undefined") {
 		return null;

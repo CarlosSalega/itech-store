@@ -1,16 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { EMPTY_CART, type Cart } from "./cart";
-import { CART_STORAGE_KEY, serializeCart } from "./cart-storage";
+import { EMPTY_CART, type Cart } from "../domain/cart";
+import { CART_STORAGE_KEY, serializeCart } from "./local-storage";
 
-/**
- * The store is module state plus `window.localStorage`, so each test re-imports
- * a fresh copy: a cached snapshot from the previous test would hide the bug.
- */
 async function loadStore() {
 	vi.resetModules();
 
-	return import("./cart-store");
+	return import("./store");
 }
 
 function fakeWindow(initial: Record<string, string> = {}) {

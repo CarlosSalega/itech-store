@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 
-import { CartProvider } from "@/features/cart/cart-provider";
-import { CartDrawer } from "@/features/cart/cart-drawer";
+import { CartProvider } from "@/features/cart/ui/provider";
+import { CartDrawer } from "@/features/cart/ui/drawer";
 import { WhatsappButton } from "@/features/contact/whatsapp-button";
 
 export const metadata: Metadata = {

@@ -3,24 +3,11 @@
 import { FAMILY_LABEL, formatStorage, variantLabel } from "@/features/catalog/catalog";
 import { prisma } from "@/lib/prisma";
 
-import type { CatalogVariant, RevalidationResult } from "./cart-revalidation";
+import type { CatalogVariant, RevalidationResult } from "./revalidation";
 
-/** The cart's own bound: more than this is not a cart, and the call is bounded. */
 const MAX_VARIANTS = 50;
 const MAX_ID_LENGTH = 64;
 
-/**
- * Revalidates the stored cart against the catalogue (§S9).
- *
- * Everything the panel shows about a line — name, variant, photograph, price,
- * stock — is read back from the database here, because the stored snapshot can
- * be arbitrarily old and the total is money. Ids come from the browser, so they
- * are deduplicated, bounded and validated before they reach the query.
- *
- * A database failure answers `{ ok: false }` instead of throwing: the panel then
- * says the prices could not be verified, which is honest, where an exception
- * would leave the drawer on a blank total.
- */
 export async function revalidateCart(variantIds: string[]): Promise<RevalidationResult> {
 	if (!Array.isArray(variantIds)) {
 		return { ok: false };

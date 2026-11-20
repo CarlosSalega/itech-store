@@ -1,14 +1,6 @@
-/*
- * The side drawer, measured from `design/cart/02-cart-drawer.html` and built on
- * the tokens of `design/system.md`. Nothing here invents a value: the panel is
- * 480px, the line photograph is 88px, the quantity stepper is a 32px pill, and
- * the footer bar is a hairline above the total.
- */
-
 .root {
 	position: fixed;
 	inset: 0;
-	/* Above the floating contact button and the sticky header: a modal owns the screen. */
 	z-index: 80;
 }
 
@@ -51,8 +43,6 @@
 		transform: translateX(0);
 	}
 }
-
-/* ---------- head ---------- */
 
 .head {
 	display: flex;
@@ -113,15 +103,11 @@
 	height: 18px;
 }
 
-/* ---------- scroll area ---------- */
-
 .scroll {
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	padding: 0 var(--s-5);
 }
-
-/* the last thing added keeps the monument of this panel */
 
 .recent {
 	display: grid;
@@ -180,8 +166,6 @@
 	color: var(--muted);
 	font-size: var(--t-label);
 }
-
-/* ---------- the line, compact ---------- */
 
 .lines {
 	margin: 0;
@@ -315,8 +299,6 @@
 	letter-spacing: -0.01em;
 }
 
-/* ---------- empty ---------- */
-
 .empty {
 	padding: var(--s-8) var(--s-5);
 	overflow-y: auto;
@@ -370,8 +352,6 @@
 .emptyLink:hover {
 	background: var(--hairline);
 }
-
-/* ---------- footer bar ---------- */
 
 .foot {
 	padding: var(--s-4) var(--s-5) var(--s-5);
@@ -459,7 +439,6 @@
 	text-align: center;
 }
 
-/* A line the catalogue no longer sells: visible, removable, out of the total. */
 .unavailable {
 	margin: var(--s-2) 0 0;
 	color: var(--muted);
@@ -467,7 +446,6 @@
 	line-height: 1.4;
 }
 
-/* Price verification state, above the total. */
 .notice {
 	margin: 0 0 var(--s-3);
 	color: var(--muted);

@@ -1,16 +1,3 @@
-/**
- * The cart's rules, kept out of React and out of the browser: the same module
- * runs in the panel, in the storage layer and in the tests. Every amount here is
- * an integer number of ARS cents (see `formatArsPrice` for rendering) and every
- * quantity is an integer.
- *
- * A line carries a snapshot of what the catalogue showed when the product was
- * added. The snapshot is never authoritative — `applyRevalidation` replaces it
- * with what the database says when the panel opens (S9) — but it lets the cart
- * render immediately, before any request resolves.
- */
-
-/** A guardrail against a runaway stepper, not a stock rule. */
 export const MAX_LINE_QUANTITY = 10;
 
 export type CartLine = {
@@ -18,30 +5,23 @@ export type CartLine = {
 	sku: string;
 	productSlug: string;
 	productName: string;
-	/** The product's family label, used when the variant has no capacity. */
 	familyLabel: string;
-	/** `Capacidad 256 GB`; `null` when the variant has no capacity at all. */
 	variantLabel: string | null;
 	imageUrl: string | null;
 	imageAlt: string;
 	unitPriceCents: number;
 	quantity: number;
-	/** `false` once revalidation proved the variant cannot be bought. */
 	available: boolean;
 };
 
 export type Cart = {
 	lines: CartLine[];
-	/** The line to announce above the list; cleared when the panel closes. */
 	lastAddedVariantId: string | null;
 };
 
 export type CartTotals = {
-	/** Distinct products in the cart. */
 	lineCount: number;
-	/** Sum of the quantities. */
 	unitCount: number;
-	/** Only what can actually be bought. */
 	totalCents: number;
 };
 
@@ -55,11 +35,6 @@ function clampQuantity(quantity: number): number {
 	return Math.min(MAX_LINE_QUANTITY, Math.max(1, Math.trunc(quantity)));
 }
 
-/**
- * Adds one unit of a variant. An existing variant is incremented and takes the
- * fresh snapshot, so the newest price the catalogue showed is the one that
- * renders; the line is never duplicated.
- */
 export function addLine(cart: Cart, line: CartLine): Cart {
 	const existing = cart.lines.find((entry) => entry.variantId === line.variantId);
 
@@ -81,11 +56,6 @@ export function addLine(cart: Cart, line: CartLine): Cart {
 	};
 }
 
-/**
- * Sets the quantity of one line. The stepper can never reach zero: removing a
- * line is `removeLine`'s job, so going below one clamps to one instead of
- * silently deleting something the visitor did not ask to delete.
- */
 export function setQuantity(cart: Cart, variantId: string, quantity: number): Cart {
 	if (!cart.lines.some((entry) => entry.variantId === variantId)) {
 		return cart;
@@ -104,8 +74,6 @@ export function setQuantity(cart: Cart, variantId: string, quantity: number): Ca
 export function removeLine(cart: Cart, variantId: string): Cart {
 	return {
 		lines: cart.lines.filter((entry) => entry.variantId !== variantId),
-		// A marker that pointed at a removed line would announce something that is
-		// no longer in the cart.
 		lastAddedVariantId: cart.lastAddedVariantId === variantId ? null : cart.lastAddedVariantId,
 	};
 }
@@ -137,7 +105,6 @@ export function cartTotals(cart: Cart): CartTotals {
 	);
 }
 
-/** `4 productos · 5 unidades`, as the panel header reads it. */
 export function cartCountLabel(totals: CartTotals): string {
 	const products = totals.lineCount === 1 ? "1 producto" : `${totals.lineCount} productos`;
 	const units = totals.unitCount === 1 ? "1 unidad" : `${totals.unitCount} unidades`;
@@ -145,12 +112,10 @@ export function cartCountLabel(totals: CartTotals): string {
 	return `${products} · ${units}`;
 }
 
-/** `Accesorios · cantidad 2`, the context line of the recently added block. */
 export function lineContextLabel(line: CartLine): string {
 	return `${line.familyLabel} · cantidad ${line.quantity}`;
 }
 
-/** The capacity when the variant has one, the family otherwise. */
 export function variantLabelOf(line: CartLine): string {
 	return line.variantLabel ?? line.familyLabel;
 }

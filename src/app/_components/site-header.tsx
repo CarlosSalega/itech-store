@@ -10,7 +10,7 @@ import {
 	MenuIcon,
 	SearchIcon,
 } from "@/features/catalog/icons";
-import { CartTrigger } from "@/features/cart/cart-trigger";
+import { CartTrigger } from "@/features/cart/ui/trigger";
 
 import styles from "./site-header.module.css";
 

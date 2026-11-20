@@ -4,18 +4,11 @@ import Link from "next/link";
 
 import { formatArsPrice } from "@/features/catalog/format-price";
 
-import { cartLineTotal, variantLabelOf } from "./cart";
-import { useCart } from "./cart-provider";
+import { cartLineTotal, variantLabelOf } from "../domain/cart";
+import { useCart } from "./provider";
 
 import styles from "@/app/finalizar-compra/finalizar-compra.module.css";
 
-/**
- * What the visitor was about to buy, on the placeholder checkout route (§S11).
- *
- * It is a client component because the cart lives in the browser: the server
- * cannot know what this session holds. The prices shown here are the stored
- * snapshot, and the copy says so instead of implying a quoted total.
- */
 export function CheckoutSummary() {
 	const { cart, totals } = useCart();
 
