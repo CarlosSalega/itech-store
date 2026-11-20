@@ -41,8 +41,7 @@ const FOCUSABLE =
  * it.
  */
 export function CartDrawer() {
-	const { cart, totals, lastAdded, isOpen, verification, closeCart, setQuantity, removeLine } =
-		useCart();
+	const { cart, totals, lastAdded, isOpen, verification, closeCart } = useCart();
 	const panelRef = useRef<HTMLElement | null>(null);
 	const openerRef = useRef<HTMLElement | null>(null);
 
@@ -54,12 +53,27 @@ export function CartDrawer() {
 		openerRef.current =
 			document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
-		const body = document.body;
-		const previousOverflow = body.style.overflow;
-		// The page behind must not scroll while the panel is open, and it keeps its
-		// position because nothing scrolls — the panel scrolls itself.
-		body.style.overflow = "hidden";
-		panelRef.current?.focus();
+		/* The document scroller is <html>, not <body>: `globals.css` sets
+		   `overflow-x: clip` on it so the full-bleed rules never grow a horizontal
+		   bar, and that is also why the body can never lock the page — its overflow
+		   does not propagate to the viewport. Locking the body anyway does real
+		   damage: body becomes a scroll container, the sticky header stops sticking
+		   to the viewport and drops to its static position, which moves it up by the
+		   whole scroll offset (a few pixels at the top of a page, off-screen further
+		   down). So the lock goes on the element that actually scrolls, and the
+		   scrollbar's width is handed back as padding so nothing shifts sideways. */
+		const root = document.documentElement;
+		const scrollbarGutter = window.innerWidth - root.clientWidth;
+		const previousOverflowY = root.style.overflowY;
+		const previousPaddingRight = root.style.paddingRight;
+
+		root.style.overflowY = "hidden";
+
+		if (scrollbarGutter > 0) {
+			root.style.paddingRight = `${scrollbarGutter}px`;
+		}
+
+		panelRef.current?.focus({ preventScroll: true });
 
 		function onKeyDown(event: KeyboardEvent) {
 			if (event.key === "Escape") {
@@ -106,8 +120,9 @@ export function CartDrawer() {
 
 		return () => {
 			document.removeEventListener("keydown", onKeyDown);
-			body.style.overflow = previousOverflow;
-			openerRef.current?.focus();
+			root.style.overflowY = previousOverflowY;
+			root.style.paddingRight = previousPaddingRight;
+			openerRef.current?.focus({ preventScroll: true });
 		};
 	}, [isOpen, closeCart]);
 
@@ -136,9 +151,12 @@ export function CartDrawer() {
 			>
 				<header className={styles.head}>
 					<div>
-						<h2 className={styles.title} id="cart-panel-title">
-							Tu carrito
-						</h2>
+						<div className={styles.titleRow}>
+							<BagIcon className={styles.titleIcon} />
+							<h2 className={styles.title} id="cart-panel-title">
+								Tu carrito
+							</h2>
+						</div>
 						{hasLines ? (
 							<span className={styles.count}>{cartCountLabel(totals)}</span>
 						) : null}
@@ -168,9 +186,7 @@ export function CartDrawer() {
 										<span className={styles.recentContext}>
 											{lineContextLabel(lastAdded)}
 										</span>
-										<span className={styles.recentAmount}>
-											{formatArsPrice(cartLineTotal(lastAdded))}
-										</span>
+										<LineControls line={lastAdded} />
 									</div>
 								</div>
 							</div>
@@ -196,42 +212,7 @@ export function CartDrawer() {
 												Ya no está disponible. Quitalo para seguir con la compra.
 											</p>
 										)}
-										<div className={styles.lineBottom}>
-											<div
-												aria-label={`Cantidad de ${line.productName}`}
-												className={styles.qty}
-												role="group"
-											>
-												<button
-													aria-label={`Quitar una unidad de ${line.productName}`}
-													disabled={!line.available || line.quantity <= 1}
-													onClick={() => setQuantity(line.variantId, line.quantity - 1)}
-													type="button"
-												>
-													<MinusIcon className={styles.qtyIcon} />
-												</button>
-												<output aria-live="polite">{line.quantity}</output>
-												<button
-													aria-label={`Agregar una unidad de ${line.productName}`}
-													disabled={!line.available || line.quantity >= MAX_LINE_QUANTITY}
-													onClick={() => setQuantity(line.variantId, line.quantity + 1)}
-													type="button"
-												>
-													<PlusIcon className={styles.qtyIcon} />
-												</button>
-											</div>
-											<button
-												aria-label={`Quitar ${line.productName} del carrito`}
-												className={styles.remove}
-												onClick={() => removeLine(line.variantId)}
-												type="button"
-											>
-												<TrashIcon className={styles.removeIcon} />
-											</button>
-											<span className={styles.lineTotal}>
-												{formatArsPrice(cartLineTotal(line))}
-											</span>
-										</div>
+										<LineControls line={line} />
 									</div>
 								</li>
 							))}
@@ -289,6 +270,52 @@ export function CartDrawer() {
 					</p>
 				</footer>
 			</section>
+		</div>
+	);
+}
+
+/**
+ * Quantity, removal and total of one line. Shared, because the promoted
+ * "Recién agregado" line must stay editable: with a single product in the cart it
+ * would otherwise be a card with no controls until the panel is closed.
+ */
+function LineControls({ line }: { line: CartLine }) {
+	const { setQuantity, removeLine } = useCart();
+
+	return (
+		<div className={styles.lineBottom}>
+			<div
+				aria-label={`Cantidad de ${line.productName}`}
+				className={styles.qty}
+				role="group"
+			>
+				<button
+					aria-label={`Quitar una unidad de ${line.productName}`}
+					disabled={!line.available || line.quantity <= 1}
+					onClick={() => setQuantity(line.variantId, line.quantity - 1)}
+					type="button"
+				>
+					<MinusIcon className={styles.qtyIcon} />
+				</button>
+				<output aria-live="polite">{line.quantity}</output>
+				<button
+					aria-label={`Agregar una unidad de ${line.productName}`}
+					disabled={!line.available || line.quantity >= MAX_LINE_QUANTITY}
+					onClick={() => setQuantity(line.variantId, line.quantity + 1)}
+					type="button"
+				>
+					<PlusIcon className={styles.qtyIcon} />
+				</button>
+			</div>
+			<button
+				aria-label={`Quitar ${line.productName} del carrito`}
+				className={styles.remove}
+				onClick={() => removeLine(line.variantId)}
+				type="button"
+			>
+				<TrashIcon className={styles.removeIcon} />
+			</button>
+			<span className={styles.lineTotal}>{formatArsPrice(cartLineTotal(line))}</span>
 		</div>
 	);
 }
