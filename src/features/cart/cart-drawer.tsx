@@ -151,9 +151,12 @@ export function CartDrawer() {
 			>
 				<header className={styles.head}>
 					<div>
-						<h2 className={styles.title} id="cart-panel-title">
-							Tu carrito
-						</h2>
+						<div className={styles.titleRow}>
+							<BagIcon className={styles.titleIcon} />
+							<h2 className={styles.title} id="cart-panel-title">
+								Tu carrito
+							</h2>
+						</div>
 						{hasLines ? (
 							<span className={styles.count}>{cartCountLabel(totals)}</span>
 						) : null}

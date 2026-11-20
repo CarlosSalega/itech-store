@@ -63,6 +63,18 @@
 	border-bottom: 1px solid var(--hairline);
 }
 
+.titleRow {
+	display: flex;
+	align-items: center;
+	gap: var(--s-2);
+}
+
+.titleIcon {
+	flex: none;
+	width: 22px;
+	height: 22px;
+}
+
 .title {
 	margin: 0;
 	font-size: var(--t-title);
