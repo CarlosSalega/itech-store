@@ -3,11 +3,12 @@
   "chosen": "02-cart-drawer.html",
   "handoffs": {
     "02-cart-drawer.html": {
-      "status": "sent",
+      "status": "implemented",
       "queued": false,
       "sentAt": "2026-11-19T15:14:42.412Z",
       "startedAt": null,
-      "implementedAt": null
+      "implementedAt": "2026-11-19T15:33:31.346Z",
+      "note": "Carrito implementado sobre el sistema de Galería: panel de 480px, stepper, quitar, «Recién agregado» con controles, estado vacío, total revalidado contra el catálogo y /finalizar-compra honesto. Verificado con tests (144), typecheck, lint y build; la comparación en navegador sigue pendiente porque el dev server lo levantás vos."
     }
   }
 }

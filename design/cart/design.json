@@ -1,6 +1,7 @@
 {
 	"title": "Carrito de compras",
 	"brief": "Carrito de compras para iTech Store: revisar los productos agregados, ajustar cantidades, ver el total y pasar al pago. Tres estrategias distintas para el mismo trabajo, sobre el sistema de diseño vigente (dirección Galería).",
+	"feature": "odd/tasks/cart.md",
 	"artboards": [
 		{
 			"file": "01-cart-page.html",

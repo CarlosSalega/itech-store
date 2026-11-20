@@ -5,8 +5,22 @@ import { resolveVariant, splitPrice } from "./variant-selection";
 import type { VariantOption } from "./variant-selector";
 
 const variants: VariantOption[] = [
-	{ id: "a", sku: "ipad-128gb", label: "128GB", price: 90_000_000, stock: 5 },
-	{ id: "b", sku: "ipad-256gb", label: "256GB", price: 103_500_000, stock: 7 },
+	{
+		id: "a",
+		sku: "ipad-128gb",
+		label: "128GB",
+		variantLabel: "Capacidad 128 GB",
+		price: 90_000_000,
+		stock: 5,
+	},
+	{
+		id: "b",
+		sku: "ipad-256gb",
+		label: "256GB",
+		variantLabel: "Capacidad 256 GB",
+		price: 103_500_000,
+		stock: 7,
+	},
 ];
 
 describe("resolveVariant", () => {

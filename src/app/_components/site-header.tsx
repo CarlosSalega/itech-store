@@ -6,11 +6,11 @@ import {
 	catalogHref,
 } from "@/features/catalog/catalog";
 import {
-	BagIcon,
 	CloseIcon,
 	MenuIcon,
 	SearchIcon,
 } from "@/features/catalog/icons";
+import { CartTrigger } from "@/features/cart/cart-trigger";
 
 import styles from "./site-header.module.css";
 
@@ -62,18 +62,8 @@ export function SiteHeader() {
 						<span className="sr-only">Buscar un producto</span>
 					</Link>
 
-					{/* No cart exists in this milestone, so the bag is present but inert. */}
-					<button
-						className={styles.iconButton}
-						type="button"
-						disabled
-						aria-disabled="true"
-					>
-						<BagIcon className={styles.icon} />
-						<span className="sr-only">
-							Carrito: disponible en la próxima etapa
-						</span>
-					</button>
+					{/* The bag opens the cart drawer; the badge is the units count. */}
+					<CartTrigger className={styles.iconButton} iconClassName={styles.icon} />
 
 					<details className={styles.menu}>
 						<summary className={styles.summary} aria-label="Menú">
