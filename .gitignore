@@ -37,4 +37,4 @@ next-env.d.ts
 /public/products/
 
 # Canvas-only design variants with product photos embedded. Never committed.
-/design/storefront-photos/
+/design/*-photos/

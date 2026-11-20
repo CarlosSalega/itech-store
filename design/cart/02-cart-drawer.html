@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carrito · Panel lateral — iTech Store</title>
+<style>
+	:root {
+		--white: #ffffff;
+		--ink: #171717;
+		--muted: #6e6e73;
+		--hairline: #d2d2d7;
+		--surface: #f5f5f7;
+		--link: #0066cc;
+		--accent: #0071e3;
+		--accent-press: #0062c4;
+
+		--t-display-s: clamp(2rem, 4.6vw, 3.75rem);
+		--t-numeral: clamp(2rem, 3.4vw, 3.25rem);
+		--t-title: clamp(1.375rem, 2.2vw, 1.875rem);
+		--t-headline: 1.3125rem;
+		--t-body: 1.0625rem;
+		--t-body-s: 0.9375rem;
+		--t-label: 0.8125rem;
+		--t-caption: 0.75rem;
+
+		--s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+		--s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+
+		--r-sm: 8px; --r-md: 12px; --r-lg: 18px; --r-pill: 980px;
+
+		--e-float: 0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+		--e-panel: -24px 0 64px rgba(0,0,0,.14);
+
+		--dur-1: 120ms; --dur-2: 220ms; --dur-3: 420ms;
+		--ease-std: cubic-bezier(.28,.11,.32,1);
+		--ease-out: cubic-bezier(.22,1,.36,1);
+
+		--font: -apple-system, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto,
+			"Helvetica Neue", Arial, sans-serif;
+	}
+
+	* { box-sizing: border-box; }
+
+	body {
+		margin: 0;
+		background: var(--white);
+		color: var(--ink);
+		font-family: var(--font);
+		font-size: var(--t-body);
+		line-height: 1.47;
+		font-optical-sizing: auto;
+		-webkit-font-smoothing: antialiased;
+		overflow: hidden;
+	}
+
+	a { color: var(--link); text-decoration: none; }
+	a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+	:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+		border-radius: var(--s-1);
+	}
+
+	.visually-hidden {
+		position: absolute;
+		width: 1px; height: 1px;
+		margin: -1px; padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	/* ---------- the page you were browsing, cropped by the panel ---------- */
+
+	.page-behind {
+		height: 100vh;
+		overflow: hidden;
+		position: relative;
+	}
+
+	.site-header {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+		background: rgba(255,255,255,.72);
+		-webkit-backdrop-filter: blur(20px) saturate(180%);
+		backdrop-filter: blur(20px) saturate(180%);
+		border-bottom: 1px solid var(--hairline);
+	}
+
+	.header-inner {
+		display: flex;
+		align-items: center;
+		gap: var(--s-5);
+		min-height: 64px;
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 var(--s-8);
+	}
+
+	.brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		color: var(--ink);
+		font-size: var(--t-body-s);
+		font-weight: 600;
+		letter-spacing: -0.01em;
+	}
+
+	.brand .logo { width: 20px; height: 20px; }
+
+	.header-inner nav { margin-inline-start: auto; }
+	.header-inner nav ul {
+		display: flex;
+		gap: var(--s-6);
+		margin: 0; padding: 0;
+		list-style: none;
+	}
+	.header-inner nav a {
+		padding: var(--s-2) 0;
+		color: var(--ink);
+		font-size: var(--t-body-s);
+	}
+	.header-inner nav a[aria-current="page"] { font-weight: 500; }
+
+	.header-actions { display: flex; align-items: center; gap: var(--s-1); }
+
+	.icon-button {
+		display: grid;
+		place-items: center;
+		width: 44px; height: 44px;
+		border: 0;
+		border-radius: var(--r-pill);
+		background: none;
+		color: var(--ink);
+		cursor: pointer;
+	}
+	.icon-button:hover { background: var(--surface); }
+	.icon-button svg { width: 20px; height: 20px; }
+
+	.cart-trigger { position: relative; }
+	.cart-trigger .badge {
+		position: absolute;
+		top: 6px; right: 4px;
+		min-width: 16px; height: 16px;
+		padding: 0 4px;
+		border-radius: var(--r-pill);
+		background: var(--accent);
+		color: var(--white);
+		font-size: 0.6875rem;
+		font-weight: 600;
+		line-height: 16px;
+		text-align: center;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.behind-body {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: var(--s-7) var(--s-8) 0;
+	}
+
+	.behind-title {
+		margin: 0 0 var(--s-6);
+		font-size: var(--t-display-s);
+		font-weight: 600;
+		line-height: 1.02;
+		letter-spacing: -0.03em;
+	}
+
+	.behind-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--s-6) var(--s-5);
+	}
+
+	.behind-card img {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1;
+		object-fit: contain;
+		mix-blend-mode: multiply;
+	}
+
+	.behind-card p {
+		margin: var(--s-3) 0 0;
+		padding-top: var(--s-3);
+		border-top: 1px solid var(--hairline);
+		font-size: var(--t-headline);
+		font-weight: 600;
+		line-height: 1.2;
+		letter-spacing: -0.012em;
+	}
+
+	.behind-card span {
+		display: block;
+		margin-top: var(--s-1);
+		color: var(--muted);
+		font-size: var(--t-label);
+	}
+
+	/* ---------- scrim + panel ---------- */
+
+	.scrim {
+		position: fixed;
+		inset: 0;
+		z-index: 5;
+		background: rgba(0,0,0,.28);
+		animation: fade var(--dur-3) var(--ease-out) both;
+	}
+
+	@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+	.panel {
+		position: fixed;
+		inset: 0 0 0 auto;
+		z-index: 6;
+		display: grid;
+		grid-template-rows: auto minmax(0, 1fr) auto;
+		width: min(480px, 100vw);
+		background: var(--white);
+		box-shadow: var(--e-panel);
+		animation: slide var(--dur-3) var(--ease-out) both;
+	}
+
+	@keyframes slide {
+		from { transform: translateX(100%); }
+		to { transform: translateX(0); }
+	}
+
+	.panel-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-4);
+		padding: var(--s-4) var(--s-5);
+		border-bottom: 1px solid var(--hairline);
+	}
+
+	.panel-head h1 {
+		margin: 0;
+		font-size: var(--t-title);
+		font-weight: 600;
+		line-height: 1.08;
+		letter-spacing: -0.022em;
+	}
+
+	.panel-head .count {
+		display: block;
+		margin-top: 2px;
+		color: var(--muted);
+		font-size: var(--t-label);
+		letter-spacing: 0.01em;
+	}
+
+	.panel-scroll {
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		padding: 0 var(--s-5);
+	}
+
+	/* ---------- the line, compact ---------- */
+
+	.lines { margin: 0; padding: 0; list-style: none; }
+
+	.line {
+		display: grid;
+		grid-template-columns: 88px minmax(0, 1fr);
+		gap: var(--s-4);
+		padding: var(--s-4) 0;
+		border-bottom: 1px solid var(--hairline);
+	}
+	.line:last-child { border-bottom: 0; }
+
+	.line-media { margin: 0; }
+	.line-media img {
+		width: 100%; height: auto;
+		aspect-ratio: 1;
+		object-fit: contain;
+		mix-blend-mode: multiply;
+	}
+
+	.line-name {
+		display: block;
+		color: var(--ink);
+		font-size: var(--t-body-s);
+		font-weight: 500;
+		line-height: 1.3;
+		letter-spacing: -0.008em;
+	}
+	.line:hover .line-name { color: var(--link); }
+
+	.line-variant {
+		margin: 2px 0 0;
+		color: var(--muted);
+		font-size: var(--t-caption);
+		letter-spacing: 0.015em;
+	}
+
+	.line-bottom {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-3);
+		margin-top: var(--s-3);
+	}
+
+	.qty {
+		display: inline-flex;
+		align-items: center;
+		border: 1px solid var(--hairline);
+		border-radius: var(--r-pill);
+	}
+
+	.qty button {
+		display: grid;
+		place-items: center;
+		width: 32px; height: 32px;
+		border: 0;
+		border-radius: var(--r-pill);
+		background: none;
+		color: var(--ink);
+		font-size: 1rem;
+		line-height: 1;
+		cursor: pointer;
+		transition: background var(--dur-1) var(--ease-std);
+	}
+	.qty button:hover { background: var(--surface); }
+
+	.qty output {
+		min-width: 24px;
+		text-align: center;
+		font-size: var(--t-label);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.remove {
+		width: 32px; height: 32px;
+		display: grid;
+		place-items: center;
+		border: 0;
+		border-radius: var(--r-pill);
+		background: none;
+		color: var(--muted);
+		cursor: pointer;
+		transition: color var(--dur-1) var(--ease-std), background var(--dur-1) var(--ease-std);
+	}
+	.remove:hover { background: var(--surface); color: var(--ink); }
+	.remove svg { width: 16px; height: 16px; }
+
+	.line-total {
+		margin-inline-start: auto;
+		font-size: var(--t-body-s);
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.01em;
+	}
+
+	/* the last thing added keeps the monument of this panel */
+
+	.recent {
+		display: grid;
+		gap: var(--s-3);
+		margin: var(--s-4) 0 var(--s-2);
+		padding: var(--s-4);
+		border-radius: var(--r-lg);
+		background: var(--surface);
+	}
+
+	.recent-label {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		margin: 0;
+		color: var(--muted);
+		font-size: var(--t-caption);
+		letter-spacing: 0.015em;
+	}
+	.recent-label svg { width: 14px; height: 14px; }
+
+	.recent-item {
+		display: grid;
+		grid-template-columns: 120px minmax(0, 1fr);
+		gap: var(--s-4);
+		align-items: center;
+	}
+
+	.recent-item img {
+		width: 100%; height: auto;
+		aspect-ratio: 1;
+		object-fit: contain;
+		mix-blend-mode: multiply;
+	}
+
+	.recent-item p {
+		margin: 0;
+		font-size: var(--t-headline);
+		font-weight: 600;
+		line-height: 1.2;
+		letter-spacing: -0.012em;
+	}
+
+	.recent-item span {
+		display: block;
+		margin-top: var(--s-1);
+		color: var(--muted);
+		font-size: var(--t-label);
+	}
+
+	.recent-item .amount {
+		margin-top: var(--s-2);
+		color: var(--ink);
+		font-size: var(--t-body);
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* ---------- footer bar ---------- */
+
+	.panel-foot {
+		padding: var(--s-4) var(--s-5) var(--s-5);
+		border-top: 1px solid var(--hairline);
+		background: var(--white);
+	}
+
+	.totals {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--s-4);
+		margin: 0 0 var(--s-4);
+	}
+
+	.totals dt {
+		color: var(--muted);
+		font-size: var(--t-body-s);
+	}
+
+	.totals dd {
+		margin: 0;
+		font-size: var(--t-title);
+		font-weight: 500;
+		line-height: 1;
+		letter-spacing: -0.022em;
+		font-variant-numeric: tabular-nums;
+	}
+	.totals .currency {
+		margin-right: 2px;
+		font-size: 0.85em;
+		color: var(--muted);
+	}
+
+	.checkout {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		min-height: 44px;
+		border: 0;
+		border-radius: var(--r-pill);
+		background: var(--accent);
+		color: var(--white);
+		font: inherit;
+		font-size: var(--t-body-s);
+		font-weight: 500;
+		cursor: pointer;
+		transition: background var(--dur-1) var(--ease-std), transform var(--dur-1) var(--ease-std);
+	}
+	.checkout:hover { background: var(--accent-press); }
+	.checkout:active { transform: scale(.97); }
+
+	.keep-browsing {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-2);
+		margin-top: var(--s-3);
+		padding: var(--s-2);
+		background: none;
+		border: 0;
+		color: var(--link);
+		font: inherit;
+		font-size: var(--t-body-s);
+		cursor: pointer;
+	}
+	.keep-browsing svg {
+		width: 16px; height: 16px;
+		transition: transform var(--dur-2) var(--ease-out);
+	}
+	.keep-browsing:hover svg { transform: translateX(-2px); }
+
+	.foot-caption {
+		margin: var(--s-3) 0 0;
+		color: var(--muted);
+		font-size: var(--t-caption);
+		line-height: 1.35;
+		text-align: center;
+	}
+
+	/* ---------- empty ---------- */
+
+	.panel-empty {
+		display: none;
+		padding: var(--s-8) var(--s-5);
+		text-align: center;
+	}
+
+	.panel-empty .mark {
+		display: grid;
+		place-items: center;
+		width: 56px; height: 56px;
+		margin: 0 auto;
+		border-radius: var(--r-pill);
+		background: var(--surface);
+		color: var(--muted);
+	}
+	.panel-empty .mark svg { width: 22px; height: 22px; }
+
+	.panel-empty h2 {
+		margin: var(--s-5) 0 var(--s-2);
+		font-size: var(--t-title);
+		font-weight: 600;
+		line-height: 1.1;
+		letter-spacing: -0.022em;
+	}
+
+	.panel-empty p {
+		margin: 0 auto var(--s-5);
+		max-width: 34ch;
+		color: var(--muted);
+		font-size: var(--t-body-s);
+	}
+
+	body[data-cart="empty"] .panel-scroll { display: none; }
+	body[data-cart="empty"] .panel-empty { display: block; }
+	body[data-cart="empty"] .cart-trigger .badge { display: none; }
+	body[data-cart="empty"] .totals,
+	body[data-cart="empty"] .checkout { display: none; }
+
+	/* ---------- canvas preview control (design harness, not product UI) ---------- */
+
+	.preview {
+		position: fixed;
+		left: var(--s-4);
+		top: var(--s-4);
+		z-index: 30;
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+		padding: var(--s-1);
+		border: 1px dashed rgba(255,255,255,.4);
+		border-radius: var(--r-pill);
+		background: rgba(23,23,23,.72);
+		-webkit-backdrop-filter: blur(12px);
+		backdrop-filter: blur(12px);
+		color: var(--white);
+		font-size: var(--t-caption);
+	}
+
+	.preview > span {
+		padding-inline: var(--s-2);
+		color: rgba(255,255,255,.72);
+	}
+
+	.preview button {
+		min-height: 32px;
+		padding: 0 var(--s-3);
+		border: 0;
+		border-radius: var(--r-pill);
+		background: none;
+		color: var(--white);
+		font: inherit;
+		cursor: pointer;
+	}
+	.preview button[aria-pressed="true"] {
+		background: var(--white);
+		color: var(--ink);
+	}
+
+	@media (max-width: 899px) {
+		.header-inner { padding: 0 var(--s-5); min-height: 48px; }
+		.header-inner nav { display: none; }
+		.behind-body { padding: var(--s-6) var(--s-5) 0; }
+		.behind-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+		.panel { width: 100vw; }
+		.recent-item { grid-template-columns: 96px minmax(0, 1fr); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		*, *::before, *::after {
+			animation-duration: 0.001ms !important;
+			transition-duration: 0.001ms !important;
+		}
+	}
+</style>
+</head>
+<body data-cart="filled">
+
+<div class="page-behind" aria-hidden="true">
+	<header class="site-header">
+		<div class="header-inner">
+			<span class="brand">
+				<svg class="logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+				iTech Store
+			</span>
+			<nav aria-label="Principal">
+				<ul>
+					<li><a href="/catalogo?familia=mac">Mac</a></li>
+					<li><a href="/catalogo?familia=ipad" aria-current="page">iPad</a></li>
+					<li><a href="/catalogo?familia=watch">Watch</a></li>
+					<li><a href="/catalogo?familia=airpods">AirPods</a></li>
+					<li><a href="/catalogo?familia=accessory">Accesorios</a></li>
+					<li><a href="/contacto">Contacto</a></li>
+				</ul>
+			</nav>
+			<div class="header-actions">
+				<span class="icon-button">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+				</span>
+				<span class="icon-button cart-trigger">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"/></svg>
+					<span class="badge">5</span>
+				</span>
+			</div>
+		</div>
+	</header>
+
+	<div class="behind-body">
+		<p class="behind-title">iPad</p>
+		<div class="behind-grid">
+			<div class="behind-card">
+				<img src="/products/ipad/apple-11-ipad-air-m4-blue-1.webp" alt="" width="640" height="640">
+				<p>Apple 11&quot; iPad Air M4 Blue<span>$ 900.000</span></p>
+			</div>
+			<div class="behind-card">
+				<img src="/products/ipad/apple-11-ipad-pro-m5-silver-1.webp" alt="" width="640" height="640">
+				<p>Apple 11&quot; iPad Pro M5 Silver<span>$ 900.000</span></p>
+			</div>
+			<div class="behind-card">
+				<img src="/products/ipad/apple-ipad-mini-8-3-7th-gen-wi-fi-1.webp" alt="" width="640" height="640">
+				<p>Apple iPad Mini 8.3&quot; 7th Gen WI-FI<span>Desde $ 900.000</span></p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="scrim" aria-hidden="true"></div>
+
+<section class="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+
+	<div class="panel-head">
+		<div>
+			<h1 id="panel-title">Tu carrito</h1>
+			<span class="count">4 productos · 5 unidades</span>
+		</div>
+		<button class="icon-button" type="button" aria-label="Cerrar el carrito">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+		</button>
+	</div>
+
+	<div class="panel-scroll">
+		<div class="recent">
+			<p class="recent-label">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+				Recién agregado
+			</p>
+			<div class="recent-item">
+				<img src="/products/accessory/apple-homepod-mini-2da-generacion-1.webp"
+					alt="Apple HomePod Mini de segunda generación, en gris espacial"
+					width="640" height="640">
+				<div>
+					<p>Apple HomePod Mini (2da Generación)</p>
+					<span>Accesorios · cantidad 2</span>
+					<span class="amount">$ 60.000</span>
+				</div>
+			</div>
+		</div>
+
+		<h2 class="visually-hidden">Productos en el carrito</h2>
+
+		<ol class="lines">
+			<li class="line">
+				<figure class="line-media">
+					<img src="/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp"
+						alt="Apple iPad 11 pulgadas A16 en color azul, de frente"
+						width="640" height="640">
+				</figure>
+				<div>
+					<a class="line-name" href="/catalogo/apple-ipad-11-a16-chip-wi-fi">Apple iPad 11&quot; A16 Chip WI-FI</a>
+					<p class="line-variant">Capacidad 256 GB</p>
+					<div class="line-bottom">
+						<div class="qty" role="group" aria-label="Cantidad de Apple iPad 11 pulgadas A16">
+							<button type="button" aria-label="Quitar una unidad de Apple iPad 11 pulgadas A16">−</button>
+							<output aria-live="polite">1</output>
+							<button type="button" aria-label="Agregar una unidad de Apple iPad 11 pulgadas A16">+</button>
+						</div>
+						<button class="remove" type="button" aria-label="Quitar Apple iPad 11 pulgadas A16 del carrito">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg>
+						</button>
+						<span class="line-total">$ 1.035.000</span>
+					</div>
+				</div>
+			</li>
+
+			<li class="line">
+				<figure class="line-media">
+					<img src="/products/mac/apple-13-macbook-air-chip-m5-1.webp"
+						alt="Apple MacBook Air de 13 pulgadas con chip M5, abierta de frente"
+						width="640" height="640">
+				</figure>
+				<div>
+					<a class="line-name" href="/catalogo/apple-13-macbook-air-chip-m5">Apple 13&quot; MacBook Air - Chip M5</a>
+					<p class="line-variant">Mac</p>
+					<div class="line-bottom">
+						<div class="qty" role="group" aria-label="Cantidad de Apple 13 pulgadas MacBook Air">
+							<button type="button" aria-label="Quitar una unidad de Apple 13 pulgadas MacBook Air">−</button>
+							<output aria-live="polite">1</output>
+							<button type="button" aria-label="Agregar una unidad de Apple 13 pulgadas MacBook Air">+</button>
+						</div>
+						<button class="remove" type="button" aria-label="Quitar Apple 13 pulgadas MacBook Air del carrito">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg>
+						</button>
+						<span class="line-total">$ 2.000.000</span>
+					</div>
+				</div>
+			</li>
+
+			<li class="line">
+				<figure class="line-media">
+					<img src="/products/watch/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-1.webp"
+						alt="Apple Watch Series 11 con caja de aluminio negro y correa deportiva negra"
+						width="640" height="640">
+				</figure>
+				<div>
+					<a class="line-name" href="/catalogo/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra">Apple Watch Series 11 - Caja Aluminio Negro - Correa Deportiva Negra</a>
+					<p class="line-variant">Watch</p>
+					<div class="line-bottom">
+						<div class="qty" role="group" aria-label="Cantidad de Apple Watch Series 11">
+							<button type="button" aria-label="Quitar una unidad de Apple Watch Series 11">−</button>
+							<output aria-live="polite">1</output>
+							<button type="button" aria-label="Agregar una unidad de Apple Watch Series 11">+</button>
+						</div>
+						<button class="remove" type="button" aria-label="Quitar Apple Watch Series 11 del carrito">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg>
+						</button>
+						<span class="line-total">$ 600.000</span>
+					</div>
+				</div>
+			</li>
+		</ol>
+	</div>
+
+	<div class="panel-empty">
+		<div class="mark" aria-hidden="true">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"/></svg>
+		</div>
+		<h2>Tu carrito está vacío</h2>
+		<p>Agregá un producto y va a aparecer acá con su capacidad, la cantidad y el total.</p>
+		<a href="/catalogo">Ver el catálogo</a>
+	</div>
+
+	<div class="panel-foot">
+		<dl class="totals">
+			<dt>Total</dt>
+			<dd><span class="currency">$</span>3.695.000</dd>
+		</dl>
+		<button class="checkout" type="button">Finalizar compra</button>
+		<button class="keep-browsing" type="button">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"/></svg>
+			Seguir comprando
+		</button>
+		<p class="foot-caption">El envío se coordina al finalizar. Los precios son de ejemplo y no son precios de venta.</p>
+	</div>
+</section>
+
+<div class="preview" role="group" aria-label="Vista previa del estado del carrito">
+	<span>Vista previa</span>
+	<button type="button" aria-pressed="true" data-state="filled">Con productos</button>
+	<button type="button" aria-pressed="false" data-state="empty">Vacío</button>
+</div>
+
+<script>
+	document.querySelectorAll('.preview button').forEach(function (button) {
+		button.addEventListener('click', function () {
+			document.body.dataset.cart = button.dataset.state;
+			document.querySelectorAll('.preview button').forEach(function (other) {
+				other.setAttribute('aria-pressed', String(other === button));
+			});
+		});
+	});
+</script>
+</body>
+</html>

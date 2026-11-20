@@ -1,0 +1,27 @@
+{
+	"title": "Carrito de compras",
+	"brief": "Carrito de compras para iTech Store: revisar los productos agregados, ajustar cantidades, ver el total y pasar al pago. Tres estrategias distintas para el mismo trabajo, sobre el sistema de diseño vigente (dirección Galería).",
+	"artboards": [
+		{
+			"file": "01-cart-page.html",
+			"title": "Página con resumen",
+			"tradeoff": "El carrito es un lugar propio: la lista y el resumen se leen enteros y el total queda a la vista mientras se recorre. Cuesta una navegación de ida y vuelta al catálogo y una página más que mantener.",
+			"width": 1440,
+			"height": 900
+		},
+		{
+			"file": "02-cart-drawer.html",
+			"title": "Panel lateral",
+			"tradeoff": "Se edita el carrito sin abandonar lo que estabas mirando, y lo último agregado queda confirmado arriba. Cuesta espacio: en el panel las líneas se comprimen y los nombres largos ocupan tres renglones.",
+			"width": 1440,
+			"height": 900
+		},
+		{
+			"file": "03-cart-counter.html",
+			"title": "Mostrador",
+			"tradeoff": "Una sola columna y una barra que nunca se va: el total y el botón de pagar están siempre a un pulgar de distancia en el teléfono. Cuesta densidad: en escritorio deja mucho margen lateral sin usar.",
+			"width": 1440,
+			"height": 900
+		}
+	]
+}
