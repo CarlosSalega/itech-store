@@ -390,7 +390,8 @@ relocates `apple-catalogue.ts`, `source-mapping.ts`, `image-preservation.ts` and
 `domain/`, the stylesheet into `ui/`, and `icons.tsx` to `src/components/icons.tsx`, without
 changing a line, so these line numbers hold before and after the move. They do not hold after T2,
 which deleted those comments: the table is the record of where each rule was written, not a place
-to look now.
+to look now. The same is true of the rows citing `scripts/*.ts` and `prisma/seed.ts`, whose comments
+were deleted by `refactor/remaining-comments`.
 
 | Rule | Documented in |
 | --- | --- |

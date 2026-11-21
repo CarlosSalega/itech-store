@@ -102,6 +102,10 @@ pnpm exec prisma db seed          # runs prisma/seed.ts, which loads every json 
 pnpm dev                          # http://localhost:3000
 ```
 
+`src/lib/prisma.ts` builds one client and keeps it in a `globalThis` slot outside production: Next
+reloads modules on every hot update, and a fresh client per reload would open a new connection pool
+each time. The client is constructed through `@prisma/adapter-pg`, which Prisma 7 requires.
+
 Node.js is required and no `engines` field is declared yet.
 
 ### Environment variables
@@ -207,7 +211,11 @@ the alternative record and are not implemented.
 `pnpm design:photos` writes a parallel, gitignored copy at `design/storefront-photos/` with the
 photography embedded. Two copies exist because artboards must be self-contained (the canvas
 injects them through JavaScript, so relative image paths 404), while product photos must never be
-committed.
+committed. The inliner rewrites `src` attributes only — the one place an artboard points at an image
+file — with a deliberately linear pattern, because a path-shaped regex backtracks for minutes once a
+data URI is in the document. Data URIs never match it, since base64 has no dot-suffix; a local
+reference is resolved under the repository root and then under `public/`; and a board that still
+references a file is never written, so this class of silent breakage fails loudly.
 
 ## Current state
 
@@ -215,8 +223,10 @@ committed.
   pagination and family filter, product detail with variant selection, contact page, ARS price
   formatting, and the Galería direction implemented in the real stack.
 - **Blocked:** `/contacto` publishes no channel — the store's WhatsApp number and email address are
-  not confirmed. `CONTACT` in `src/app/contacto/page.tsx` holds `null` for both, and the page says
-  so instead of inventing a number or an address.
+  not confirmed. `WHATSAPP_NUMBER` and `CONTACT_EMAIL` in
+  `src/features/contact/contact-channels.ts` hold `null` for both, the page says so instead of
+  inventing a number or an address, and `docs/contact-channels.md` records the rule and the one
+  change that turns both on.
 - **Next:** cart, MercadoPago Checkout Pro, authentication (Better Auth), admin panel, and an
   external image host for product photography. Real prices and stock replace the sample rules in
   `prisma/seed.ts`.
