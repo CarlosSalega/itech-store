@@ -14,21 +14,11 @@ import { CartTrigger } from "@/features/cart/ui/trigger";
 
 import styles from "./site-header.module.css";
 
-/**
- * Sticky header. Below 900px the links live in a `<details>` menu that swaps its
- * own icon in CSS, so the disclosure needs no JavaScript.
- *
- * Each family links into the catalog with its filter applied, so the header
- * reaches a real page from anywhere instead of an in-page anchor.
- */
 export function SiteHeader() {
 	return (
 		<header className={styles.header}>
 			<div className={styles.bar}>
 				<Link className={styles.brand} href="/">
-					{/* A plain <img> on purpose: this is an 809-byte SVG mark, which next/image
-					    does not optimise. It is committed (unlike public/products), so nothing
-					    here couples the build to gitignored files. */}
 					{/* eslint-disable-next-line @next/next/no-img-element */}
 					<img
 						className={styles.logo}
@@ -56,13 +46,11 @@ export function SiteHeader() {
 				</nav>
 
 				<div className={styles.tools}>
-					{/* Find-an-item leads to the catalog listing: there is no search box yet. */}
 					<Link className={styles.iconButton} href="/catalogo">
 						<SearchIcon className={styles.icon} />
 						<span className="sr-only">Buscar un producto</span>
 					</Link>
 
-					{/* The bag opens the cart drawer; the badge is the units count. */}
 					<CartTrigger className={styles.iconButton} iconClassName={styles.icon} />
 
 					<details className={styles.menu}>

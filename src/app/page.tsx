@@ -15,23 +15,8 @@ import { prisma } from "@/lib/prisma";
 
 import styles from "./page.module.css";
 
-/*
- * The landing reads the database on every request.
- *
- * This route is deliberately request-time, not prerendered: `cacheComponents` is
- * enabled and the cloud database is intermittently unreachable, so a data
- * dependency at build time would make `pnpm build` fail for reasons unrelated to
- * this code. Route segment config (`export const dynamic`) is removed under
- * `cacheComponents`, so `connection()` is the documented way to say it: nothing
- * below it runs during the build. ISR is the later improvement — cache this route
- * once the data layer is stable.
- */
 export const instant = false;
 
-/**
- * The featured products, one per family, selected in the explicit family order
- * rather than in database order.
- */
 async function getFeaturedProducts(): Promise<CatalogCard[]> {
 	const rows = await prisma.product.findMany({
 		where: { featured: true },
@@ -63,7 +48,6 @@ async function getFeaturedProducts(): Promise<CatalogCard[]> {
 		);
 }
 
-/** Products per family, so the family entry can state real counts. */
 async function getFamilyCounts() {
 	const rows = await prisma.product.groupBy({
 		by: ["category"],
@@ -82,7 +66,6 @@ async function getFamilyCounts() {
 }
 
 export default async function Home() {
-	// Prerendering stops here: the queries below only ever run for a real request.
 	await connection();
 
 	const [featured, counts] = await Promise.all([
@@ -98,7 +81,6 @@ export default async function Home() {
 	const filledFamilies = families.filter((family) => family.count > 0).length;
 	const emptyFamilies = families.length - filledFamilies;
 
-	// The first featured work in family order is the monument; the rest hang below.
 	const [monument, ...wall] = featured;
 
 	return (

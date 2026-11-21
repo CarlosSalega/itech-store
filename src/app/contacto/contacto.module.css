@@ -1,5 +1,3 @@
-/* Contact page: the same gallery language, with the channels as hanging rows. */
-
 .crumbs {
 	padding-top: var(--s-5);
 }
@@ -78,7 +76,6 @@
 	color: var(--muted);
 }
 
-/* Two hanging rows on hairlines, like the family rows of the landing. */
 .channels {
 	margin-top: var(--section-tight);
 	border-top: 1px solid var(--hairline);
@@ -133,7 +130,6 @@
 	color: var(--muted);
 }
 
-/* A channel without a published value says so instead of offering a dead link. */
 .pending {
 	font-size: var(--t-label);
 	letter-spacing: 0.01em;

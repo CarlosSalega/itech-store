@@ -23,10 +23,6 @@ import { VariantSelector } from "@/features/catalog/ui/variant-selector";
 
 import styles from "./producto.module.css";
 
-/*
- * Request-time, like the rest of the catalog: the cloud database must not be a
- * build dependency, and the price of a variant is read from it on every request.
- */
 export const instant = false;
 
 type ProductPageProps = {
@@ -50,14 +46,11 @@ export async function generateMetadata({
 }
 
 export default async function ProductoPage({ params }: ProductPageProps) {
-	// Prerendering stops here: the queries below only run for a real request.
 	await connection();
 
 	const { slug } = await params;
 	const product = await findProductBySlug(slug);
 
-	// An unknown slug is a real 404: nothing in the catalog can name a product
-	// that is not in the database.
 	if (product === null) notFound();
 
 	const related = await listRelatedProducts(product.category, product.slug, 4);
@@ -87,8 +80,6 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 		id: variant.id,
 		sku: variant.sku,
 		label: variantLabel(variant.storage, variant.color),
-		// The cart names the capacity and falls back to the family label when the
-		// variant has none, so a colour-only variant never reads as "Única presentación".
 		variantLabel: formatStorage(variant.storage),
 		price: variant.price,
 		stock: variant.stock,
@@ -127,13 +118,8 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 					<div className="wrap">
 						<div className={styles.grid}>
 							<div>
-								{/* The main photograph hangs with no tile under it and dissolves
-								    into the page; the wall label under it is the page's h1. */}
 								<figure className={styles.media}>
 									{hasImages ? (
-										// A plain <img> on purpose: `public/products` is gitignored and
-										// absent on a fresh clone, so the app must never let the build
-										// or the renderer depend on those files.
 										// eslint-disable-next-line @next/next/no-img-element
 										<img
 											alt={product.name}
@@ -171,8 +157,6 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 								</figure>
 
 								{imageCount > 1 ? (
-									// Every photo of the product is rendered: a numbered strip of small
-									// works, the way the artboard hangs them.
 									<ul className={styles.thumbs}>
 										{product.images.map((image, index) => (
 											<li className={styles.thumb} key={image}>

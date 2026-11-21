@@ -10,18 +10,9 @@ import {
 import styles from "./site-footer.module.css";
 
 type SiteFooterProps = {
-	/** The editorial picks, shown only on the landing. */
 	products?: readonly CatalogCard[];
 };
 
-/**
- * Footer. It carries the sample-data notice exactly once per page: the seeded
- * prices are examples, and saying so here is the only place they are marked.
- *
- * The family entries link into the catalog with the filter applied. The products
- * column is the landing's editorial pick, so it is omitted on the catalog and
- * contact pages instead of repeating the featured names everywhere.
- */
 export function SiteFooter({ products = [] }: SiteFooterProps) {
 	return (
 		<footer className={styles.footer}>

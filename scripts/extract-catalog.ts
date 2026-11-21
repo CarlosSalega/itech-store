@@ -5,20 +5,11 @@ import path from "node:path";
 
 import { familyFolder } from "../src/features/catalog/seed/source-mapping";
 
-/**
- * One-off extraction of catalog facts (name, description, images, capacity)
- * from the store's existing site into files this project owns.
- *
- * The source base URL is read from CATALOG_SOURCE_URL and is deliberately
- * never printed: the repository must carry no reference to the source site.
- */
-
 const BASE_URL = process.env.CATALOG_SOURCE_URL;
 const ROOT = process.cwd();
 const DATA_FILE = path.join(ROOT, "prisma", "seed", "products.json");
 
 const MAX_IMAGES_PER_PRODUCT = 5;
-/** Site furniture (headers, banners, generic renders) is reused across products. */
 const MAX_PRODUCTS_SHARING_ASSET = 5;
 const IMAGE_EXTENSIONS = ["webp", "jpg", "jpeg", "png"] as const;
 const IMAGE_URL_PATTERN = /https:\/\/[^"'\s]+\/products\/[^"'\s]+?\.(?:webp|jpe?g|png)/gi;
@@ -47,11 +38,6 @@ export type PageFacts = {
 	images: string[];
 };
 
-/**
- * Capacity tokens are ambiguous: the same "36GB" can be unified memory or
- * storage. A token counts as memory when a memory word follows it, and as
- * storage when a disk word does.
- */
 const CAPACITY_SOURCE = "\\d+(?:[.,]\\d+)?\\s?(?:gb|tb)";
 const MEMORY_QUALIFIER_SOURCE = "ram|memoria|unificada";
 const DISK_QUALIFIER_SOURCE = "ssd|hdd|almacenamiento|disco";
@@ -95,11 +81,6 @@ function capacityTokens(text: string): CapacityToken[] {
 	return tokens;
 }
 
-/**
- * Returns the storage capacity, never the memory capacity: "36GB RAM" is
- * skipped, "1TB SSD" wins. Without any qualifier the first capacity is kept
- * ("256GB"), and a title that only qualifies memory yields no storage at all.
- */
 export function parseStorage(text: string): string | null {
 	const tokens = capacityTokens(text);
 	const disk = tokens.find((token) => token.disk && !token.memory);
@@ -110,7 +91,6 @@ export function parseStorage(text: string): string | null {
 	return unqualified ? unqualified.value : null;
 }
 
-/** Removes capacities together with their qualifier word, leaving no stray "RAM". */
 export function stripStorage(text: string): string {
 	return text
 		.replace(CAPACITY_WITH_QUALIFIER_PATTERN, " ")
@@ -139,11 +119,6 @@ export function inferCategory(name: string): Category {
 	return "ACCESSORY";
 }
 
-/**
- * The CDN only serves renditions it has already generated: requesting another
- * width returns 403. So instead of guessing a size, keep the widest rendition
- * the page actually advertises for each asset.
- */
 export function assetKey(url: string): string {
 	const clean = url.split("?")[0] ?? url;
 
@@ -246,8 +221,6 @@ function productUrlsFromSitemap(xml: string, baseUrl: string): string[] {
 	return locs
 		.filter((loc) => /\/productos\/[^/]+\/?$/.test(new URL(loc).pathname))
 		.map((loc) => {
-			// The sitemap may advertise the canonical host rather than the one
-			// the caller configured; keep every request on the configured origin.
 			const parsed = new URL(loc);
 			const relative = `${parsed.pathname}${parsed.search}`;
 
@@ -306,12 +279,6 @@ function groupPages(pages: PageFacts[]): Group[] {
 	return grouped.sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
-/**
- * Gallery slots beyond the first one are mostly site furniture: the same asset
- * is reused by dozens of unrelated products. Count how many distinct slugs use
- * each asset and drop the ones above the sharing budget. A product never loses
- * every image: its first image (the og:image) stays as a fallback.
- */
 export function pruneSharedImages(groups: Group[]): void {
 	const usage = new Map<string, Set<string>>();
 
@@ -392,8 +359,6 @@ async function main(): Promise<void> {
 
 	for (const [index, group] of groups.entries()) {
 		const images: string[] = [];
-		// One folder per family: the reference and the file share the family, so a
-		// downloaded photograph can never land at the flat root again.
 		const folder = familyFolder(group.category);
 		const folderDir = path.join(ROOT, "public", folder);
 

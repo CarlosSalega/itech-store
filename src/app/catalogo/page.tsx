@@ -22,12 +22,6 @@ import { ProductCard } from "@/features/catalog/ui/product-card";
 
 import styles from "./catalogo.module.css";
 
-/*
- * The listing is request-time for the same reason as the landing: the cloud
- * database is not reachable during `pnpm build`, so the queries must never run
- * as part of the static shell. `instant = false` allows the navigation to wait
- * for them instead of demanding an instant UI from an uncached read.
- */
 export const instant = false;
 
 type CatalogSearchParams = {
@@ -62,7 +56,6 @@ export default async function CatalogoPage({
 }: {
 	searchParams: Promise<CatalogSearchParams>;
 }) {
-	// Prerendering stops here: the queries below only run for a real request.
 	await connection();
 
 	const params = await searchParams;
@@ -73,9 +66,6 @@ export default async function CatalogoPage({
 		countByFamily(),
 	]);
 
-	// An unknown `?familia=` value leaves `family` null, so it renders the whole
-	// catalog instead of a 404. An out-of-range `?page=` clamps to the last page
-	// inside `paginatePage`; the URL keeps the number the visitor asked for.
 	const { page, pageCount, skip, take } = paginatePage(
 		requestedPage(params),
 		total,
@@ -146,8 +136,6 @@ export default async function CatalogoPage({
 
 							{FAMILY_ORDER.map((category) =>
 								counts[category] === 0 ? (
-									// A family with no products keeps its entry and states the
-									// zero: it is never hidden and never faked with stock copy.
 									<span
 										className={`${styles.filter} ${styles.filterEmpty}`}
 										key={category}

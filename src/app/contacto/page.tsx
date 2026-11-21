@@ -14,8 +14,6 @@ export const metadata: Metadata = {
 		"Los canales de iTech Store para consultar por un producto del catálogo Apple.",
 };
 
-// Channels come from one shared module, so the contact page and the floating
-// WhatsApp button can never disagree about whether a number exists.
 const CONTACT = {
 	whatsapp: WHATSAPP_CHANNEL,
 	email: EMAIL_CHANNEL,
@@ -72,9 +70,6 @@ export default function ContactoPage() {
 
 						<ul className={styles.channels}>
 							<li className={styles.channel}>
-								{/* A plain <img> on purpose: this is a committed 28px SVG icon, which
-								    the framework image component does not optimise. It is decorative, so the
-								    row's heading carries the name of the channel. */}
 								{/* eslint-disable-next-line @next/next/no-img-element */}
 								<img
 									alt=""
