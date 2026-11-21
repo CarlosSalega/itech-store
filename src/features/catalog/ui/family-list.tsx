@@ -17,10 +17,19 @@ export function FamilyList({ families }: { families: readonly FamilyEntry[] }) {
 		<div className={styles.hanging}>
 			{families.map((family) =>
 				family.count === 0 ? (
-					<span className={`${styles.hang} ${styles.empty}`} key={family.category}>
-						<span className={styles.name}>{FAMILY_LABEL[family.category]}</span>
-						<span className={styles.count}>0 productos</span>
-					</span>
+					<div className={styles.emptyCell} key={family.category}>
+						<span className={`${styles.hang} ${styles.empty}`}>
+							<span className={styles.name}>{FAMILY_LABEL[family.category]}</span>
+							<span className={styles.count}>0 productos</span>
+						</span>
+						<span className={styles.emptyNote}>
+							¿Buscás algo que no está?
+							<Link className={styles.emptyLink} href="/contacto">
+								Consultanos
+								<ChevronRightIcon className={styles.chevron} />
+							</Link>
+						</span>
+					</div>
 				) : (
 					<Link className={styles.hang} href="/catalogo" key={family.category}>
 						<span className={styles.name}>{FAMILY_LABEL[family.category]}</span>

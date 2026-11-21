@@ -65,8 +65,35 @@
 	color: var(--muted);
 }
 
+.emptyCell {
+	display: grid;
+	gap: var(--s-2);
+	padding-bottom: var(--s-4);
+}
+
+.emptyNote {
+	display: flex;
+	align-items: baseline;
+	gap: var(--s-2);
+	font-size: var(--t-label);
+	letter-spacing: 0.01em;
+	color: var(--muted);
+}
+
+.emptyLink {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--s-1);
+	color: var(--link);
+}
+
+.emptyLink:hover .chevron {
+	transform: translateX(3px);
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.hang:hover .chevron {
+	.hang:hover .chevron,
+	.emptyLink:hover .chevron {
 		transform: none;
 	}
 }
