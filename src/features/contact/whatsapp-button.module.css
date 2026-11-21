@@ -1,11 +1,3 @@
-/* Floats over the page, so it must never take part in layout: `position: fixed`
-   keeps it out of the flow and cannot introduce a horizontal scrollbar. It is also
-   the positioning context for the label.
-
-   48px is the ceiling for a glyph-only button: a standard FAB is 56px of surface
-   around a 24-28px glyph, so a 48px glyph already carries the visual weight of a
-   ~72px FAB. The padding around it is the breathing room and the touch target:
-   48 + 2x8 = 64px of tappable area. */
 .button {
 	position: fixed;
 	right: var(--s-4);
@@ -18,10 +10,6 @@
 	border-radius: var(--r-pill);
 }
 
-/* The icon carries its own brand gradient, so it needs no colour from the palette.
-   56px is large-FAB territory: at this size the mark overlays more product
-   photography, which is a deliberate choice rather than an oversight. The 8px of
-   padding around it takes the touch target to 72px. */
 .icon {
 	display: block;
 	width: 56px;
@@ -34,17 +22,11 @@
 	transform: scale(1.05);
 }
 
-/* The label sits to the left of the mark and only appears on hover or keyboard
-   focus. Hidden below 600px: touch devices have no hover, and a label that needs
-   one would never be seen there while taking space from the icon. */
 .label {
 	position: absolute;
 	top: 50%;
 	right: calc(100% + var(--s-2));
 	display: none;
-	/* A fixed height instead of vertical padding: the pill has to measure exactly
-	   26px whatever the line box does, and centring the text inside it is what
-	   makes that stable across fonts. */
 	height: 26px;
 	align-items: center;
 	padding-inline: var(--s-3);

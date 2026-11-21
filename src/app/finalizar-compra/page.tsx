@@ -11,16 +11,9 @@ export const metadata: Metadata = {
 	title: "Finalizar compra — iTech Store",
 	description:
 		"El pago online todavía no está disponible en iTech Store: la compra se coordina por contacto.",
-	// A placeholder must not be indexed as if it were the real checkout.
 	robots: { index: false, follow: true },
 };
 
-/**
- * §S11: the route the drawer's `Finalizar compra` leads to. It is not a dead end
- * and it is not a fake checkout either: online payment does not exist yet, so the
- * page says that, shows what the visitor was about to buy, and offers the real
- * channel the store already has.
- */
 export default function FinalizarCompraPage() {
 	return (
 		<>

@@ -1,45 +1,3 @@
-/**
- * Catalog seed — loads `prisma/seed/products.json` (and, when present, the separately
- * extracted `prisma/seed/products-iphone.json` and `prisma/seed/products-apple.json`)
- * into the database. The files are concatenated at load time: each extract is optional,
- * so a clone without them seeds exactly what it did before.
- *
- * The decisions that are silent when wrong — the file merge, the featured pick and the
- * image filter — live in `src/features/catalog/seed/catalog.ts`, away from this script's
- * `main()`, so they can be tested.
- *
- * ============================================================================
- * SAMPLE DATA: PRICES AND STOCK ARE PLACEHOLDERS, NOT REAL VALUES.
- * ============================================================================
- * Every `price` and `stock` written by this script is derived from fixed,
- * arbitrary rules (a per-category base price and a storage multiplier for
- * prices, a hash of the SKU for stock). No real price exists in this file and
- * none was fetched from any store. Real prices arrive later, replacing only the
- * two functions below (`priceInCents` and `stockForSku`); the catalog model and
- * this seed's shape stay unchanged.
- *
- * The decision that seed prices and stock are sample values ("de ejemplo,
- * reales después") is recorded in `odd/tasks/public-catalog-mvp.md`, spec S7
- * and log entry L8, and the public README rewrite (task T10) carries the same
- * warning for users of the store.
- *
- * Rules (fixed, do not improvise a different scheme):
- *   - `price` is an integer number of cents in ARS (1 ARS = 100 cents). Money
- *     never uses floating point.
- *   - price = round(category base × storage multiplier), bases in cents below.
- *   - stock = (sum of the SKU's character codes) % 8 + 1, so re-runs are stable.
- * ============================================================================
- *
- * The seed is idempotent: products are upserted on `slug` and variants on
- * `sku`, so running it twice leaves 89 products and 98 variants. Rows are never
- * deleted or recreated.
- *
- * Images are local-only and gitignored, so a clone has the image paths but not
- * the files. `resolveImages` keeps only paths whose file exists on this
- * machine; the catalog UI renders `/placeholder.webp` for products left with
- * none, which is exactly what a fresh clone sees.
- */
-
 import "dotenv/config";
 
 import path from "node:path";
@@ -51,7 +9,6 @@ import { buildSeedCatalog, resolveImages, type SeedProduct, type SeedVariant } f
 
 const SEED_DIR = path.join(process.cwd(), "prisma", "seed");
 
-/** Base sample price per category, in integer cents (ARS). */
 const CATEGORY_BASE_CENTS: Record<Category, number> = {
 	IPHONE: 150_000_000,
 	MAC: 200_000_000,
@@ -61,7 +18,6 @@ const CATEGORY_BASE_CENTS: Record<Category, number> = {
 	ACCESSORY: 3_000_000,
 };
 
-/** Sample capacity multiplier applied to the category base price. */
 const STORAGE_MULTIPLIER: Record<string, number> = {
 	"128GB": 1.0,
 	"256GB": 1.15,
@@ -70,7 +26,6 @@ const STORAGE_MULTIPLIER: Record<string, number> = {
 	"2TB": 1.9,
 };
 
-/** Storage multiplier lookup: case-insensitive, 1.0 for unrecognised values. */
 function storageMultiplier(storage: string | null): number {
 	if (storage === null) return 1.0;
 	const key = storage.trim().toUpperCase();
@@ -79,21 +34,18 @@ function storageMultiplier(storage: string | null): number {
 		: 1.0;
 }
 
-/** Sample price in integer cents: category base × storage multiplier, rounded. */
 function priceInCents(product: SeedProduct, variant: SeedVariant): number {
 	return Math.round(
 		CATEGORY_BASE_CENTS[product.category] * storageMultiplier(variant.storage),
 	);
 }
 
-/** Sample stock derived from the SKU, stable across runs. */
 function stockForSku(sku: string): number {
 	let sum = 0;
 	for (const char of sku) sum += char.codePointAt(0) ?? 0;
 	return (sum % 8) + 1;
 }
 
-/** Format integer cents as an ARS amount for the summary output. */
 function formatArs(cents: number): string {
 	return new Intl.NumberFormat("es-AR", {
 		style: "currency",
@@ -132,13 +84,6 @@ async function main() {
 				description: product.description,
 				category: product.category,
 				images,
-				/**
-				 * Derived from the seed data (the first two catalog files, one product per
-				 * family), which is why it is written on the update path as well as on
-				 * create: a database seeded before this rule converges on the next run
-				 * instead of keeping a stale flag. Manual curation of this column in the
-				 * database is not supported — the next seed reverts it.
-				 */
 				featured: featured.has(product.slug),
 			};
 
@@ -179,8 +124,6 @@ async function main() {
 		console.log("Seed summary (sample prices and stock, not real data)");
 		console.log(`Products upserted: ${productsUpserted}`);
 		console.log(`Variants upserted: ${variantsUpserted}`);
-		// Printed because it is written on every run now: the landing shows exactly these,
-		// so the output has to say which they are.
 		console.log(`Featured on the landing: ${[...featured].sort().join(", ")}`);
 		console.log(
 			`Price range written: ${formatArs(minPrice)} - ${formatArs(maxPrice)} ` +

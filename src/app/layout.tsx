@@ -16,13 +16,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 	return (
 		<html lang="es-AR">
 			<body>
-				{/* The cart outlives every page: one provider, one drawer, both at the root. */}
 				<CartProvider>
 					{children}
 					<CartDrawer />
 				</CartProvider>
-				{/* Public pages only today: no private route exists yet. When auth lands
-				    these pages move into a (public) route group, and this moves with them. */}
 				<WhatsappButton />
 			</body>
 		</html>

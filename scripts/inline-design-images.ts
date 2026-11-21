@@ -1,38 +1,17 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
 
-/**
- * The design canvas injects artboards through JavaScript, so a relative path
- * like `../../public/products/x.webp` resolves against the canvas page and
- * 404s. Self-contained artboards are the rule anyway, but the product photos
- * must never be committed, so they cannot be inlined into the tracked files.
- *
- * This script writes a parallel, gitignored design with every local image
- * embedded as a data URI, so the canvas can show the real photography while
- * the repository keeps zero product images.
- *
- * Run: pnpm design:photos [slug ...]   (defaults to `storefront`)
- */
-
 const ROOT = process.cwd();
 const SYSTEM_BOARD = path.join(ROOT, "design", "system.html");
 
-/** One `design/<slug>/` per argument, written to `design/<slug>-photos/`. */
 const SLUGS = (() => {
 	const requested = process.argv.slice(2).filter((arg) => !arg.startsWith("-"));
 
 	return requested.length > 0 ? requested : ["storefront"];
 })();
 
-/**
- * `src` attributes are the only place an artboard points at an image file, and
- * this pattern is deliberately linear: a greedy character class over a long
- * data URI backtracks for minutes, which is what a path-shaped regex does once
- * the first blob is in the document.
- */
 const SOURCE_ATTRIBUTE = /\bsrc="([^"]+)"/g;
 
-/** A local file reference, by extension. Data URIs never match: base64 has no dot-suffix. */
 const IMAGE_FILE = /\.(?:webp|png|jpe?g|svg)$/i;
 
 const MIME: Record<string, string> = {
@@ -97,7 +76,6 @@ function inlineImages(html: string): Inline {
 	return { html: output, inlined, missing };
 }
 
-/** A reference that survives inlining would render as a silent broken image. */
 function assertFullyInlined(html: string, outputFile: string): void {
 	const leftover: string[] = [];
 

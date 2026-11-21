@@ -1,9 +1,3 @@
-/*
- * The placeholder checkout: the Galería system applied to a page that has to be
- * honest before it is pretty. No numeral monument here — the total is a note,
- * not a price of sale.
- */
-
 .crumbs {
 	padding-top: var(--s-6);
 	font-size: var(--t-body-s);
@@ -52,8 +46,6 @@
 	font-size: var(--t-body);
 	line-height: 1.5;
 }
-
-/* ---------- what was in the cart ---------- */
 
 .summary {
 	max-width: 62ch;
@@ -137,8 +129,6 @@
 	line-height: 1.4;
 }
 
-/* ---------- empty cart ---------- */
-
 .empty {
 	max-width: 62ch;
 	padding: var(--s-6);
@@ -177,8 +167,6 @@
 .emptyLink:hover {
 	background: var(--surface);
 }
-
-/* ---------- actions ---------- */
 
 .actions {
 	display: flex;

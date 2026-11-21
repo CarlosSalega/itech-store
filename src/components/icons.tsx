@@ -1,11 +1,3 @@
-/**
- * The icon set for this store, drawn here: twenty-four unit grid, 1.6 stroke,
- * round caps and joins, `currentColor`, `fill="none"`.
- *
- * Size comes from CSS only (the class the caller passes), never from a `width`
- * or `height` inside the SVG. Every glyph is decorative: the accessible name
- * belongs to the button or link that contains it.
- */
 type IconProps = {
 	className?: string;
 };

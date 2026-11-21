@@ -1,6 +1,3 @@
-/* Catalog listing in the Galería direction: a heading, the family filter on
-   pills, then the wall of works and the pager. */
-
 .crumbs {
 	padding-top: var(--s-5);
 }
@@ -41,7 +38,6 @@
 	padding: var(--s-6) 0 var(--s-7);
 }
 
-/* The page's one statement. Everything below it steps down immediately. */
 .title {
 	max-width: 18ch;
 	font-size: var(--t-display-s);
@@ -58,34 +54,21 @@
 	color: var(--muted);
 }
 
-/* Family filter: the same pill language as the capacity selector. */
 .filterRow {
 	display: flex;
 	flex-wrap: wrap;
 	gap: var(--s-2) var(--s-3);
 }
 
-/* At 320px six chips wrapped into three ragged rows and ate half the screen.
-   Below the tablet breakpoint they become one scrollable strip instead: same
-   information, one line, and no ragged column widths. The scrollbar is hidden
-   because the strip reads as a row, not as an overflow. */
 @media (max-width: 599px) {
 	.filterRow {
 		flex-wrap: nowrap;
 		overflow-x: auto;
 		overscroll-behavior-x: contain;
 		scroll-snap-type: x proximity;
-		/* A focus ring is painted outside the chip, so the scroll container has to
-		   reserve room or it clips the ring above and below. The negative margin puts
-		   the chips back exactly where they were. The extra room on the right lets the
-		   last chip scroll clear of the edge fade. */
 		padding: var(--s-1);
 		padding-right: var(--s-6);
 		margin: calc(-1 * var(--s-1));
-		/* Slide affordance. The strip can cut exactly between two chips and then look
-		   complete, so the right edge fades to show there is more. Masking the
-		   container needs no extra element and no script, and the right padding above
-		   keeps the last chip out of the faded zone at the end of the scroll. */
 		-webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
 		mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
 		scrollbar-width: none;
@@ -141,7 +124,6 @@
 	color: rgba(255, 255, 255, 0.74);
 }
 
-/* An empty family keeps its entry, loses the pill fill and says zero. */
 .filterEmpty {
 	background: transparent;
 	box-shadow: none;
@@ -189,7 +171,6 @@
 	font-variant-numeric: tabular-nums;
 }
 
-/* The wall: no tiles under the photographs, hung at two heights. */
 .wall {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
@@ -215,14 +196,10 @@
 	font-size: var(--t-body-s);
 	color: var(--muted);
 }
-/* The shared `.rule` hairline carries no spacing of its own, which left it
-   sitting on top of the note above it. The rule separates the filter header from
-   the catalogue wall, so it needs air on the side it faces. */
 .separator {
 	margin-top: var(--s-6);
 }
 
-/* Honest empty state: a family with no products, or a catalog with none. */
 .empty {
 	max-width: 56ch;
 	margin-top: var(--section-tight);
