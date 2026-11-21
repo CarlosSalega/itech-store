@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveVariant, splitPrice } from "./variant-selection";
-
-import type { VariantOption } from "./variant-selector";
+import { resolveVariant, splitPrice, type VariantOption } from "./variant-selection";
 
 const variants: VariantOption[] = [
 	{

@@ -1,6 +1,6 @@
 "use server";
 
-import { FAMILY_LABEL, formatStorage, variantLabel } from "@/features/catalog/catalog";
+import { FAMILY_LABEL, formatStorage, variantLabel } from "@/features/catalog/domain/catalog";
 import { prisma } from "@/lib/prisma";
 
 import type { CatalogVariant, RevalidationResult } from "./revalidation";

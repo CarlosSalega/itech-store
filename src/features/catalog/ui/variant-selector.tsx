@@ -4,26 +4,10 @@ import { useState } from "react";
 
 import { useCart } from "@/features/cart/ui/provider";
 
-import { formatArsPrice } from "./format-price";
-import { resolveVariant, splitPrice } from "./variant-selection";
+import { formatArsPrice } from "../domain/format-price";
+import { resolveVariant, splitPrice, type VariantOption } from "../domain/variant-selection";
 
 import styles from "./variant-selector.module.css";
-
-/**
- * One variant of a product, reduced to what the selector renders. Everything
- * here is serialisable, because it crosses the server/client boundary.
- */
-export type VariantOption = {
-	id: string;
-	sku: string;
-	/** Capacity, colour, or a single-presentation label. */
-	label: string;
-	/** `Capacidad 256 GB`-style capacity, or `null` when the variant has none. */
-	variantLabel: string | null;
-	/** Integer ARS cents. */
-	price: number;
-	stock: number;
-};
 
 /** What the cart needs to know about the product this variant belongs to. */
 export type SelectorProduct = {

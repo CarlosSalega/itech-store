@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { SiteFooter } from "@/app/_components/site-footer";
 import { SiteHeader } from "@/app/_components/site-header";
-import { ChevronRightIcon } from "@/features/catalog/icons";
+import { ChevronRightIcon } from "@/components/icons";
 import { EMAIL_CHANNEL, WHATSAPP_CHANNEL } from "@/features/contact/contact-channels";
 
 import styles from "./contacto.module.css";

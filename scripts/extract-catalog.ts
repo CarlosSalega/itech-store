@@ -3,7 +3,7 @@ import "dotenv/config";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { familyFolder } from "../src/features/catalog/source-mapping";
+import { familyFolder } from "../src/features/catalog/seed/source-mapping";
 
 /**
  * One-off extraction of catalog facts (name, description, images, capacity)

@@ -12,9 +12,9 @@ import {
 	skuFor,
 	slugFromName,
 	storagesFromName,
-} from "../src/features/catalog/apple-catalogue";
-import { preserveLocalPhotographs } from "../src/features/catalog/image-preservation";
-import { familyFolder } from "../src/features/catalog/source-mapping";
+} from "../src/features/catalog/seed/apple-catalogue";
+import { preserveLocalPhotographs } from "../src/features/catalog/seed/image-preservation";
+import { familyFolder } from "../src/features/catalog/seed/source-mapping";
 
 /**
  * Extraction of the Apple products this store does not sell yet into files the project
@@ -38,7 +38,7 @@ const DATA_FILE = path.join(ROOT, "prisma", "seed", "products-apple.json");
 
 /**
  * The list of products to import lives next to the classifier that reads the names
- * (`REQUESTED_APPLE_PRODUCTS` in `src/features/catalog/apple-catalogue.ts`) so that a test
+ * (`REQUESTED_APPLE_PRODUCTS` in `src/features/catalog/seed/apple-catalogue.ts`) so that a test
  * can prove every entry resolves to a family. This script only consumes it.
  */
 

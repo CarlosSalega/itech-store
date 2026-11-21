@@ -4,8 +4,8 @@ import {
 	FAMILY_LABEL,
 	PLACEHOLDER_IMAGE,
 	type CatalogCard as CatalogCardModel,
-} from "./catalog";
-import { formatArsPrice } from "./format-price";
+} from "../domain/catalog";
+import { formatArsPrice } from "../domain/format-price";
 import styles from "./product-card.module.css";
 
 type ProductCardProps = {

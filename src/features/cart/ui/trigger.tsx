@@ -1,6 +1,6 @@
 "use client";
 
-import { BagIcon } from "@/features/catalog/icons";
+import { BagIcon } from "@/components/icons";
 
 import { useCart } from "./provider";
 
