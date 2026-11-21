@@ -289,9 +289,9 @@ shows exactly one price and one SKU). Never average, never show the max, never h
 
 ## Components
 
-**Header** — 48px (mobile) / 64px, sticky, `rgba(255,255,255,.72)` (dark: `rgba(10,10,10,.72)`)
-+ `backdrop-filter: blur(20px) saturate(180%)`, closed by a hairline bottom edge, never a hard
-divider. Content scrolls under it.
+**Header** — 48px (mobile) / 64px, sticky, `rgb(255 255 255 / 82%)` (dark: `rgb(10 10 10 / 82%)`)
++ `backdrop-filter: blur(20px) saturate(180%)`, never closed by a hard divider. Content scrolls
+under it.
 `<nav aria-label="Principal">`; a skip link is the first tab stop; below 900px the links live in a
 `<details>` menu whose summary button states its own state ("Menú") and swaps its `menu` icon for
 `close` when `[open]`, in CSS only. Search and cart are icon buttons at 44×44, each named by visually
@@ -300,8 +300,8 @@ hidden text rather than by a label on the glyph.
 **Header pill, as implemented.** The live header is a floating bar, not a full-width strip: inset
 `--s-3` from the top, width `min(1200px, calc(100% - 2 * var(--header-inset)))`, `--r-lg`, edged by
 `--e-hairline` plus `--e-float` instead of a bottom border, sitting over the content instead of
-dividing it. Its ground is `rgb(255 255 255 / 82%)` — higher than the 72% quoted above, because a
-bar that floats over a product photograph does not hold 4.5:1 at 72%. Behind the blur it is the same
+dividing it. Its ground is `rgb(255 255 255 / 82%)`, because a bar that floats over a product
+photograph does not hold 4.5:1 at 72%. Behind the blur it is the same
 `blur(20px) saturate(180%)`; where `backdrop-filter` is unsupported the fallback is opaque
 `--white`, since translucent-but-unreadable is worse than plain. The pill declares no
 `overflow: hidden`: the mobile menu panel hangs below it and would be clipped.
@@ -381,8 +381,9 @@ place in the grid.
 (`src/features/catalog/ui/family-list.module.css`).
 
 **Empty family** — a family with zero products keeps its entry, drops its count to "0 productos",
-uses a dashed `--hairline` edge and one sentence of plain copy plus a link to `/contacto`. It is
-never hidden and never faked with a stock photo.
+uses a dashed `--hairline` edge, the sentence `¿Buscás algo que no está?` and a `Consultanos` link
+to `/contacto` with the same chevron the filled rows use. It is never hidden and never faked with a
+stock photo.
 
 **Capacity selector** — fieldset + radio group ("Capacidad"), one label per `Variant`, pill
 `--r-pill`, min-height 44px, unselected: `1px solid --hairline` on the page ground; selected:

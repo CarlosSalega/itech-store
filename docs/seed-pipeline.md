@@ -276,11 +276,10 @@ re-ordered files. The result is at most one product per family.
 extract: an extract adds catalogue to the store, it never moves a family's landing pick. An
 empty set of products features nothing.
 
-**R45 — The flag is written on create and on update.** The seed writes
-`featured: featured.has(product.slug)` in the data used by both the create and the update path,
-so a database seeded before this rule converges on the next run instead of keeping a stale flag.
-Manual curation of the column is not supported: the next seed reverts it. The seed also prints
-the featured slugs it wrote.
+**R45 — The flag is written on create and never on update.** The seed passes
+`featured: featured.has(product.slug)` into the create branch of the product upsert only, so a fresh
+database reproduces the file-derived pick while a re-run leaves the column as it is: manual curation
+survives. The seed prints the pick it applied on create.
 
 ## 12. Image references resolve, or fall back to the placeholder
 
@@ -359,12 +358,11 @@ The three seed files on disk today hold 90 products and 100 variants (`products.
 `products-iphone.json` 17/22, `products-apple.json` 9/10) with no repeated slug or SKU. The
 idempotency claim is right; only the two numbers are out of date.
 
-**D6 — `featured` is written on update, and the spec still says it is not.**
-`prisma/seed.ts:136-141` documents that the flag is written "on the update path as well as on
-create" and that manual curation is reverted; the code does exactly that (`130-149`).
-`odd/tasks/public-catalog-mvp.md` S15 and log entry L33 still say the seed sets the flag "only on
-create and never on update, which keeps manual changes alive across re-seeds". The drift is in the
-spec text, not in the code: a manual change to the column does not survive the next seed.
+**D6 — resolved: `featured` is written on create only.** The seed used to write the flag on the
+update path as well, which reverted manual curation; `odd/tasks/public-catalog-mvp.md` S15 and L33
+had said "only on create and never on update" all along. The seed now sets it in the create branch
+alone (`prisma/seed.ts`, the product upsert), and the console line names the pick as applied on
+create rather than as the current state of the column.
 
 **D7 — The two `skuFor` rules disagree on a blank capacity.**
 `src/features/catalog/seed/apple-catalogue.ts:152-158` has no guard for a storage that strips to
