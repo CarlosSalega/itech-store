@@ -11,16 +11,8 @@ import {
 	type SeedProduct,
 } from "./catalog";
 
-/**
- * The seed makes three decisions that are invisible in the database until they are
- * wrong: which product is featured, which catalog files are merged, and which image
- * reference survives. They live here, away from the script's `main()`, so a test can
- * pin them.
- */
-
 const scratch: string[] = [];
 
-/** A throwaway directory outside the worktree, removed again after the test. */
 function makeSeedDir(): string {
 	const dir = mkdtempSync(path.join(tmpdir(), "seed-catalog-"));
 	scratch.push(dir);
@@ -61,7 +53,6 @@ describe("buildSeedCatalog", () => {
 		const dir = makeSeedDir();
 		writeSeedFile(dir, "products.json", [product("apple-airtag", "ACCESSORY"), product("ip15", "IPHONE")]);
 		writeSeedFile(dir, "products-iphone.json", [product("ip16", "IPHONE")]);
-		// products-apple.json is absent on purpose: a fresh clone has not run the extract.
 		const log = vi.spyOn(console, "log").mockImplementation(() => {});
 
 		const catalog = buildSeedCatalog(dir);
@@ -74,8 +65,6 @@ describe("buildSeedCatalog", () => {
 	});
 
 	it("features only from the first two files, so a later extract cannot steal a family", () => {
-		// The regression this exists for: an extract whose slug sorts before the current
-		// featured product must add catalogue without moving the landing.
 		const dir = makeSeedDir();
 		writeSeedFile(dir, "products.json", [product("apple-airtag", "ACCESSORY")]);
 		writeSeedFile(dir, "products-iphone.json", [product("ip15", "IPHONE")]);
@@ -98,7 +87,6 @@ describe("featuredSlugs", () => {
 			product("ip16", "IPHONE"),
 		]);
 
-		// Alphabetical by slug: the pick is a rule, not a choice made per run.
 		expect([...featured].sort()).toEqual(["adaptador-20w-original", "ip15"]);
 	});
 
@@ -134,7 +122,6 @@ describe("resolveImages", () => {
 		});
 
 		expect(kept).toEqual(["/products/iphone/iphone-16-1.png"]);
-		// Resolved under `public/`, so the nested form is looked up and not dropped.
 		expect(seen).toHaveLength(1);
 		expect(seen[0]?.startsWith(path.join(process.cwd(), "public"))).toBe(true);
 		expect(seen[0]?.endsWith(path.join("products", "iphone", "iphone-16-1.png"))).toBe(true);

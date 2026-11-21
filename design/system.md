@@ -297,7 +297,10 @@ since this section was written; it now carries ten glyphs — `search`, `bag`, `
 
 **Button** — two styles only. Primary: pill, `--accent` fill, white label, min-height 44px,
 `padding: 0 24px`, press `scale(.97)`. Secondary: text link, `--link`, with a `chevron-right` that
-moves 2px on hover. A text button is never styled as a bordered box.
+moves 2px on hover. A text button is never styled as a bordered box. An action that cannot be used
+is disabled, reads as inert and says why: `--surface` ground with an inset `--hairline`, `--muted`
+label, `cursor: not-allowed`, and a `--t-caption` `--muted` note under it linked by
+`aria-describedby` (`src/features/catalog/ui/variant-selector.module.css`, `ui/variant-selector.tsx`).
 
 **Product card** — `<article>`: image tile (`--surface`, `--r-lg`, 4:3, `object-fit: contain`,
 `padding: --s-5`), then name (`--t-headline`), then price block, then optional capacity note. The
@@ -306,7 +309,10 @@ and hovering anywhere on the card turns the name `--link` (`:focus-within` on th
 keyboard path the same), so the card announces its link before you reach the name.
 A direction may change the container: Galería hangs the photo on the page with no tile and captions
 it (wall label), and Vitrina puts the dominant product in a case at 2×2 while its neighbours stay
-1×1. The name / price / capacity order and the link rules never change.
+1×1. The name / price / capacity order and the link rules never change. Photography is rendered with
+a plain `<img>`, never `next/image`: `/products` is gitignored and absent on a fresh clone, so the
+build must never depend on those files existing, and the local `no-img-element` rule is silenced for
+exactly that reason (`src/features/catalog/ui/product-card.tsx`).
 
 The **wall label** is the light-ground caption form: 1px `--hairline` on top (short tick that extends
 on hover), name at `--t-headline`, then one caption line of family and price at `--t-label`; on the
@@ -316,6 +322,9 @@ monumental work the price steps up to `--t-numeral`.
 ground, shows `/placeholder.webp` as a decorative `<img alt="">` and a `--t-label` `--muted` line
 "Imagen no disponible" as the accessible state. Name and price still render; the card keeps its
 place in the grid.
+
+**Family rows** — the families are hung as rows, one hairline under each, never as tiles
+(`src/features/catalog/ui/family-list.module.css`).
 
 **Empty family** — a family with zero products keeps its entry, drops its count to "0 productos",
 uses a dashed `--hairline` edge and one sentence of plain copy plus a link to `/contacto`. It is
@@ -337,8 +346,10 @@ painted outside a number is not clipped. The step that does not exist on this pa
 link: it keeps its place, reads as unavailable with the header's disabled `0.45`, and does not react
 to the pointer. Below 600px the strip is replaced by the current position, because seven 44px
 targets need 332px and 320px leaves the pager 272px: the pager stays one row and every target keeps
-its size, so only the presentation changes, never the target. The note lives in
-`src/features/catalog/ui/catalog-pagination.module.css:1`, `:14-16` and `:107-109` today.
+its size, so only the presentation changes, never the target. Every rule in this paragraph was
+carried by a comment in `src/features/catalog/ui/catalog-pagination.module.css` until
+`odd/tasks/catalog-layout.md` T2 (spec S5) deleted every prose comment in the feature; this section
+is now its only record.
 
 **Sample-data notice** — one per page, in the footer, `--t-caption` `--muted`:
 "Los precios de este catálogo son de ejemplo y no son precios de venta." Never a banner, never a

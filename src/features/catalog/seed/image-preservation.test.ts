@@ -2,15 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import { preserveLocalPhotographs } from "./image-preservation";
 
-/**
- * The extraction scripts rewrite a whole data file on every run. The owner adds
- * photographs of his own into the same `images` array, so a rewrite that ignores what was
- * there deletes his work while reporting success. These cases pin the rule that decides
- * which references survive a re-run.
- *
- * Only references are handled here; whether the file exists is the seed's problem, and it
- * already drops a missing one without failing.
- */
 describe("preserveLocalPhotographs", () => {
 	it("returns the downloaded photographs alone when there is nothing written yet", () => {
 		expect(preserveLocalPhotographs(["/products/iphone/a-1.webp"], null)).toEqual({

@@ -12,10 +12,6 @@ export type FamilyEntry = {
 	count: number;
 };
 
-/**
- * The families as hanging rows. An empty family keeps its row, drops to
- * "0 productos" and loses its link: it is never hidden and never faked.
- */
 export function FamilyList({ families }: { families: readonly FamilyEntry[] }) {
 	return (
 		<div className={styles.hanging}>

@@ -9,17 +9,11 @@ import { catalogHref } from "../domain/catalog";
 import styles from "./catalog-pagination.module.css";
 
 type CatalogPaginationProps = {
-	/** The family being filtered, kept in every page link. */
 	family: Category | null;
-	/** The page that is rendered (already clamped). */
 	page: number;
 	pageCount: number;
 };
 
-/**
- * Real URL pagination: every page is a plain link, so the pager works with the
- * keyboard, with the middle mouse button and with a shared URL.
- */
 export function CatalogPagination({
 	family,
 	page,
@@ -39,8 +33,6 @@ export function CatalogPagination({
 					<ChevronLeftIcon className={styles.stepIcon} />
 				</Link>
 			) : (
-				/* No destination to offer, so there is nothing for the keyboard to land
-				   on: the arrow stays for geometry but leaves the accessibility tree. */
 				<span
 					aria-hidden="true"
 					className={`${styles.step} ${styles.inert}`}
@@ -70,8 +62,6 @@ export function CatalogPagination({
 				))}
 			</ol>
 
-			{/* The narrow layout swaps the numbered strip for this, so the pager stays one
-			   row at 320px. Hidden by CSS above the tablet breakpoint. */}
 			<span className={styles.position}>
 				<span className="sr-only">Página </span>
 				{page}

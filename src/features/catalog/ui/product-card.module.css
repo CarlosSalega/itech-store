@@ -1,6 +1,3 @@
-/* Galería direction: the work hangs on the page with no tile under it, and its
-   wall label carries a hairline tick that draws out to the caption width. */
-
 .work {
 	display: flex;
 	flex-direction: column;
@@ -17,7 +14,6 @@
 	height: auto;
 	aspect-ratio: 1;
 	object-fit: contain;
-	/* The photography is white-ground webp, so the ground dissolves into the page. */
 	mix-blend-mode: multiply;
 	transition: transform var(--dur-2) var(--ease-std);
 }
@@ -26,7 +22,6 @@
 	transform: scale(1.02);
 }
 
-/* Fresh clone (S13): no product photo, so the work keeps a ground and its size. */
 .empty {
 	display: grid;
 	place-items: center;
@@ -89,9 +84,6 @@
 	color: inherit;
 }
 
-/* The whole work is the target, not just its name: hovering anywhere on the
-   card — photograph, label or price — announces that the wall label is a link.
-   `focus-within` keeps the keyboard path identical to the pointer one. */
 .work:hover .name a,
 .work:focus-within .name a {
 	color: var(--link);

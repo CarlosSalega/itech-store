@@ -10,21 +10,13 @@ import styles from "./product-card.module.css";
 
 type ProductCardProps = {
 	product: CatalogCardModel;
-	/** The monumental work of the page: the label steps up to title and numeral scale. */
 	monument?: boolean;
 };
 
-/**
- * A work on the Galería wall: the photograph with no tile under it, then a wall
- * label whose hairline tick draws out on hover. The card is not a link; the
- * photograph and the name are.
- */
 export function ProductCard({ product, monument = false }: ProductCardProps) {
 	const href = `/catalogo/${product.slug}`;
 	const image = product.image;
 	const hasImage = image !== null;
-	// The formatter owns the whole string ("$ 900.000"); splitting it here is the
-	// only way to give the currency sign its own muted treatment.
 	const price =
 		product.priceFrom === null
 			? null
@@ -37,8 +29,6 @@ export function ProductCard({ product, monument = false }: ProductCardProps) {
 				href={href}
 			>
 				{hasImage ? (
-					// A plain <img> on purpose: `public/products` is gitignored and absent on a
-					// fresh clone, so the build must never depend on those files existing.
 					// eslint-disable-next-line @next/next/no-img-element
 					<img
 						src={image ?? PLACEHOLDER_IMAGE}

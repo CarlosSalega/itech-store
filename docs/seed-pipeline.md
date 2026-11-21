@@ -309,11 +309,19 @@ from the single `PLACEHOLDER_IMAGE` constant: the product card shows a decorativ
 with the line "Imagen no disponible" and keeps its place on the wall; the product page does the
 same in its gallery. Nothing is broken and no layout depends on the file existing.
 
+## 13. Why these decisions live in the feature
+
+**R51 — The seed's pure decisions live in the feature, not in the script.** File merge, the
+featured pick and the image filter are in `src/features/catalog/seed/catalog.ts`, because
+`prisma/seed.ts` runs `main()` on import and a test cannot import it. They are the three decisions
+that are silent when wrong, so they have to be pinned by a test instead of read out of a script.
+
 ## Known drift
 
 These are places where a comment or spec statement does not describe what the code does. They are
 recorded instead of quietly documented as if they were true. None of them is changed by this
-document.
+document. The comment lines they cite were deleted by `odd/tasks/catalog-layout.md` T2 (spec S5),
+so where an entry quotes what a module "says", it records what it said before that change.
 
 **D1 — Only the Apple extract preserves photographs.**
 `src/features/catalog/seed/image-preservation.ts:9-10` says the rule "has to hold in all three
@@ -380,7 +388,9 @@ Each rule above came from one of these lines. Paths are the module names used in
 relocates `apple-catalogue.ts`, `source-mapping.ts`, `image-preservation.ts` and
 `seed-catalog.ts` into `src/features/catalog/seed/`, `pagination.ts` and `format-price.ts` into
 `domain/`, the stylesheet into `ui/`, and `icons.tsx` to `src/components/icons.tsx`, without
-changing a line, so these line numbers hold before and after the move.
+changing a line, so these line numbers hold before and after the move. They do not hold after T2,
+which deleted those comments: the table is the record of where each rule was written, not a place
+to look now.
 
 | Rule | Documented in |
 | --- | --- |
@@ -431,3 +441,4 @@ changing a line, so these line numbers hold before and after the move.
 | R48 | `scripts/extract-catalog.ts:20-23`, `:309-314` |
 | R49 | `src/features/catalog/seed/catalog.ts:88-103`, `prisma/seed.ts:37-40` |
 | R50 | `src/features/catalog/catalog.ts:3-4`, `prisma/seed.ts:37-40` |
+| R51 | `src/features/catalog/seed/catalog.ts:6-12` |

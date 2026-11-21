@@ -3,17 +3,6 @@ import { prisma } from "@/lib/prisma";
 
 import { FAMILY_ORDER, type CatalogCard } from "../domain/catalog";
 
-/**
- * Catalog reads. These are server-only: they are imported by route segments, not
- * by the client components of the catalog.
- *
- * Every read stays request-time. The route defers through `connection()` before
- * calling them, so nothing below runs during `pnpm build`: the cloud database is
- * intermittently unreachable, and a data dependency in the static shell would
- * fail the build for reasons unrelated to this code.
- */
-
-/** The columns a wall card needs. */
 const cardSelect = {
 	slug: true,
 	name: true,
@@ -30,10 +19,6 @@ type CardRow = {
 	variants: { price: number }[];
 };
 
-/**
- * Reduces a product row to what a card renders: the first image (or none, which
- * makes the card show the placeholder) and the lowest price across its variants.
- */
 export function toCatalogCard(row: CardRow): CatalogCard {
 	return {
 		slug: row.slug,
@@ -47,17 +32,14 @@ export function toCatalogCard(row: CardRow): CatalogCard {
 	};
 }
 
-/** The where clause of the family filter: `null` means the whole catalog. */
 function familyFilter(family: Category | null) {
 	return family === null ? {} : { category: family };
 }
 
-/** How many products the filter matches, which is what the pager counts. */
 export async function countProducts(family: Category | null): Promise<number> {
 	return prisma.product.count({ where: familyFilter(family) });
 }
 
-/** One page of the wall, ordered by name so the pages never reshuffle. */
 export async function listProducts(
 	family: Category | null,
 	skip: number,
@@ -74,10 +56,6 @@ export async function listProducts(
 	return rows.map(toCatalogCard);
 }
 
-/**
- * Products per family, including the families with none: `IPHONE` is zero today
- * and the filter states that instead of hiding it.
- */
 export async function countByFamily(): Promise<Record<Category, number>> {
 	const rows = await prisma.product.groupBy({
 		by: ["category"],
@@ -111,7 +89,6 @@ export type ProductDetail = {
 	}[];
 };
 
-/** One product with its variants, cheapest first so capacities read in order. */
 export async function findProductBySlug(
 	slug: string,
 ): Promise<ProductDetail | null> {
@@ -138,7 +115,6 @@ export async function findProductBySlug(
 	});
 }
 
-/** The rest of the same family, so a product page leads back into the catalog. */
 export async function listRelatedProducts(
 	family: Category,
 	excludeSlug: string,
