@@ -13,14 +13,12 @@ describe("paginatePage", () => {
 	});
 
 	it("returns the last page, which holds the remainder", () => {
-		// 64 = 5 full pages of 12 plus a partial sixth page of 4 products.
 		expect(paginatePage(6, 64, CATALOG_PAGE_SIZE)).toEqual({
 			page: 6,
 			pageCount: 6,
 			skip: 60,
 			take: 12,
 		});
-		// The take stays at the page size: the database returns what exists.
 		expect(paginatePage(3, 25, 12)).toEqual({
 			page: 3,
 			pageCount: 3,

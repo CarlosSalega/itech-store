@@ -10,11 +10,6 @@ import {
 	storagesFromName,
 } from "./apple-catalogue";
 
-/**
- * The names the owner asked to add are exported by the module itself, so the list the
- * extraction uses and the list these tests check cannot drift apart. They are the only
- * names this module cares about, and they carry no reference to where they came from.
- */
 const REQUESTED = REQUESTED_APPLE_PRODUCTS;
 
 describe("REQUESTED_APPLE_PRODUCTS", () => {
@@ -47,20 +42,15 @@ describe("categoryFromName", () => {
 	});
 
 	it("treats a keyboard for an iPad as an accessory, not as an iPad", () => {
-		// The name mentions both, and the wall would otherwise file a keyboard under IPAD.
 		expect(categoryFromName("Apple Magic Keyboard iPad White")).toBe("ACCESSORY");
 	});
 
 	it("files a phone case and a screen protector as accessories, not as phones", () => {
-		// Both names carry the model they fit. Without accessory vocabulary the phone
-		// family wins and a case ends up sold as a phone.
 		expect(categoryFromName("Funda iPhone 17 Pro")).toBe("ACCESSORY");
 		expect(categoryFromName("Protector de pantalla iPhone 16")).toBe("ACCESSORY");
 	});
 
 	it("returns null for anything that is not an Apple product", () => {
-		// The source also lists other brands and unbranded parts; none of them may enter
-		// an Apple family by accident.
 		expect(categoryFromName("Sony Play Station 5 Digital 825GB")).toBeNull();
 		expect(categoryFromName("Cargador – generico – 20w")).toBeNull();
 		expect(categoryFromName("")).toBeNull();
@@ -113,7 +103,6 @@ describe("storagesFromName", () => {
 	it("reports no capacity for a product that is not sold by capacity", () => {
 		expect(storagesFromName("Apple Watch SE 3 40mm Starlight")).toEqual([]);
 		expect(storagesFromName("Apple Pencil Pro")).toEqual([]);
-		// 20w is a power rating, never a capacity.
 		expect(storagesFromName("Apple Adaptador 20w original")).toEqual([]);
 	});
 });
@@ -142,8 +131,6 @@ describe("normaliseName", () => {
 	});
 
 	it("reads a brand prefix typed twice as the same product", () => {
-		// The source carries names such as "Apple Apple Watch SE 3 40mm": the brand was
-		// typed on top of an already branded name. It is one product, not two.
 		expect(normaliseName("Apple Apple Watch SE 3 40mm")).toBe(
 			normaliseName("Apple Watch SE 3 40mm"),
 		);
@@ -160,8 +147,6 @@ describe("selectRequested", () => {
 
 		expect(result.present).toHaveLength(REQUESTED.length);
 		expect(result.missing).toEqual([]);
-		// S3: a product that was not requested is never selected, so a model the store
-		// already sells under another source cannot enter twice.
 		expect(result.present).not.toContain("Apple iPhone 16 128GB White");
 	});
 
