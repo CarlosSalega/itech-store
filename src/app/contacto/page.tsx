@@ -131,7 +131,7 @@ export default function ContactoPage() {
 							<p>
 								Esta página no tiene un formulario a propósito: no hay nada del
 								otro lado que reciba el mensaje todavía, y un botón que no envía
-								nada sería mentira. Cuando exista el carrito, la confirmación del
+								nada sería mentira. Cuando exista el pago online, la confirmación del
 								pedido reemplaza a este párrafo.
 							</p>
 						</div>

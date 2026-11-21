@@ -5,10 +5,12 @@ ARS, stored as integer cents.
 
 **Implemented today:** the public catalogue — landing page, listing with URL pagination and
 family filter, product detail with a capacity selector, and a contact page — backed by seeded
-Prisma Postgres data.
+Prisma Postgres data, plus the shopping cart: a 480px side drawer whose prices are revalidated
+against the catalogue every time it opens. `/finalizar-compra` is an honest placeholder because
+online payment does not exist yet.
 
-**Not implemented yet:** the cart, MercadoPago Checkout Pro, authentication and the admin panel.
-No route in this repository lets a visitor add a product to a cart or pay for it.
+**Not implemented yet:** MercadoPago Checkout Pro, authentication, the admin panel, and an external
+image host for product photography. Nothing in this repository charges a card.
 
 > ## Warning: sample prices and stock
 >
@@ -129,6 +131,7 @@ loads it on its own.
 | `/catalogo` | Full catalogue, 12 products per page, family filter |
 | `/catalogo/[slug]` | Product detail with gallery and capacity selector; the price follows the selected variant. Unknown slug → 404 |
 | `/contacto` | Contact page. It publishes no phone number and no email, because the store has not confirmed either yet |
+| `/finalizar-compra` | Checkout placeholder: it lists what the cart holds, says online payment does not exist yet, and points at `/contacto`. `noindex` |
 
 `/catalogo` accepts two query parameters, and they compose:
 
@@ -221,13 +224,15 @@ references a file is never written, so this class of silent breakage fails loudl
 
 - **Done:** seeded Prisma Postgres schema (`Product` + `Variant`), landing, catalogue with URL
   pagination and family filter, product detail with variant selection, contact page, ARS price
-  formatting, and the Galería direction implemented in the real stack.
+  formatting, the shopping cart as a 480px side drawer over `localStorage` with prices revalidated
+  on open, the `/finalizar-compra` placeholder, and the Galería direction implemented in the real
+  stack.
 - **Blocked:** `/contacto` publishes no channel — the store's WhatsApp number and email address are
   not confirmed. `WHATSAPP_NUMBER` and `CONTACT_EMAIL` in
   `src/features/contact/contact-channels.ts` hold `null` for both, the page says so instead of
   inventing a number or an address, and `docs/contact-channels.md` records the rule and the one
   change that turns both on.
-- **Next:** cart, MercadoPago Checkout Pro, authentication (Better Auth), admin panel, and an
+- **Next:** MercadoPago Checkout Pro, authentication (Better Auth), admin panel, and an
   external image host for product photography. Real prices and stock replace the sample rules in
   `prisma/seed.ts`.
 

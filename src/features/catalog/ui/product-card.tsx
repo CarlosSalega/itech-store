@@ -6,6 +6,7 @@ import {
 	type CatalogCard as CatalogCardModel,
 } from "../domain/catalog";
 import { formatArsPrice } from "../domain/format-price";
+import { splitPrice } from "../domain/variant-selection";
 import styles from "./product-card.module.css";
 
 type ProductCardProps = {
@@ -20,7 +21,7 @@ export function ProductCard({ product, monument = false }: ProductCardProps) {
 	const price =
 		product.priceFrom === null
 			? null
-			: formatArsPrice(product.priceFrom).split(" ");
+			: splitPrice(formatArsPrice(product.priceFrom));
 
 	return (
 		<article className={monument ? `${styles.work} ${styles.monument}` : styles.work}>
@@ -66,8 +67,8 @@ export function ProductCard({ product, monument = false }: ProductCardProps) {
 						<>
 							<span className={styles.from}>Desde</span>
 							<span className={styles.price}>
-								<span className={styles.currency}>$</span>
-								{price.slice(1).join(" ")}
+								<span className={styles.currency}>{price.currency}</span>
+								{price.amount}
 							</span>
 						</>
 					)}
