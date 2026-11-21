@@ -285,6 +285,16 @@ or `height` inside the SVG. Every SVG is `aria-hidden="true"` and `focusable="fa
 name belongs to the button or link that contains it. `chevron-right` replaces the `›` glyph wherever
 it was decorative. Inline SVG only: no icon font, no sprite file, no downloaded asset.
 
+**Icon grid in code** — the convention is written at the top of the icon module
+(`src/features/catalog/icons.tsx`, hoisted to `src/components/icons.tsx` by
+`odd/tasks/catalog-layout.md` S2), and every glyph spreads one shared `iconProps` object, so a new
+glyph cannot drift from the grid: twenty-four unit viewBox, 1.6 stroke, round caps and joins,
+`currentColor`, `fill="none"`, `aria-hidden="true"`, `focusable="false"`. Size comes from the
+class the caller passes, never from a `width` or `height` inside the SVG, and every glyph is
+decorative: the accessible name belongs to the button or link that contains it. The set has grown
+since this section was written; it now carries ten glyphs — `search`, `bag`, `menu`, `close`,
+`chevron-left`, `chevron-right`, `check`, `minus`, `plus`, `trash`.
+
 **Button** — two styles only. Primary: pill, `--accent` fill, white label, min-height 44px,
 `padding: 0 24px`, press `scale(.97)`. Secondary: text link, `--link`, with a `chevron-right` that
 moves 2px on hover. A text button is never styled as a bordered box.
@@ -317,6 +327,18 @@ never hidden and never faked with a stock photo.
 shows its own price underneath in `--t-label`, at `rgba(255,255,255,.74)` on the light selection and
 `rgba(10,10,10,.62)` on the dark one. Focus ring is always visible on the label. Keyboard: arrows
 move between options, as native radios do.
+
+**Pager** — plain links on a hairline under the wall, and every control is a 44×44 target: the two
+steps, each number, the current marker and the narrow-screen position label all keep that size. The
+steps are chevrons whose words live in `aria-label` ("Página anterior" / "Página siguiente"), so the
+arrow alone carries the meaning and takes no width from the numbered strip. The strip never wraps;
+it scrolls sideways instead, with ring-room padding and an equal negative margin so a focus ring
+painted outside a number is not clipped. The step that does not exist on this page is never a dead
+link: it keeps its place, reads as unavailable with the header's disabled `0.45`, and does not react
+to the pointer. Below 600px the strip is replaced by the current position, because seven 44px
+targets need 332px and 320px leaves the pager 272px: the pager stays one row and every target keeps
+its size, so only the presentation changes, never the target. The note lives in
+`src/features/catalog/ui/catalog-pagination.module.css:1`, `:14-16` and `:107-109` today.
 
 **Sample-data notice** — one per page, in the footer, `--t-caption` `--muted`:
 "Los precios de este catálogo son de ejemplo y no son precios de venta." Never a banner, never a
