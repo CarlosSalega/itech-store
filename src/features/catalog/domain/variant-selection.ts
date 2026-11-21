@@ -1,4 +1,18 @@
-import type { VariantOption } from "./variant-selector";
+/**
+ * One variant of a product, reduced to what the selector renders. Everything
+ * here is serialisable, because it crosses the server/client boundary.
+ */
+export type VariantOption = {
+	id: string;
+	sku: string;
+	/** Capacity, colour, or a single-presentation label. */
+	label: string;
+	/** `Capacidad 256 GB`-style capacity, or `null` when the variant has none. */
+	variantLabel: string | null;
+	/** Integer ARS cents. */
+	price: number;
+	stock: number;
+};
 
 /**
  * The selection rules of the product page, kept out of the component so they can

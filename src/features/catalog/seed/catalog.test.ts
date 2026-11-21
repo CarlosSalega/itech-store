@@ -9,7 +9,7 @@ import {
 	featuredSlugs,
 	resolveImages,
 	type SeedProduct,
-} from "./seed-catalog";
+} from "./catalog";
 
 /**
  * The seed makes three decisions that are invisible in the database until they are

@@ -11,15 +11,15 @@ import {
 	catalogHref,
 	formatStorage,
 	variantLabel,
-} from "@/features/catalog/catalog";
+} from "@/features/catalog/domain/catalog";
 import {
 	findProductBySlug,
 	listRelatedProducts,
-} from "@/features/catalog/catalog-queries";
-import { formatArsPrice } from "@/features/catalog/format-price";
-import { ChevronRightIcon } from "@/features/catalog/icons";
-import { ProductCard } from "@/features/catalog/product-card";
-import { VariantSelector } from "@/features/catalog/variant-selector";
+} from "@/features/catalog/server/catalog-queries";
+import { formatArsPrice } from "@/features/catalog/domain/format-price";
+import { ChevronRightIcon } from "@/components/icons";
+import { ProductCard } from "@/features/catalog/ui/product-card";
+import { VariantSelector } from "@/features/catalog/ui/variant-selector";
 
 import styles from "./producto.module.css";
 

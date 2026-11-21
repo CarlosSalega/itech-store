@@ -9,16 +9,16 @@ import {
 	FAMILY_ORDER,
 	catalogHref,
 	familyFromSlug,
-} from "@/features/catalog/catalog";
-import { CatalogPagination } from "@/features/catalog/catalog-pagination";
+} from "@/features/catalog/domain/catalog";
+import { CatalogPagination } from "@/features/catalog/ui/catalog-pagination";
 import {
 	countByFamily,
 	countProducts,
 	listProducts,
-} from "@/features/catalog/catalog-queries";
-import { ChevronRightIcon } from "@/features/catalog/icons";
-import { CATALOG_PAGE_SIZE, paginatePage } from "@/features/catalog/pagination";
-import { ProductCard } from "@/features/catalog/product-card";
+} from "@/features/catalog/server/catalog-queries";
+import { ChevronRightIcon } from "@/components/icons";
+import { CATALOG_PAGE_SIZE, paginatePage } from "@/features/catalog/domain/pagination";
+import { ProductCard } from "@/features/catalog/ui/product-card";
 
 import styles from "./catalogo.module.css";
 

@@ -7,10 +7,10 @@ import { SiteHeader } from "@/app/_components/site-header";
 import {
 	FAMILY_ORDER,
 	type CatalogCard,
-} from "@/features/catalog/catalog";
-import { FamilyList } from "@/features/catalog/family-list";
-import { ChevronRightIcon } from "@/features/catalog/icons";
-import { ProductCard } from "@/features/catalog/product-card";
+} from "@/features/catalog/domain/catalog";
+import { FamilyList } from "@/features/catalog/ui/family-list";
+import { ChevronRightIcon } from "@/components/icons";
+import { ProductCard } from "@/features/catalog/ui/product-card";
 import { prisma } from "@/lib/prisma";
 
 import styles from "./page.module.css";

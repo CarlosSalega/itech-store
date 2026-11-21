@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
-import { PLACEHOLDER_IMAGE } from "@/features/catalog/catalog";
-import { formatArsPrice } from "@/features/catalog/format-price";
+import { PLACEHOLDER_IMAGE } from "@/features/catalog/domain/catalog";
+import { formatArsPrice } from "@/features/catalog/domain/format-price";
 import {
 	BagIcon,
 	CheckIcon,
@@ -13,7 +13,7 @@ import {
 	MinusIcon,
 	PlusIcon,
 	TrashIcon,
-} from "@/features/catalog/icons";
+} from "@/components/icons";
 
 import {
 	MAX_LINE_QUANTITY,

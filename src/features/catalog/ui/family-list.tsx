@@ -2,8 +2,9 @@ import Link from "next/link";
 
 import type { Category } from "@/generated/prisma/enums";
 
-import { FAMILY_LABEL } from "./catalog";
-import { ChevronRightIcon } from "./icons";
+import { ChevronRightIcon } from "@/components/icons";
+
+import { FAMILY_LABEL } from "../domain/catalog";
 import styles from "./family-list.module.css";
 
 export type FamilyEntry = {

@@ -1,7 +1,7 @@
 import type { Category } from "@/generated/prisma/enums";
 import { prisma } from "@/lib/prisma";
 
-import { FAMILY_ORDER, type CatalogCard } from "./catalog";
+import { FAMILY_ORDER, type CatalogCard } from "../domain/catalog";
 
 /**
  * Catalog reads. These are server-only: they are imported by route segments, not

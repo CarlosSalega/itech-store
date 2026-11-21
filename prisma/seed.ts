@@ -5,7 +5,7 @@
  * so a clone without them seeds exactly what it did before.
  *
  * The decisions that are silent when wrong — the file merge, the featured pick and the
- * image filter — live in `src/features/catalog/seed-catalog.ts`, away from this script's
+ * image filter — live in `src/features/catalog/seed/catalog.ts`, away from this script's
  * `main()`, so they can be tested.
  *
  * ============================================================================
@@ -47,7 +47,7 @@ import path from "node:path";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 import { Category, PrismaClient } from "../src/generated/prisma/client";
-import { buildSeedCatalog, resolveImages, type SeedProduct, type SeedVariant } from "../src/features/catalog/seed-catalog";
+import { buildSeedCatalog, resolveImages, type SeedProduct, type SeedVariant } from "../src/features/catalog/seed/catalog";
 
 const SEED_DIR = path.join(process.cwd(), "prisma", "seed");
 

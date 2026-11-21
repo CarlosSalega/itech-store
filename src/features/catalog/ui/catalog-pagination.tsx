@@ -2,8 +2,9 @@ import Link from "next/link";
 
 import type { Category } from "@/generated/prisma/enums";
 
-import { catalogHref } from "./catalog";
-import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
+
+import { catalogHref } from "../domain/catalog";
 
 import styles from "./catalog-pagination.module.css";
 

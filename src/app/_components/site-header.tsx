@@ -4,12 +4,12 @@ import {
 	FAMILY_LABEL,
 	NAV_FAMILIES,
 	catalogHref,
-} from "@/features/catalog/catalog";
+} from "@/features/catalog/domain/catalog";
 import {
 	CloseIcon,
 	MenuIcon,
 	SearchIcon,
-} from "@/features/catalog/icons";
+} from "@/components/icons";
 import { CartTrigger } from "@/features/cart/ui/trigger";
 
 import styles from "./site-header.module.css";

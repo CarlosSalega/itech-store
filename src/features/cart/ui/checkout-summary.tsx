@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { formatArsPrice } from "@/features/catalog/format-price";
+import { formatArsPrice } from "@/features/catalog/domain/format-price";
 
 import { cartLineTotal, variantLabelOf } from "../domain/cart";
 import { useCart } from "./provider";

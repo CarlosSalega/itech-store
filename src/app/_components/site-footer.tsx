@@ -5,7 +5,7 @@ import {
 	NAV_FAMILIES,
 	catalogHref,
 	type CatalogCard,
-} from "@/features/catalog/catalog";
+} from "@/features/catalog/domain/catalog";
 
 import styles from "./site-footer.module.css";
 

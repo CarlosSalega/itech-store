@@ -7,7 +7,7 @@ import {
 	mapSourceProduct,
 	type CatalogProduct,
 	type SourceProduct,
-} from "../src/features/catalog/source-mapping";
+} from "../src/features/catalog/seed/source-mapping";
 
 /**
  * Extraction of the phone catalog from a second catalog source into files this
