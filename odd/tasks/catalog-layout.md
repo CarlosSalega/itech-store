@@ -32,10 +32,11 @@ Per commit: `pnpm exec next typegen && pnpm exec tsc --noEmit` clean, `pnpm test
 
 ## Delivery
 
-Branch `refactor/catalog-layout`, three pull requests merged in order: documentation, layout, comments. No push or merge of feature branches beyond that order.
+Branch `refactor/catalog-layout`, three pull requests merged in order: layout, documentation, comments. The layout lands first so the provenance table in `docs/seed-pipeline.md` cites the paths a reader will actually find (L4). Comment removal is split by folder: `domain/`, `server/` and `seed/` in one commit, `ui/` and its stylesheets in the other, because the two halves cite different documents.
 
 ## Log
 
 - L1 (owner, verbatim): "ahora planifica la reestructuracion del feature catalog utilizando el mismo criterio que usamos con cart"
 - L2 (owner, decisions, verbatim option labels): seed pipeline inside the feature — "Dentro del feature, carpeta seed/ (recomendado)"; icon set hoisted — "Subirlo a src/components/icons.tsx (recomendado)"; and "Arrancar ahora, corte por corte".
 - L3 (implementation decision): the plan proposed eight slices; the layout ships as one commit instead of five because each group changes the same importer files (`app/catalogo/page.tsx` alone imports from `domain/`, `server/` and `ui/`), so a per-group slice would leave importers pointing at modules that have not moved yet. The two comment commits stay separate.
+- L4 (implementation decisions and findings): the commits run layout → documentation → comments, not documentation → layout, so the 50-row provenance table names the final module paths; at the time each block was deleted, its rule was already in a document. Evidence for the deletion: every catalog file is byte-identical to its pre-change copy once comments are stripped, and the four stylesheets keep their selector census (14, 12, 24, 30). Three things found and deliberately not fixed here, because they are behaviour or copy and S8 forbids both: `design/system.md` says an empty family shows a sentence plus a `/contacto` link while `ui/family-list.tsx` renders only `0 productos`; three deleted comments were already false (they claimed the IPHONE family has no products, and the phone extract put 17 rows on disk); and `ui/product-card.tsx` still splits the formatted price inline although `domain/variant-selection.ts` exports `splitPrice`. Those are the next decisions, not regressions of this refactor.

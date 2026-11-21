@@ -1,5 +1,3 @@
-/* The families hang as rows on one hairline each. */
-
 .hanging {
 	display: grid;
 	gap: 0 var(--s-8);

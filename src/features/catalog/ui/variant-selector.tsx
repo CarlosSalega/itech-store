@@ -9,25 +9,13 @@ import { resolveVariant, splitPrice, type VariantOption } from "../domain/varian
 
 import styles from "./variant-selector.module.css";
 
-/** What the cart needs to know about the product this variant belongs to. */
 export type SelectorProduct = {
 	slug: string;
 	name: string;
-	/** The family label, used by the cart when the variant has no capacity. */
 	familyLabel: string;
 	imageUrl: string | null;
 };
 
-/**
- * The capacity selector. This is the only client component of the product page:
- * the price, the SKU and the stock are the ones of the chosen variant, and they
- * are already server-rendered for the first variant, so the page reads correctly
- * before hydration.
- *
- * The cart does exist now: the action adds the chosen variant and opens the
- * drawer, and a variant with no stock keeps the action disabled and says so
- * instead of faking a flow.
- */
 export function VariantSelector({
 	variants,
 	product,
@@ -48,8 +36,6 @@ export function VariantSelector({
 		);
 	}
 
-	// The formatter owns the whole string ("$ 900.000"); splitting it lets the
-	// currency sign take the smaller, muted treatment of the design system.
 	const { currency, amount } = splitPrice(formatArsPrice(variant.price));
 
 	return (
@@ -125,8 +111,6 @@ export function VariantSelector({
 							imageAlt: `${product.name}, ${variant.label}`,
 							unitPriceCents: variant.price,
 							quantity: 1,
-							// The snapshot claims nothing about the database: opening the cart
-							// revalidates it against the catalogue.
 							available: true,
 						});
 						openCart();
