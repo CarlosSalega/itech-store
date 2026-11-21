@@ -44,12 +44,6 @@
 	}
 }
 
-@media (min-width: 900px) {
-	.bar {
-		min-height: 64px;
-	}
-}
-
 .brand {
 	display: inline-flex;
 	align-items: center;
