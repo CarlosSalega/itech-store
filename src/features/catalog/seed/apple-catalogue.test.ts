@@ -5,7 +5,6 @@ import {
 	normaliseName,
 	REQUESTED_APPLE_PRODUCTS,
 	selectRequested,
-	skuFor,
 	slugFromName,
 	storagesFromName,
 } from "./apple-catalogue";
@@ -104,21 +103,6 @@ describe("storagesFromName", () => {
 		expect(storagesFromName("Apple Watch SE 3 40mm Starlight")).toEqual([]);
 		expect(storagesFromName("Apple Pencil Pro")).toEqual([]);
 		expect(storagesFromName("Apple Adaptador 20w original")).toEqual([]);
-	});
-});
-
-describe("skuFor", () => {
-	it("keeps the slug alone when the product has no capacity", () => {
-		expect(skuFor("pencil-pro", null)).toBe("pencil-pro");
-	});
-
-	it("qualifies the slug with the capacity, without punctuation", () => {
-		expect(skuFor("iphone-18-pro-256-gb", "256GB")).toBe(
-			"iphone-18-pro-256-gb-256gb",
-		);
-		expect(skuFor("iphone-duo-256-512-gb", "512GB")).toBe(
-			"iphone-duo-256-512-gb-512gb",
-		);
 	});
 });
 

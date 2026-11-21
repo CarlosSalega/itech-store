@@ -9,7 +9,6 @@ import {
 	imageDestination,
 	isIphoneProduct,
 	mapSourceProduct,
-	skuFor,
 	slugFromId,
 	type SourceProduct,
 } from "./source-mapping";
@@ -106,18 +105,6 @@ describe("collapseStorages", () => {
 		expect(collapseStorages(record({ variants: [{}, { storage: "  " }], storages: [] }))).toEqual(
 			[],
 		);
-	});
-});
-
-describe("skuFor", () => {
-	it("appends the storage with non-alphanumerics stripped and lowercase", () => {
-		expect(skuFor("iphone-15-pro", "128GB")).toBe("iphone-15-pro-128gb");
-		expect(skuFor("iphone-15-pro", "1 TB")).toBe("iphone-15-pro-1tb");
-		expect(skuFor("iphone-15-pro", "256 gb")).toBe("iphone-15-pro-256gb");
-	});
-
-	it("returns the bare slug when there is no storage", () => {
-		expect(skuFor("iphone-15-pro", null)).toBe("iphone-15-pro");
 	});
 });
 

@@ -4,15 +4,8 @@ import path from "node:path";
 
 import type { Category } from "../src/generated/prisma/enums";
 
-import {
-	categoryFromName,
-	normaliseName,
-	REQUESTED_APPLE_PRODUCTS,
-	selectRequested,
-	skuFor,
-	slugFromName,
-	storagesFromName,
-} from "../src/features/catalog/seed/apple-catalogue";
+import { categoryFromName, normaliseName, REQUESTED_APPLE_PRODUCTS, selectRequested, slugFromName, storagesFromName } from "../src/features/catalog/seed/apple-catalogue";
+import { skuFor } from "../src/features/catalog/seed/sku";
 import { preserveLocalPhotographs } from "../src/features/catalog/seed/image-preservation";
 import { familyFolder } from "../src/features/catalog/seed/source-mapping";
 
