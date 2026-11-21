@@ -84,12 +84,15 @@ async function main() {
 				description: product.description,
 				category: product.category,
 				images,
-				featured: featured.has(product.slug),
 			};
 
 			const record = await prisma.product.upsert({
 				where: { slug: product.slug },
-				create: { slug: product.slug, ...productData },
+				create: {
+					slug: product.slug,
+					...productData,
+					featured: featured.has(product.slug),
+				},
 				update: productData,
 			});
 			productsUpserted += 1;
@@ -124,7 +127,7 @@ async function main() {
 		console.log("Seed summary (sample prices and stock, not real data)");
 		console.log(`Products upserted: ${productsUpserted}`);
 		console.log(`Variants upserted: ${variantsUpserted}`);
-		console.log(`Featured on the landing: ${[...featured].sort().join(", ")}`);
+		console.log(`Featured applied on create: ${[...featured].sort().join(", ")}`);
 		console.log(
 			`Price range written: ${formatArs(minPrice)} - ${formatArs(maxPrice)} ` +
 				`(${minPrice}-${maxPrice} cents)`,
