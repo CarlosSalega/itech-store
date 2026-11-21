@@ -1,3 +1,5 @@
+import { skuFor, storageKey } from "./sku";
+
 export type SourceVariant = {
 	storage?: string | null;
 	color?: string | null;
@@ -84,10 +86,6 @@ export function displayName(product: SourceProduct): string {
 	return `${name}${USED_SUFFIX}`;
 }
 
-function storageKey(storage: string): string {
-	return storage.toLowerCase().replace(/[^a-z0-9]+/g, "");
-}
-
 export function collapseStorages(product: SourceProduct): string[] {
 	const rows = [
 		...(product.variants ?? []).map((variant) => variant.storage ?? ""),
@@ -108,14 +106,6 @@ export function collapseStorages(product: SourceProduct): string[] {
 	}
 
 	return kept;
-}
-
-export function skuFor(slug: string, storage: string | null): string {
-	if (storage === null) return slug;
-
-	const key = storageKey(storage);
-
-	return key === "" ? slug : `${slug}-${key}`;
 }
 
 export function imageAssetPath(name: string, family: CatalogFamily = DEFAULT_FAMILY): string {

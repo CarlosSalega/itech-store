@@ -178,9 +178,7 @@ every non-alphanumeric run removed: `iphone-18-pro-256-gb` + `256GB` →
 `iphone-18-pro-256-gb-256gb`. Qualifying it is what keeps the same product sold by 256GB and
 512GB from colliding on the unique SKU.
 
-**R27 — The phone adapter applies the same shape.** Its `skuFor` strips non-alphanumerics
-through the same key it uses to compare capacities, and a storage that strips to nothing yields
-the bare slug.
+**R27 — One `skuFor` serves every extract.** The shape lives in `src/features/catalog/seed/sku.ts`, together with the capacity key it shares with the phone adapter's comparison, so the Apple extract, the phone adapter and the base extract cannot drift apart. A storage that strips to nothing yields the bare slug, exactly like `null`.
 
 ## 8. The phone adapter
 
@@ -364,12 +362,12 @@ had said "only on create and never on update" all along. The seed now sets it in
 alone (`prisma/seed.ts`, the product upsert), and the console line names the pick as applied on
 create rather than as the current state of the column.
 
-**D7 — The two `skuFor` rules disagree on a blank capacity.**
-`src/features/catalog/seed/apple-catalogue.ts:152-158` has no guard for a storage that strips to
-nothing and would return `<slug>-` with a trailing hyphen, while
-`src/features/catalog/seed/source-mapping.ts:153-159` returns the bare slug for the same input. This is
-a divergence between the two implementations of one rule rather than a wrong comment, and it is
-unreachable today because `storagesFromName` cannot produce a blank capacity.
+**D7 — resolved: the two `skuFor` rules now are one rule.** The Apple extract returned `<slug>-`
+with a trailing hyphen when a storage stripped to nothing, while the phone adapter returned the bare
+slug. Both now import `skuFor` and `storageKey` from `src/features/catalog/seed/sku.ts`, and a blank
+capacity behaves like no capacity. The case was unreachable through `storagesFromName`, which cannot
+produce a blank capacity, so no committed seed data changed; the divergence was a trap for the next
+caller.
 
 **D8 — The pruned first image is a fallback, not an exemption.**
 `scripts/extract-catalog.ts:309-313` says "Gallery slots beyond the first one are mostly site
@@ -415,8 +413,8 @@ were deleted by `refactor/remaining-comments`.
 | R22-R23 | `src/features/catalog/seed/apple-catalogue.ts:123-126`, `:145` |
 | R24 | `src/features/catalog/seed/source-mapping.ts:121`, `:126-129` |
 | R25 | `scripts/extract-apple-catalogue.ts:241-244` |
-| R26 | `src/features/catalog/seed/apple-catalogue.ts:148-151` |
-| R27 | `src/features/catalog/seed/source-mapping.ts:152-159` |
+| R26 | `src/features/catalog/seed/sku.ts:6-12` |
+| R27 | `src/features/catalog/seed/sku.ts:1-12`, `src/features/catalog/seed/sku.test.ts` |
 | R28 | `src/features/catalog/seed/source-mapping.ts:100-109`, `:206-208` |
 | R29 | `src/features/catalog/seed/source-mapping.ts:111-119`, `:48-53` |
 | R30 | `src/features/catalog/seed/source-mapping.ts:1-8` |

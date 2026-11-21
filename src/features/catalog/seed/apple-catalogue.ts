@@ -87,14 +87,6 @@ export function storagesFromName(name: string): string[] {
 	return [...new Set(sources)];
 }
 
-export function skuFor(slug: string, storage: string | null): string {
-	if (storage === null) {
-		return slug;
-	}
-
-	return `${slug}-${storage.toLowerCase().replace(/[^a-z0-9]+/g, "")}`;
-}
-
 export type AppleSelection = {
 	present: string[];
 	missing: string[];
