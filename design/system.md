@@ -45,6 +45,10 @@ are hand-written CSS Modules. The split is deliberate, and this is the only plac
 through `var()`, so a pruned theme variable would break a module silently. The only Tailwind utility
 used in `src/` is `sr-only`, for text that must be read by a screen reader and not shown.
 
+Four primitives stay global in `src/app/globals.css` — `.wrap` (the content column), `.rule` (the
+full-bleed hairline), `.skip` (the skip link) and `.sr-only` — because every surface uses them.
+Everything else is a module that only its own component reads.
+
 **Why the rules are hand-written.** Each artboard is a single self-contained HTML file with inline
 CSS, because the canvas injects artboards through JavaScript and nothing there can be built. The
 implemented direction was ported from that block, and one scoped module per component is the direct
@@ -83,6 +87,11 @@ dissolves into the tile. On `--canvas-dark` the photo does not dissolve: it sits
 (white tile, `--r-lg`, `radial-gradient(120% 100% at 50% 0%, #ffffff 0%, var(--surface) 100%)` and
 no ring) on the black floor. Never crop a product photo to fill a frame: they are 640px wide and
 contain their own margins.
+
+The store is a light gallery end to end, so `:root` declares `color-scheme: light` and
+`scrollbar-color: var(--hairline) var(--white)`: form controls and scrollbars stay light even when
+the operating system asks for dark. The dark surfaces in the table above are latent — no route
+renders one yet.
 
 Rules: never put `--link` on a dark ground. On dark, text links are `--ink-dark` with a 1px
 underline (`text-decoration-color: --hairline-strong`, `currentColor` on hover) and `--accent` is
@@ -147,7 +156,12 @@ not borders: gaps carry the grouping.
 | `--s-5` | `24px` | `--s-10` | `120px` |
 | | | `--s-11` | `160px` |
 
-- Content column: `max-width: 1200px`, side padding `--s-5` (mobile) → `--s-8` (≥900px).
+- Content column: `max-width: 1200px`, side padding `--s-5` (mobile) → `--s-8` (≥900px), and one
+  step down to `--s-4` below 480px. At 320px the header has to fit the brand, its mark, two icon
+  buttons and the menu trigger; the gutter gives way, never the touch targets.
+- `--float-clearance: 96px` is the footer's reserve for the floating WhatsApp action (its height,
+  its offset and a little air), added to the footer's own bottom padding. Without it the end of every
+  page lives permanently under the button.
 - Section rhythm is three values, and they alternate on purpose:
   `--section-tall: clamp(88px, 12vw, 176px)` for monumental and empty passages;
   `--section: clamp(64px, 9vw, 112px)` as the default;
@@ -223,7 +237,13 @@ The bolder pass made composition part of the system, not an accident of the grid
 
 - **Full-bleed rule.** A 1px `--hairline` that ignores the content column
   (`margin-inline: calc(50% - 50vw)`) is the shared structural device; section boundaries and page
-  divisions use it instead of a background change.
+  divisions use it instead of a background change. Because it is measured in viewport units, which
+  include the vertical scrollbar, the root declares `overflow-x: clip`; without it the document
+  grows wider than the viewport the moment the vertical scrollbar appears. `clip` rather than
+  `hidden` on purpose: it does not create a scroll container, so the sticky header keeps sticking
+  to the viewport.
+- **The rule carries no spacing of its own.** A page that puts the divider next to text owns the air
+  around it, with a module modifier on its own stylesheet, never by changing the global `.rule`.
 - **One monument per page.** Either one product hung at its largest possible size inside the column,
   one display-scale number, or one case that leaves the column. Never two.
 - **Grid break, deliberately.** At most one element per page may leave the column: a photograph that
@@ -276,6 +296,40 @@ divider. Content scrolls under it.
 `<details>` menu whose summary button states its own state ("Menú") and swaps its `menu` icon for
 `close` when `[open]`, in CSS only. Search and cart are icon buttons at 44×44, each named by visually
 hidden text rather than by a label on the glyph.
+
+**Header pill, as implemented.** The live header is a floating bar, not a full-width strip: inset
+`--s-3` from the top, width `min(1200px, calc(100% - 2 * var(--header-inset)))`, `--r-lg`, edged by
+`--e-hairline` plus `--e-float` instead of a bottom border, sitting over the content instead of
+dividing it. Its ground is `rgb(255 255 255 / 82%)` — higher than the 72% quoted above, because a
+bar that floats over a product photograph does not hold 4.5:1 at 72%. Behind the blur it is the same
+`blur(20px) saturate(180%)`; where `backdrop-filter` is unsupported the fallback is opaque
+`--white`, since translucent-but-unreadable is worse than plain. The pill declares no
+`overflow: hidden`: the mobile menu panel hangs below it and would be clipped.
+
+The alignment is arithmetic, and it is the reason the bar stopped using the global `.wrap`. The pill's
+side inset is a custom property (`--header-inset`: `--s-4` normally, `--s-2` below 480px) and the bar's
+`padding-inline` is the page gutter **minus** that inset — `8 + 8 = 16` below 480px,
+`16 + 8 = 24` below 900px, `16 + 48 = 64` from 900px up. Content sits at inset plus padding, which
+is exactly the page gutter, so the brand stays on the same axis as the hero text at every width
+instead of drifting by the inset. The pill inset is what keeps real inner padding at 320px: adding
+padding instead of halving the inset would push the brand off the page axis.
+
+Two optical corrections belong to the same family. `.tools` is outdented by the residual inset
+between the pill edge and the glyph — a 44px icon button centres a 20px glyph, leaving 12px — capped
+below by the bar's padding so the touch target never spills outside the pill: `--s-2` below 900px,
+`--s-3` from 900px up. And `.logo` is nudged by `translateY(-0.12em)`, in `em` on purpose: the offset
+is a fraction of the font size, so one value holds at the 17px brand and at the 15px mobile one,
+where a px-per-breakpoint pair is correct at exactly one size. Geometry symmetric, perception not.
+
+Below 480px the brand name takes one step down to `--t-body-s` and the menu trigger drops its
+label, keeping its accessible name through `aria-label` in the markup; the icon alone stays. The
+bag, the search glyph and the menu trigger are 44px targets, and a disabled icon button reads as
+inert at `opacity: 0.45`, the same value the pager uses. Search is a link to `/catalogo`: there is no
+search box, and the icon says so by going where an item would be found.
+
+The store mark is a committed 809-byte SVG rendered with a plain `<img>` (`alt=""`, decorative), not
+through `next/image`: the framework does not optimise an SVG, and because the file is committed,
+nothing here couples the build to the gitignored `public/products`.
 
 **Icons** — one set, drawn in this repository: `search`, `bag`, `menu`, `close`, `chevron-right`. A
 24×24 viewBox, `stroke-width` 1.6, `stroke-linecap="round"`, `stroke-linejoin="round"`,
@@ -354,6 +408,42 @@ is now its only record.
 **Sample-data notice** — one per page, in the footer, `--t-caption` `--muted`:
 "Los precios de este catálogo son de ejemplo y no son precios de venta." Never a banner, never a
 toast, never repeated per card.
+
+**Footer** — the notice above, then a column grid that auto-fits at 200px from 700px up, because the
+editorial picks column is conditional: three columns on the landing, two on the catalogue and the
+contact page. Family entries link into the catalogue with the filter applied. The bottom padding
+carries `--float-clearance` (see Spacing).
+
+**Family filter** — the same pill language as the capacity selector, and every chip keeps its 44px
+target. Below 600px the chips stop wrapping and become one horizontal strip (`flex-wrap: nowrap`,
+`overflow-x: auto`, hidden scrollbar, children `flex: none`, scroll snapping): six chips wrapped into
+three ragged rows and ate half a 320px screen, so the presentation changes and the information does
+not. The strip reserves ring room with `--s-1` of padding plus an equal negative margin, so a focus
+ring painted outside a chip is not clipped, and `--s-6` of right padding so the last chip can scroll
+clear of the edge fade. The fade is a `mask-image` on the scroller, which needs no extra element and
+no script; the cost is that it cannot switch itself off at the end of the scroll, which is why the
+chips may wear one and a pager of two pages may not.
+
+**Product page** — the main photograph hangs with no tile under it (`mix-blend-mode: multiply`), and
+the wall label under it is the page's `<h1>`; its tick is short until hover or focus. Every photo of
+the product is rendered: a four-column numbered strip of small works, each on its own hairline, with
+the index in `--t-caption` and `tabular-nums`. The facts of the product are a sheet of ruled rows
+(two columns from 760px up, `dd` right-aligned in `tabular-nums`), and the related works use the
+same two-height wall as the catalogue. Photography is a plain `<img>` here for the same reason as
+the product card: `public/products` is gitignored and absent on a fresh clone.
+
+**WhatsApp action** — fixed to the bottom-right (`position: fixed`, `z-index: 30`,
+`env(safe-area-inset-bottom)`), so it never takes part in layout and cannot contribute a horizontal
+scrollbar. The mark is the owner's `public/whatsapp.svg` at 56px with 8px of padding around it, which
+is a 72px touch target; 48px is the ceiling for a glyph-only button because a standard FAB is 56px of
+surface around a 24–28px glyph, and 56px is large-FAB territory that deliberately overlays more
+product photography. The mark carries its own brand gradient and needs no palette colour. Its label
+("Escribinos") is an ink pill of exactly 26px height — a fixed height rather than vertical padding,
+so it does not drift with the line box — `--t-label`, `aria-hidden` because the accessible name comes
+from `aria-label`, and it appears on hover and keyboard focus while sliding 4px. Below 600px it is
+hidden: a label gated on hover is never seen on touch and would still take space from the icon. While
+the store's number is unconfirmed the button links to `/contacto` instead of opening a chat that
+cannot exist (see `docs/contact-channels.md`).
 
 ## Self-check for artboards
 
