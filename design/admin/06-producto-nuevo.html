@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Nuevo producto del panel de iTech Store: nombre y slug derivado, familia, descripción, variantes con precio y stock, fotos del catálogo y los interruptores de publicación.">
+<title>Nuevo producto · Tarjeta flotante — iTech Store</title>
+<!--
+  Direction 01 · Tarjeta flotante — screen 06 of 7: the create form.
+  The shell is the implemented one, with Productos current and the products sub-navigation.
+  The draft in the form is demo content for the demo's own catalogue: the iPad Pro 11" M5 is not
+  one of the fourteen fixture products, so nothing in the table is contradicted. The second
+  variant has no price yet, which is the shown error, and it is also why the save button is
+  disabled with its reason next to it instead of failing on submit.
+  The photo candidates are real files under public/products; the drop area says plainly that this
+  demo cannot upload anything (S7: it does not pretend to have a storage it does not have).
+  Tokens come from design/system.md; run `pnpm design:photos admin` to inline the photos.
+-->
+<style>
+  :root{
+    --white:#ffffff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
+    --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
+    --s-8:64px; --s-9:88px;
+    --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
+    --e-hairline:inset 0 0 0 1px var(--hairline);
+    --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+    --e-lift:0 12px 32px rgba(0,0,0,.10);
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms; --dur-4:720ms;
+    --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
+    --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+    --t-display-s:clamp(2rem,4.6vw,3.75rem);
+    --t-numeral:clamp(2rem,3.4vw,3.25rem);
+    --t-title:clamp(1.375rem,2.2vw,1.875rem);
+    --t-headline:1.3125rem;
+    --t-body:1.0625rem; --t-body-s:.9375rem; --t-label:.8125rem; --t-caption:.75rem;
+    --side-w:268px;
+    color-scheme:light;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;overflow-x:clip;scrollbar-color:var(--hairline) var(--white)}
+  body{margin:0;background:var(--white);color:var(--ink);font:400 var(--t-body)/1.47 var(--font);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:var(--ink);color:var(--white)}
+  img{max-width:100%;display:block}
+  a{color:var(--link);text-decoration:none}
+  h1,h2{margin:0;font-weight:600;text-wrap:balance;font-optical-sizing:auto}
+  p{margin:0;text-wrap:pretty}
+  ul{margin:0;padding:0;list-style:none}
+  button,select,input,textarea{font:inherit;color:inherit}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm)}
+  .is-focused{outline:3px solid var(--accent);outline-offset:3px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
+  .skip{position:absolute;left:12px;top:-56px;z-index:60;background:var(--ink);color:var(--white);
+    padding:12px 20px;border-radius:var(--r-pill);min-height:44px;display:inline-flex;
+    align-items:center;transition:top var(--dur-1) var(--ease-std)}
+  .skip:focus{top:12px}
+
+  .ico{display:block;flex:none;width:20px;height:20px;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .ico-18{width:18px;height:18px}
+  .ico-16{width:16px;height:16px}
+  .ico-14{width:14px;height:14px}
+
+  /* ---------- the floating card: the implemented shell ---------- */
+  .side{position:fixed;left:var(--s-4);top:var(--s-4);bottom:var(--s-4);width:var(--side-w);
+    z-index:30;display:flex;flex-direction:column;padding:var(--s-4);background:var(--white);
+    border-radius:var(--r-xl);box-shadow:var(--e-hairline),var(--e-float)}
+  .side-bar{display:flex;flex-direction:column;gap:var(--s-2)}
+  .brandrow{display:flex;align-items:center;gap:var(--s-2)}
+  .brand{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;color:var(--ink);
+    font-size:var(--t-body-s);font-weight:600;letter-spacing:-.012em;white-space:nowrap;
+    padding-right:var(--s-1)}
+  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor;transform:translateY(-.12em)}
+  .workspace{position:relative;margin-inline-start:auto}
+  .ws{display:inline-flex;align-items:center;justify-content:center;width:44px;min-height:44px;
+    border-radius:var(--r-pill);color:var(--muted);cursor:pointer;list-style:none;
+    transition:background var(--dur-1) linear,color var(--dur-1) linear}
+  .ws::-webkit-details-marker{display:none}
+  .ws:hover{background:var(--surface);color:var(--ink)}
+  .ws .ico{transition:transform var(--dur-2) var(--ease-std)}
+  .workspace[open] .ws .ico{transform:rotate(180deg)}
+  .wsPanel{position:absolute;inset-block-start:calc(100% + var(--s-1));inset-inline-end:0;
+    z-index:40;width:216px;padding:var(--s-3);border-radius:var(--r-md);background:var(--white);
+    box-shadow:var(--e-hairline),var(--e-float)}
+  .wsLabel{color:var(--muted);font-size:var(--t-caption);letter-spacing:.015em}
+  .wsName{margin-top:var(--s-1);color:var(--ink);font-size:var(--t-body-s);font-weight:600}
+  .wsNote{margin-top:var(--s-2);color:var(--muted);font-size:var(--t-caption);line-height:1.4}
+  .brandmeta{margin-top:calc(-1 * var(--s-2));padding-left:calc(20px + var(--s-2));
+    font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+
+  .search{display:flex;align-items:center;gap:var(--s-2);width:100%;min-height:44px;
+    margin-top:var(--s-4);padding:0 var(--s-3);border:0;border-radius:var(--r-md);
+    background:var(--surface);color:var(--ink);cursor:pointer;text-align:left;
+    transition:box-shadow var(--dur-1) linear}
+  .search .ico{color:var(--muted)}
+  .search-label{font-size:var(--t-body-s)}
+  .search kbd{margin-inline-start:auto;font:500 var(--t-caption)/1 var(--mono);color:var(--muted);
+    letter-spacing:.02em;padding:3px 5px;border-radius:var(--r-sm);box-shadow:var(--e-hairline);
+    background:var(--white)}
+  .search:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+
+  .strip{display:flex;flex:1 1 auto;flex-direction:column;min-height:0}
+  .nav{margin-top:var(--s-5);display:grid;gap:2px}
+  .navrow{display:flex;align-items:center}
+  .navitem{display:flex;flex:1 1 auto;align-items:center;gap:var(--s-3);min-height:44px;
+    padding:0 var(--s-3);border-radius:var(--r-pill);color:var(--ink);font-size:var(--t-body-s);
+    transition:background var(--dur-1) linear,color var(--dur-1) linear}
+  .navitem .ico{color:var(--muted)}
+  .navitem:hover{background:var(--surface)}
+  .navitem[aria-current="page"]{background:var(--ink);color:var(--white);font-weight:500}
+  .navitem[aria-current="page"] .ico{color:var(--white)}
+  .badge{margin-inline-start:auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--r-pill);
+    background:var(--accent);color:var(--white);font-size:var(--t-caption);font-weight:600;
+    line-height:20px;text-align:center;font-variant-numeric:tabular-nums}
+  .subnav{display:grid;gap:2px;margin:2px 0 var(--s-2) 30px;padding-left:var(--s-3);
+    border-left:1px solid var(--hairline)}
+  .subnav a{display:flex;align-items:center;min-height:44px;padding:0 var(--s-3);color:var(--ink);
+    font-size:var(--t-body-s);border-radius:var(--r-sm)}
+  .subnav a:hover{background:var(--surface)}
+  .subcount{margin-inline-start:auto;font-size:var(--t-caption);color:var(--muted);
+    font-variant-numeric:tabular-nums}
+
+  .side-foot{margin-top:auto;padding-top:var(--s-3);border-top:1px solid var(--hairline)}
+  .session{display:grid;gap:2px}
+  .user{display:flex;align-items:center;gap:var(--s-3);margin-top:var(--s-3);padding-top:var(--s-3);
+    border-top:1px solid var(--hairline);color:var(--ink)}
+  .user:hover .user-name{color:var(--link)}
+  .avatar{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:var(--r-pill);
+    background:var(--surface);box-shadow:var(--e-hairline);font-size:var(--t-caption);
+    font-weight:600;letter-spacing:.02em;color:var(--ink)}
+  .user-text{min-width:0}
+  .user-name{display:block;font-size:var(--t-label);font-weight:600;letter-spacing:-.008em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .user-mail{display:block;font-size:var(--t-caption);color:var(--muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* ---------- the content column ---------- */
+  main{padding:var(--s-6) var(--s-6) 0}
+  .page{display:flex;flex-direction:column;min-height:calc(100vh - var(--s-6));max-width:1180px}
+  @media (min-width:960px){
+    main{margin-left:calc(var(--side-w) + var(--s-4) + var(--s-6));padding-right:var(--s-7)}
+  }
+
+  .back{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-bottom:var(--s-1);
+    color:var(--link);font-size:var(--t-body-s);font-weight:500}
+  .back .ico{width:14px;height:14px;transition:transform var(--dur-2) var(--ease-std)}
+  .back:hover .ico{transform:translateX(-3px)}
+  .page-head h1{font-size:var(--t-title);line-height:1.08;letter-spacing:-.022em}
+  .deck{margin-top:var(--s-2);max-width:62ch;color:var(--muted);font-size:var(--t-body-s)}
+
+  /* ---------- form layout: the data on the left, the photos and the state on the right ---------- */
+  .form-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-6);margin-top:var(--s-5)}
+  @media (min-width:1100px){
+    .form-grid{grid-template-columns:minmax(0,1fr) 340px;gap:var(--s-7);align-items:start}
+  }
+  .section{margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--hairline)}
+  .section:first-child,.col-side .section:first-child{margin-top:0;padding-top:0;border-top:0}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3)}
+  .section h2{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.012em}
+  .sec-count{font-size:var(--t-label);color:var(--muted);font-variant-numeric:tabular-nums}
+  .sec-deck{margin-top:4px;font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;
+    color:var(--muted);max-width:52ch}
+
+  .fields{display:grid;gap:var(--s-3);margin-top:var(--s-4)}
+  .field{display:grid;gap:6px;min-width:0}
+  .field > label{font-size:var(--t-label);letter-spacing:.01em;font-weight:500;color:var(--ink);
+    display:flex;align-items:baseline;gap:var(--s-2)}
+  .field .optional{font-size:var(--t-caption);font-weight:400;color:var(--muted)}
+  .input{width:100%;min-height:44px;padding:0 var(--s-4);border:0;border-radius:var(--r-sm);
+    box-shadow:var(--e-hairline);background:var(--white);color:var(--ink);
+    font:400 var(--t-body-s)/1.4 var(--font);transition:box-shadow var(--dur-1) linear}
+  .input:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+  .input:focus-visible{outline:3px solid var(--accent);outline-offset:2px;
+    box-shadow:inset 0 0 0 1px var(--ink)}
+  .input--mono{font-family:var(--mono);font-size:var(--t-label);letter-spacing:-.005em}
+  .input[readonly]{background:var(--surface);color:var(--muted)}
+  textarea.input{min-height:72px;padding:var(--s-3) var(--s-4);line-height:1.47;resize:vertical}
+  select.input{appearance:none;padding-right:var(--s-6);cursor:pointer}
+  .select-wrap{position:relative;display:block}
+  .select-wrap .ico{position:absolute;right:var(--s-3);top:50%;transform:translateY(-50%);
+    width:14px;height:14px;color:var(--muted);pointer-events:none}
+  .field .help{font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;color:var(--muted)}
+  /* the error state, one real case: the second variant has no price */
+  .field--error .input{box-shadow:inset 0 0 0 2px var(--ink)}
+  .field--error .error{display:flex;gap:var(--s-2);align-items:flex-start;font-size:var(--t-caption);
+    line-height:1.4;letter-spacing:.015em;color:var(--ink)}
+  .field--error .error .ico{width:14px;height:14px;margin-top:2px;stroke-width:2}
+
+  /* ---------- the variants repeater ---------- */
+  .repeater{margin-top:var(--s-4);border-top:1px solid var(--hairline)}
+  .variant{padding:var(--s-4) 0;border-bottom:1px solid var(--hairline)}
+  .variant-fields{display:grid;grid-template-columns:120px minmax(0,1fr) 96px 44px;
+    gap:var(--s-3);align-items:start}
+  .variant-sku{margin-top:var(--s-2);font:400 var(--t-caption)/1.4 var(--mono);
+    color:var(--muted);overflow-wrap:anywhere}
+  .variant-sku b{font-weight:500;color:var(--ink);margin-right:6px;white-space:nowrap}
+  .remove{display:inline-flex;align-items:center;justify-content:center;width:44px;min-height:44px;
+    border:0;background:none;border-radius:var(--r-sm);color:var(--muted);cursor:pointer;
+    transition:background var(--dur-1) linear,color var(--dur-1) linear}
+  .remove:hover{background:var(--surface);color:var(--ink)}
+  .btn-2{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0;border:0;
+    background:none;color:var(--link);font:500 var(--t-body-s)/1 var(--font);cursor:pointer}
+  .btn-2 .ico{width:16px;height:16px}
+  .repeater .btn-2{margin-top:var(--s-3)}
+  .money{position:relative;display:block}
+  .money .cur{position:absolute;left:var(--s-3);top:50%;transform:translateY(-50%);
+    font-size:var(--t-caption);color:var(--muted);pointer-events:none}
+  .money .input{padding-left:var(--s-6);font-variant-numeric:tabular-nums}
+
+  /* ---------- photos ---------- */
+  .drop{display:flex;flex-direction:column;align-items:center;gap:var(--s-2);margin-top:var(--s-4);
+    padding:var(--s-4) var(--s-4);border:1px dashed var(--hairline);border-radius:var(--r-lg);
+    text-align:center}
+  .drop .ico{width:24px;height:24px;color:var(--muted)}
+  .drop strong{display:block;font-size:var(--t-body-s);font-weight:600;letter-spacing:-.008em}
+  .drop .drop-note{font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;
+    color:var(--muted);max-width:32ch}
+  .btn-quiet{display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+    margin-top:var(--s-1);padding:0 var(--s-4);border:0;border-radius:var(--r-pill);
+    background:var(--surface);box-shadow:var(--e-hairline);color:var(--muted);
+    font:500 var(--t-body-s)/1 var(--font);cursor:not-allowed}
+  .picks{margin-top:var(--s-4)}
+  .picks h3{margin:0;font-size:var(--t-label);font-weight:500;letter-spacing:.01em;color:var(--muted)}
+  .pick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-2);
+    margin-top:var(--s-2)}
+  .pick{position:relative;display:block;padding:var(--s-2);border-radius:var(--r-md);
+    background:var(--surface);cursor:pointer;transition:box-shadow var(--dur-1) linear}
+  .pick img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;mix-blend-mode:multiply}
+  .pick input{position:absolute;opacity:0;width:1px;height:1px}
+  .pick:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+  .pick:has(input:checked){box-shadow:inset 0 0 0 2px var(--ink)}
+  .pick:focus-within{outline:3px solid var(--accent);outline-offset:2px}
+  .pick-badge{position:absolute;top:5px;right:5px;display:grid;place-items:center;width:20px;
+    height:20px;border-radius:var(--r-pill);background:var(--ink);color:var(--white);
+    font-size:var(--t-caption);font-weight:600;font-variant-numeric:tabular-nums}
+  .pick-badge .ico{width:12px;height:12px;stroke-width:2}
+  .pick-count{margin-top:var(--s-2);font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+
+  /* ---------- switches ---------- */
+  .switch{display:flex;align-items:flex-start;gap:var(--s-3);min-height:44px;
+    cursor:pointer;padding-block:var(--s-2)}
+  .switch + .switch{margin-top:var(--s-1)}
+  .switch input{position:absolute;opacity:0;width:1px;height:1px}
+  .track{position:relative;flex:none;width:44px;height:26px;margin-top:2px;border-radius:var(--r-pill);
+    background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--muted);
+    transition:background var(--dur-2) var(--ease-std),box-shadow var(--dur-2) var(--ease-std)}
+  .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:var(--r-pill);
+    background:var(--white);box-shadow:var(--e-hairline);
+    transition:transform var(--dur-2) var(--ease-std)}
+  .switch input:checked + .track{background:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+  .switch input:checked + .track .knob{transform:translateX(18px)}
+  .switch input:focus-visible + .track{outline:3px solid var(--accent);outline-offset:3px}
+  .switch-text{min-width:0}
+  .switch-name{display:block;font-size:var(--t-body-s);font-weight:500;letter-spacing:-.008em}
+  .switch-note{display:block;margin-top:2px;font-size:var(--t-caption);line-height:1.4;
+    letter-spacing:.015em;color:var(--muted)}
+
+  /* ---------- the sticky action bar ---------- */
+  .action-bar{position:sticky;bottom:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;
+    gap:var(--s-3) var(--s-5);margin-top:var(--s-6);padding:var(--s-3) 0;
+    background:var(--white);border-top:1px solid var(--hairline)}
+  .action-note{display:flex;gap:var(--s-2);align-items:flex-start;max-width:48ch;
+    font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;color:var(--muted)}
+  .action-note .ico{width:14px;height:14px;margin-top:2px;stroke-width:2;color:var(--muted)}
+  .action-actions{display:flex;align-items:center;gap:var(--s-5);margin-inline-start:auto}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);
+    min-height:44px;padding:0 var(--s-5);border:0;border-radius:var(--r-pill);
+    background:var(--accent);color:var(--white);font:500 var(--t-body-s)/1 var(--font);
+    cursor:pointer;transition:background var(--dur-1) linear,transform var(--dur-1) var(--ease-std)}
+  .btn:hover{background:var(--accent-press)}
+  .btn:active{transform:scale(.97)}
+  /* an action that cannot be used reads as inert and says why, per the system's disabled rule */
+  .btn:disabled{background:var(--surface);color:var(--muted);box-shadow:var(--e-hairline);
+    cursor:not-allowed}
+  .btn:disabled:active{transform:none}
+
+  .page-foot{padding:var(--s-5) 0 var(--s-6)}
+  .foot-rule{display:block;height:1px;background:var(--hairline);margin-bottom:var(--s-4)}
+  .notice{font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;color:var(--muted);
+    max-width:80ch}
+  .routes{margin-top:var(--s-2);font:400 var(--t-caption)/1.5 var(--mono);color:var(--muted);
+    word-break:break-word}
+
+  /* ---------- below 960px the card becomes a bar plus a strip ---------- */
+  @media (max-width:959px){
+    .side{position:sticky;top:0;z-index:30;left:auto;bottom:auto;width:auto;margin:0;
+      border-radius:0;padding:var(--s-2) var(--s-4) 0;box-shadow:0 1px 0 var(--hairline);
+      background:rgb(255 255 255 / 82%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+    .side-bar{flex-direction:row;align-items:center;gap:var(--s-2)}
+    .brandmeta{display:none}
+    .search{margin-top:0;width:44px;min-width:44px;margin-inline-start:auto;padding:0;
+      justify-content:center;background:none;box-shadow:none}
+    .search .search-label,.search kbd{display:none}
+    .search:hover{background:var(--surface);box-shadow:none}
+    .strip{flex-direction:row;flex-wrap:nowrap;align-items:center;gap:var(--s-2);
+      margin-inline:calc(-1 * var(--s-4));padding:var(--s-1) var(--s-4) var(--s-2);
+      overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+    .strip::-webkit-scrollbar{display:none}
+    .nav,.navrow,.subnav,.subnav li,.side-foot,.session{display:contents}
+    .navitem{flex:none;gap:var(--s-2);padding:0 var(--s-3);border-radius:var(--r-pill);
+      background:var(--white);box-shadow:var(--e-hairline);font-size:var(--t-label);
+      white-space:nowrap}
+    .navitem[aria-current="page"]{box-shadow:none}
+    .navitem .ico{width:16px;height:16px}
+    .badge{margin-inline-start:0}
+    .subnav a{padding:0 var(--s-3);border-radius:var(--r-pill);background:var(--white);
+      box-shadow:var(--e-hairline);font-size:var(--t-label);white-space:nowrap}
+    .subcount{display:none}
+    .user{margin:0;padding:0 0 0 var(--s-2);border:0;flex:none}
+    .user-mail{display:none}
+    .user-name{max-width:11ch}
+    main{padding:var(--s-5) var(--s-4) 0}
+    .page{min-height:auto}
+    .action-bar{padding-bottom:var(--s-2)}
+  }
+  @media (max-width:699px){
+    .variant-fields{grid-template-columns:minmax(0,1fr) 88px 44px;gap:var(--s-3)}
+    .variant-fields .field:nth-child(1){grid-column:1 / -1;grid-row:1}
+    .variant-fields .field:nth-child(2){grid-column:1;grid-row:2}
+    .variant-fields .field:nth-child(3){grid-column:2;grid-row:2}
+    .remove{grid-column:3;grid-row:2;justify-self:end}
+    .action-actions{width:100%;justify-content:space-between;margin-inline-start:0}
+  }
+  @media (max-width:479px){
+    .page-head h1{font-size:var(--t-headline)}
+    .pick-grid{grid-template-columns:minmax(0,1fr) 1fr}
+    .btn{flex:1 1 auto}
+  }
+
+  /* ---------- one authored moment ---------- */
+  @keyframes rise{from{opacity:0;transform:translateY(16px);filter:blur(6px)}
+    to{opacity:1;transform:none;filter:blur(0)}}
+  .enter{animation:rise var(--dur-4) var(--ease-out-expo) both;
+    animation-delay:calc(var(--i,0) * 80ms)}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition-duration:0ms!important}
+    .enter{opacity:1;transform:none;filter:none}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#admin-main">Saltar al contenido</a>
+
+<header class="side">
+  <div class="side-bar">
+    <div class="brandrow">
+      <a class="brand" href="/admin">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09 22C7.79 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+        <span>iTech Store</span>
+      </a>
+      <details class="workspace">
+        <summary class="ws">
+          <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M8 10.5 12 14.5 16 10.5"/>
+          </svg>
+          <span class="sr-only">Cambiar de espacio de trabajo</span>
+        </summary>
+        <div class="wsPanel">
+          <p class="wsLabel">Espacio de trabajo</p>
+          <p class="wsName">iTech Store</p>
+          <p class="wsNote">Esta demo tiene un solo espacio de trabajo.</p>
+        </div>
+      </details>
+    </div>
+    <p class="brandmeta">Panel de administración</p>
+
+    <button class="search" type="button" aria-keyshortcuts="Meta+K Control+K">
+      <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/>
+      </svg>
+      <span class="search-label">Buscar en el panel</span>
+      <kbd>⌘K</kbd>
+    </button>
+  </div>
+
+  <div class="strip">
+    <nav class="nav" aria-label="Secciones del panel">
+      <div class="navrow">
+        <a class="navitem" href="/admin">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 4.5h6.5V11H4z"/><path d="M13.5 4.5H20V8.5h-6.5z"/>
+            <path d="M13.5 11H20v8.5h-6.5z"/><path d="M4 13.5h6.5V20H4z"/>
+          </svg>
+          Panel
+        </a>
+      </div>
+      <div class="navrow">
+        <a class="navitem" href="/admin/productos" aria-current="page">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3.2 20.5 7.6v8.8L12 20.8 3.5 16.4V7.6L12 3.2z"/>
+            <path d="M3.5 7.6 12 12l8.5-4.4"/><path d="M12 12v8.8"/>
+          </svg>
+          Productos
+        </a>
+      </div>
+      <ul class="subnav" id="sub-productos">
+        <li><a href="/admin/productos">Todos <span class="subcount">14</span></a></li>
+        <li><a href="/admin/productos/nuevo">Nuevo producto</a></li>
+      </ul>
+      <div class="navrow">
+        <a class="navitem" href="/admin/pedidos">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 3.5h12v17l-3-1.8-3 1.8-3-1.8-3 1.8v-17z"/>
+            <path d="M9 8h6"/><path d="M9 11.5h6"/>
+          </svg>
+          Pedidos
+          <span class="badge" aria-hidden="true">2</span>
+          <span class="sr-only">, 2 pedidos a preparar</span>
+        </a>
+      </div>
+      <div class="navrow">
+        <a class="navitem" href="/admin/ajustes">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 8h5"/><path d="M13 8h7"/><path d="M4 16h7"/><path d="M15 16h5"/>
+            <circle cx="11" cy="8" r="2"/><circle cx="13" cy="16" r="2"/>
+          </svg>
+          Ajustes
+        </a>
+      </div>
+    </nav>
+
+    <div class="side-foot">
+      <nav class="session" aria-label="Sesión">
+        <a class="navitem" href="/catalogo">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M9 6.5 14.5 12 9 17.5"/>
+          </svg>
+          Ver la tienda
+        </a>
+        <a class="navitem" href="/login">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M15 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/>
+            <path d="M9.5 12H19"/><path d="M16 8.5 19.5 12 16 15.5"/>
+          </svg>
+          Cerrar sesión
+        </a>
+      </nav>
+
+      <div class="user">
+        <span class="avatar" aria-hidden="true">SR</span>
+        <span class="user-text">
+          <span class="user-name">Sofía Ramos</span>
+          <span class="user-mail">sofia.ramos@example.com</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="admin-main">
+  <div class="page">
+    <div class="page-head enter">
+      <a class="back" href="/admin/productos">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M15 6.5 9.5 12 15 17.5"/>
+        </svg>
+        Productos
+      </a>
+      <h1>Nuevo producto</h1>
+      <p class="deck">Los datos que el catálogo necesita: nombre, familia, variantes y fotos.</p>
+    </div>
+
+    <form class="product-form" action="/admin/productos" method="post" novalidate>
+      <div class="form-grid enter" style="--i:1">
+        <div class="col-main">
+          <section class="section" aria-labelledby="datos">
+            <div class="section-head">
+              <h2 id="datos">Datos del producto</h2>
+            </div>
+
+            <div class="fields">
+              <div class="field">
+                <label for="nombre">Nombre</label>
+                <input class="input" id="nombre" name="nombre" type="text"
+                  value="Apple iPad Pro 11&quot; M5 Space Black" autocomplete="off">
+                <p class="help">El nombre que se ve en el catálogo. No se traduce.</p>
+              </div>
+
+              <div class="field">
+                <label for="slug">Slug</label>
+                <input class="input input--mono" id="slug" name="slug" type="text" readonly
+                  value="apple-ipad-pro-11-m5-space-black" aria-describedby="slug-help">
+                <p class="help" id="slug-help">Se arma con el nombre: cambia solo mientras lo escribís.</p>
+              </div>
+
+              <div class="field">
+                <label for="familia">Familia</label>
+                <span class="select-wrap">
+                  <select class="input" id="familia" name="familia">
+                    <option>Mac</option>
+                    <option selected>iPad</option>
+                    <option>Watch</option>
+                    <option>AirPods</option>
+                    <option>Accesorios</option>
+                  </select>
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M8 10.5 12 14.5 16 10.5"/>
+                  </svg>
+                </span>
+              </div>
+
+              <div class="field">
+                <label for="descripcion">Descripción <span class="optional">opcional</span></label>
+                <textarea class="input" id="descripcion" name="descripcion">iPad Pro de 11 pulgadas con chip M5, en Space Black. Pantalla Ultra Retina XDR y USB-C.</textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" aria-labelledby="variantes">
+            <div class="section-head">
+              <h2 id="variantes">Variantes</h2>
+              <span class="sec-count">2 cargadas</span>
+            </div>
+            <p class="sec-deck">Cada capacidad es una variante con su precio y su stock. El SKU se arma
+              con el slug y la capacidad.</p>
+
+            <div class="repeater">
+              <div class="variant">
+                <div class="variant-fields">
+                  <div class="field">
+                    <label for="cap-1">Capacidad</label>
+                    <input class="input" id="cap-1" name="capacidad-1" type="text" value="128 GB">
+                  </div>
+                  <div class="field field--error">
+                    <label for="precio-1">Precio en pesos</label>
+                    <span class="money">
+                      <span class="cur">$</span>
+                      <input class="input" id="precio-1" name="precio-1" type="text" inputmode="numeric"
+                        value="" aria-invalid="true" aria-describedby="precio-error-1">
+                    </span>
+                    <p class="error" id="precio-error-1">
+                      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M12 3.8 21 20H3L12 3.8z"/><path d="M12 10v4.6"/><path d="M12 17.4v.4"/>
+                      </svg>
+                      Poné el precio de esta variante.
+                    </p>
+                  </div>
+                  <div class="field">
+                    <label for="stock-1">Stock</label>
+                    <input class="input" id="stock-1" name="stock-1" type="text" inputmode="numeric"
+                      value="6">
+                  </div>
+                  <button class="remove" type="button">
+                    <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M5 7h14"/><path d="M9.5 7V4.8h5V7"/>
+                      <path d="M6.8 7l.9 12.2h8.6L17.2 7"/><path d="M10.5 10.5v5.5M13.5 10.5v5.5"/>
+                    </svg>
+                    <span class="sr-only">Quitar la variante de 128 GB</span>
+                  </button>
+                </div>
+                <p class="variant-sku"><b>SKU</b> apple-ipad-pro-11-m5-space-black-128gb</p>
+              </div>
+
+              <div class="variant">
+                <div class="variant-fields">
+                  <div class="field">
+                    <label for="cap-2">Capacidad</label>
+                    <input class="input" id="cap-2" name="capacidad-2" type="text" value="256 GB">
+                  </div>
+                  <div class="field">
+                    <label for="precio-2">Precio en pesos</label>
+                    <span class="money">
+                      <span class="cur">$</span>
+                      <input class="input" id="precio-2" name="precio-2" type="text" inputmode="numeric"
+                        value="1.499.000" aria-describedby="precio-help-2">
+                    </span>
+                    <p class="help" id="precio-help-2">En pesos, sin centavos.</p>
+                  </div>
+                  <div class="field">
+                    <label for="stock-2">Stock</label>
+                    <input class="input" id="stock-2" name="stock-2" type="text" inputmode="numeric"
+                      value="4">
+                  </div>
+                  <button class="remove" type="button">
+                    <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M5 7h14"/><path d="M9.5 7V4.8h5V7"/>
+                      <path d="M6.8 7l.9 12.2h8.6L17.2 7"/><path d="M10.5 10.5v5.5M13.5 10.5v5.5"/>
+                    </svg>
+                    <span class="sr-only">Quitar la variante de 256 GB</span>
+                  </button>
+                </div>
+                <p class="variant-sku"><b>SKU</b> apple-ipad-pro-11-m5-space-black-256gb</p>
+              </div>
+            </div>
+
+            <button class="btn-2" type="button">
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 5v14"/><path d="M5 12h14"/>
+              </svg>
+              Agregar variante
+            </button>
+          </section>
+        </div>
+
+        <aside class="col-side">
+          <section class="section" aria-labelledby="fotos">
+            <div class="section-head">
+              <h2 id="fotos">Fotos</h2>
+              <span class="sec-count">2 de 4 elegidas</span>
+            </div>
+
+            <div class="drop">
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 5.5h16v13H4z"/><circle cx="9" cy="10" r="1.6"/>
+                <path d="m5 16.5 4.5-4 3.5 3 2.5-2 3.5 3"/>
+              </svg>
+              <strong>Arrastrá las fotos acá</strong>
+              <p class="drop-note" id="drop-note">Subir archivos no está disponible en esta demo.
+                Elegí una de las fotos que ya están en el catálogo.</p>
+              <button class="btn-quiet" type="button" disabled aria-describedby="drop-note">
+                Elegir archivo
+              </button>
+            </div>
+
+            <div class="picks">
+              <h3>Fotos ya subidas</h3>
+              <div class="pick-grid">
+                <label class="pick">
+                  <input type="checkbox" name="foto-1" checked>
+                  <img src="../../public/products/ipad/apple-11-ipad-pro-m5-space-black-1.webp" width="640" height="640" alt="Apple iPad Pro 11 pulgadas M5 Space Black, foto 1">
+                  <span class="pick-badge" aria-hidden="true">1</span>
+                </label>
+                <label class="pick">
+                  <input type="checkbox" name="foto-2" checked>
+                  <img src="../../public/products/ipad/apple-11-ipad-pro-m5-space-black-2.webp" width="640" height="640" alt="Apple iPad Pro 11 pulgadas M5 Space Black, foto 2">
+                  <span class="pick-badge" aria-hidden="true">2</span>
+                </label>
+                <label class="pick">
+                  <input type="checkbox" name="foto-3">
+                  <img src="../../public/products/ipad/apple-11-ipad-pro-m5-space-black-3.webp" width="640" height="640" alt="Apple iPad Pro 11 pulgadas M5 Space Black, foto 3">
+                </label>
+                <label class="pick">
+                  <input type="checkbox" name="foto-4">
+                  <img src="../../public/products/ipad/apple-11-ipad-pro-m5-space-black-4.webp" width="640" height="640" alt="Apple iPad Pro 11 pulgadas M5 Space Black, foto 4">
+                </label>
+              </div>
+              <p class="pick-count">La primera elegida es la portada. Las que no elegís quedan en la
+                biblioteca.</p>
+            </div>
+          </section>
+
+          <section class="section" aria-labelledby="publicacion">
+            <div class="section-head">
+              <h2 id="publicacion">Publicación</h2>
+            </div>
+
+            <label class="switch" for="publicado">
+              <input id="publicado" type="checkbox" checked>
+              <span class="track" aria-hidden="true"><span class="knob"></span></span>
+              <span class="switch-text">
+                <span class="switch-name">Publicado</span>
+                <span class="switch-note">Se ve en la tienda apenas se guarda.</span>
+              </span>
+            </label>
+
+            <label class="switch" for="destacado">
+              <input id="destacado" type="checkbox">
+              <span class="track" aria-hidden="true"><span class="knob"></span></span>
+              <span class="switch-text">
+                <span class="switch-name">Destacado</span>
+                <span class="switch-note">Se muestra con la estrella del catálogo.</span>
+              </span>
+            </label>
+          </section>
+        </aside>
+      </div>
+
+      <div class="action-bar">
+        <p class="action-note" id="save-note">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3.8 21 20H3L12 3.8z"/><path d="M12 10v4.6"/><path d="M12 17.4v.4"/>
+          </svg>
+          Para guardar falta el precio de la variante de 128 GB.
+        </p>
+        <div class="action-actions">
+          <a class="btn-2" href="/admin/productos">Cancelar</a>
+          <button class="btn" type="submit" disabled aria-describedby="save-note">Guardar producto</button>
+        </div>
+      </div>
+    </form>
+
+    <footer class="page-foot">
+      <span class="foot-rule" aria-hidden="true"></span>
+      <p class="notice">Los datos de este panel son de ejemplo: este formulario no guarda nada y las
+        fotos son las del catálogo de la demo. Los precios son de muestra y no son precios de venta.</p>
+      <p class="routes">/admin/productos/nuevo</p>
+    </footer>
+  </div>
+</main>
+
+</body>
+</html>

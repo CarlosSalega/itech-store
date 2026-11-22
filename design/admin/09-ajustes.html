@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Ajustes del panel de iTech Store: los canales sin publicar con la nota honesta, la regla de envío sin costo calculado y la biblioteca de imágenes del catálogo con su uso.">
+<title>Ajustes · Tarjeta flotante — iTech Store</title>
+<!--
+  Direction 01 · Tarjeta flotante — screen 09 of 7 routes: settings and the media library.
+  The shell is the implemented one, with Ajustes current.
+  Both channels stay unpublished and say why: the store has confirmed neither a WhatsApp number nor
+  an email (CONTACT is null and docs/contact-channels.md governs what /contacto may say), so the
+  board invents neither. Each channel points at how it gets turned on instead of showing a fake
+  address.
+  The shipping rule is the store's real one, quoted exactly: "El envío se coordina al finalizar".
+  There is no computed cost anywhere — cartTotals sums product lines only — so the section says so.
+  The media library shows the photographs that exist under public/products, with how many products
+  use each one (the fixtures use one cover photo per product), the reserve image and an upload
+  affordance that states it is not available in this demo.
+  Tokens come from design/system.md; run `pnpm design:photos admin` to inline the photos.
+-->
+<style>
+  :root{
+    --white:#ffffff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
+    --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
+    --s-8:64px; --s-9:88px;
+    --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
+    --e-hairline:inset 0 0 0 1px var(--hairline);
+    --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+    --e-lift:0 12px 32px rgba(0,0,0,.10);
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms; --dur-4:720ms;
+    --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
+    --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+    --t-display-s:clamp(2rem,4.6vw,3.75rem);
+    --t-numeral:clamp(2rem,3.4vw,3.25rem);
+    --t-title:clamp(1.375rem,2.2vw,1.875rem);
+    --t-headline:1.3125rem;
+    --t-body:1.0625rem; --t-body-s:.9375rem; --t-label:.8125rem; --t-caption:.75rem;
+    --side-w:268px;
+    color-scheme:light;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;overflow-x:clip;scrollbar-color:var(--hairline) var(--white)}
+  body{margin:0;background:var(--white);color:var(--ink);font:400 var(--t-body)/1.47 var(--font);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:var(--ink);color:var(--white)}
+  img{max-width:100%;display:block}
+  a{color:var(--link);text-decoration:none}
+  h1,h2,h3{margin:0;font-weight:600;text-wrap:balance;font-optical-sizing:auto}
+  p{margin:0;text-wrap:pretty}
+  ul{margin:0;padding:0;list-style:none}
+  button,summary{font:inherit;color:inherit}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm)}
+  .is-focused{outline:3px solid var(--accent);outline-offset:3px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
+  .skip{position:absolute;left:12px;top:-56px;z-index:60;background:var(--ink);color:var(--white);
+    padding:12px 20px;border-radius:var(--r-pill);min-height:44px;display:inline-flex;
+    align-items:center;transition:top var(--dur-1) var(--ease-std)}
+  .skip:focus{top:12px}
+
+  .ico{display:block;flex:none;width:20px;height:20px;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .ico-18{width:18px;height:18px}
+  .ico-16{width:16px;height:16px}
+  .ico-14{width:14px;height:14px}
+
+  /* ---------- the floating card: the implemented shell ---------- */
+  .side{position:fixed;left:var(--s-4);top:var(--s-4);bottom:var(--s-4);width:var(--side-w);
+    z-index:30;display:flex;flex-direction:column;padding:var(--s-4);background:var(--white);
+    border-radius:var(--r-xl);box-shadow:var(--e-hairline),var(--e-float)}
+  .side-bar{display:flex;flex-direction:column;gap:var(--s-2)}
+  .brandrow{display:flex;align-items:center;gap:var(--s-2)}
+  .brand{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;color:var(--ink);
+    font-size:var(--t-body-s);font-weight:600;letter-spacing:-.012em;white-space:nowrap;
+    padding-right:var(--s-1)}
+  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor;transform:translateY(-.12em)}
+  .workspace{position:relative;margin-inline-start:auto}
+  .ws{display:inline-flex;align-items:center;justify-content:center;width:44px;min-height:44px;
+    border-radius:var(--r-pill);color:var(--muted);cursor:pointer;list-style:none;
+    transition:background var(--dur-1) linear,color var(--dur-1) linear}
+  .ws::-webkit-details-marker{display:none}
+  .ws:hover{background:var(--surface);color:var(--ink)}
+  .ws .ico{transition:transform var(--dur-2) var(--ease-std)}
+  .workspace[open] .ws .ico{transform:rotate(180deg)}
+  .wsPanel{position:absolute;inset-block-start:calc(100% + var(--s-1));inset-inline-end:0;
+    z-index:40;width:216px;padding:var(--s-3);border-radius:var(--r-md);background:var(--white);
+    box-shadow:var(--e-hairline),var(--e-float)}
+  .wsLabel{color:var(--muted);font-size:var(--t-caption);letter-spacing:.015em}
+  .wsName{margin-top:var(--s-1);color:var(--ink);font-size:var(--t-body-s);font-weight:600}
+  .wsNote{margin-top:var(--s-2);color:var(--muted);font-size:var(--t-caption);line-height:1.4}
+  .brandmeta{margin-top:calc(-1 * var(--s-2));padding-left:calc(20px + var(--s-2));
+    font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+
+  .search{display:flex;align-items:center;gap:var(--s-2);width:100%;min-height:44px;
+    margin-top:var(--s-4);padding:0 var(--s-3);border:0;border-radius:var(--r-md);
+    background:var(--surface);color:var(--ink);cursor:pointer;text-align:left;
+    transition:box-shadow var(--dur-1) linear}
+  .search .ico{color:var(--muted)}
+  .search-label{font-size:var(--t-body-s)}
+  .search kbd{margin-inline-start:auto;font:500 var(--t-caption)/1 var(--mono);color:var(--muted);
+    letter-spacing:.02em;padding:3px 5px;border-radius:var(--r-sm);box-shadow:var(--e-hairline);
+    background:var(--white)}
+  .search:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+
+  .strip{display:flex;flex:1 1 auto;flex-direction:column;min-height:0}
+  .nav{margin-top:var(--s-5);display:grid;gap:2px}
+  .navrow{display:flex;align-items:center}
+  .navitem{display:flex;flex:1 1 auto;align-items:center;gap:var(--s-3);min-height:44px;
+    padding:0 var(--s-3);border-radius:var(--r-pill);color:var(--ink);font-size:var(--t-body-s);
+    transition:background var(--dur-1) linear,color var(--dur-1) linear}
+  .navitem .ico{color:var(--muted)}
+  .navitem:hover{background:var(--surface)}
+  .navitem[aria-current="page"]{background:var(--ink);color:var(--white);font-weight:500}
+  .navitem[aria-current="page"] .ico{color:var(--white)}
+  .badge{margin-inline-start:auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--r-pill);
+    background:var(--accent);color:var(--white);font-size:var(--t-caption);font-weight:600;
+    line-height:20px;text-align:center;font-variant-numeric:tabular-nums}
+  .subnav{display:grid;gap:2px;margin:2px 0 var(--s-2) 30px;padding-left:var(--s-3);
+    border-left:1px solid var(--hairline)}
+  .subnav a{display:flex;align-items:center;min-height:44px;padding:0 var(--s-3);color:var(--ink);
+    font-size:var(--t-body-s);border-radius:var(--r-sm)}
+  .subnav a:hover{background:var(--surface)}
+  .subcount{margin-inline-start:auto;font-size:var(--t-caption);color:var(--muted);
+    font-variant-numeric:tabular-nums}
+
+  .side-foot{margin-top:auto;padding-top:var(--s-3);border-top:1px solid var(--hairline)}
+  .session{display:grid;gap:2px}
+  .user{display:flex;align-items:center;gap:var(--s-3);margin-top:var(--s-3);padding-top:var(--s-3);
+    border-top:1px solid var(--hairline);color:var(--ink)}
+  .user:hover .user-name{color:var(--link)}
+  .avatar{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:var(--r-pill);
+    background:var(--surface);box-shadow:var(--e-hairline);font-size:var(--t-caption);
+    font-weight:600;letter-spacing:.02em;color:var(--ink)}
+  .user-text{min-width:0}
+  .user-name{display:block;font-size:var(--t-label);font-weight:600;letter-spacing:-.008em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .user-mail{display:block;font-size:var(--t-caption);color:var(--muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* ---------- the content column ---------- */
+  main{padding:var(--s-6) var(--s-6) 0}
+  .page{display:flex;flex-direction:column;min-height:calc(100vh - var(--s-6));max-width:1180px}
+  @media (min-width:960px){
+    main{margin-left:calc(var(--side-w) + var(--s-4) + var(--s-6));padding-right:var(--s-7)}
+  }
+
+  .page-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--s-4) var(--s-6)}
+  .page-head h1{font-size:var(--t-title);line-height:1.08;letter-spacing:-.022em}
+  .deck{margin-top:var(--s-2);max-width:70ch;color:var(--muted);font-size:var(--t-body-s)}
+
+  .top{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-6);margin-top:var(--s-5)}
+  @media (min-width:1080px){
+    .top{grid-template-columns:minmax(0,1fr) 340px;gap:var(--s-7);align-items:start}
+  }
+  .section-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
+    gap:var(--s-2) var(--s-4)}
+  .section h2{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.012em}
+  .sec-count{font-size:var(--t-label);color:var(--muted);font-variant-numeric:tabular-nums}
+  .sec-deck{margin-top:4px;font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;
+    color:var(--muted);max-width:58ch}
+  .section-note{margin-top:var(--s-3);display:flex;gap:var(--s-2);align-items:flex-start;
+    font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;color:var(--muted);max-width:62ch}
+  .section-note .ico{width:14px;height:14px;margin-top:2px;stroke-width:2}
+
+  /* ---------- channels ---------- */
+  .channels{margin-top:var(--s-3);border-top:1px solid var(--hairline)}
+  .channel{padding:var(--s-3) 0;border-bottom:1px solid var(--hairline)}
+  .channel-head{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-2) var(--s-3)}
+  .channel h3{font-size:var(--t-body-s);font-weight:600;letter-spacing:-.008em}
+  .chip{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:var(--r-pill);
+    font-size:var(--t-caption);letter-spacing:.01em;font-weight:500;white-space:nowrap;
+    color:var(--muted);outline:1px dashed var(--hairline);outline-offset:-1px}
+  .channel p{margin-top:var(--s-2);font-size:var(--t-label);line-height:1.45;color:var(--ink);
+    max-width:58ch}
+  .how{margin-top:var(--s-1)}
+  .how summary{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--link);
+    font-size:var(--t-body-s);font-weight:500;cursor:pointer;list-style:none}
+  .how summary::-webkit-details-marker{display:none}
+  .how summary .ico{width:14px;height:14px;transition:transform var(--dur-2) var(--ease-std)}
+  .how[open] summary .ico{transform:rotate(180deg)}
+  .how-body{padding:var(--s-3);border-radius:var(--r-md);background:var(--surface);
+    font-size:var(--t-caption);line-height:1.5;letter-spacing:.015em;color:var(--ink);max-width:56ch}
+
+  /* ---------- shipping: the rule, quoted, with no computed cost ---------- */
+  .ship{padding:var(--s-4);border-radius:var(--r-lg);background:var(--surface)}
+  .ship-rule{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.012em;font-weight:600;
+    text-wrap:pretty}
+  .ship-note{margin-top:var(--s-2);font-size:var(--t-label);line-height:1.45;color:var(--ink);
+    max-width:44ch}
+  .ship-facts{margin-top:var(--s-4);padding-top:var(--s-3);border-top:1px solid var(--hairline)}
+  .ship-facts div{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);
+    padding:3px 0;font-size:var(--t-caption);letter-spacing:.015em}
+  .ship-facts dt{color:var(--muted)}
+  .ship-facts dd{margin:0;color:var(--ink)}
+
+  /* ---------- media library ---------- */
+  .media-section{margin-top:var(--s-5);padding-top:var(--s-4);border-top:1px solid var(--hairline)}
+  .media{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-4);
+    margin-top:var(--s-3)}
+  @media (min-width:700px){ .media{grid-template-columns:repeat(3,minmax(0,1fr))} }
+  @media (min-width:1080px){ .media{grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--s-3)} }
+  .tile{display:block;min-width:0;text-align:start}
+  .tile-frame{width:100%;height:auto;aspect-ratio:2/1;padding:var(--s-2);border-radius:var(--r-md);
+    background:var(--surface);object-fit:contain;mix-blend-mode:multiply}
+  .tile-name{display:block;margin-top:var(--s-2);font-size:var(--t-label);font-weight:500;
+    line-height:1.3;letter-spacing:-.008em;color:var(--ink);text-wrap:pretty}
+  .tile-meta{display:block;margin-top:2px;font-size:var(--t-caption);line-height:1.3;
+    color:var(--muted);font-variant-numeric:tabular-nums}
+  .tile--reserve .tile-frame{box-shadow:var(--e-hairline);background:var(--white)}
+  .tile--upload{display:block;width:100%;border:0;background:none;padding:0;cursor:not-allowed;
+    text-align:start}
+  .upload-frame{display:grid;place-items:center;gap:var(--s-1);width:100%;aspect-ratio:2/1;
+    border:1px dashed var(--hairline);border-radius:var(--r-md);color:var(--muted)}
+  .upload-frame .ico{width:20px;height:20px}
+  .upload-frame span{font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+
+  .page-foot{margin-top:auto;padding:var(--s-6) 0 var(--s-6)}
+  .foot-rule{display:block;height:1px;background:var(--hairline);margin-bottom:var(--s-4)}
+  .notice{font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;color:var(--muted);
+    max-width:84ch}
+  .routes{margin-top:var(--s-2);font:400 var(--t-caption)/1.5 var(--mono);color:var(--muted);
+    word-break:break-word}
+
+  /* ---------- below 960px the card becomes a bar plus a strip ---------- */
+  @media (max-width:959px){
+    .side{position:sticky;top:0;z-index:30;left:auto;bottom:auto;width:auto;margin:0;
+      border-radius:0;padding:var(--s-2) var(--s-4) 0;box-shadow:0 1px 0 var(--hairline);
+      background:rgb(255 255 255 / 82%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+    .side-bar{flex-direction:row;align-items:center;gap:var(--s-2)}
+    .brandmeta{display:none}
+    .search{margin-top:0;width:44px;min-width:44px;margin-inline-start:auto;padding:0;
+      justify-content:center;background:none;box-shadow:none}
+    .search .search-label,.search kbd{display:none}
+    .search:hover{background:var(--surface);box-shadow:none}
+    .strip{flex-direction:row;flex-wrap:nowrap;align-items:center;gap:var(--s-2);
+      margin-inline:calc(-1 * var(--s-4));padding:var(--s-1) var(--s-4) var(--s-2);
+      overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+    .strip::-webkit-scrollbar{display:none}
+    .nav,.navrow,.subnav,.subnav li,.side-foot,.session{display:contents}
+    .navitem{flex:none;gap:var(--s-2);padding:0 var(--s-3);border-radius:var(--r-pill);
+      background:var(--white);box-shadow:var(--e-hairline);font-size:var(--t-label);
+      white-space:nowrap}
+    .navitem[aria-current="page"]{box-shadow:none}
+    .navitem .ico{width:16px;height:16px}
+    .badge{margin-inline-start:0}
+    .subnav a{padding:0 var(--s-3);border-radius:var(--r-pill);background:var(--white);
+      box-shadow:var(--e-hairline);font-size:var(--t-label);white-space:nowrap}
+    .subcount{display:none}
+    .user{margin:0;padding:0 0 0 var(--s-2);border:0;flex:none}
+    .user-mail{display:none}
+    .user-name{max-width:11ch}
+    main{padding:var(--s-5) var(--s-4) 0}
+    .page{min-height:auto}
+    .page-foot{padding-top:var(--s-6)}
+  }
+  @media (max-width:479px){
+    .page-head h1{font-size:var(--t-headline)}
+    .media{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-3)}
+    .tile-name{font-size:var(--t-caption)}
+  }
+
+  /* ---------- one authored moment ---------- */
+  @keyframes rise{from{opacity:0;transform:translateY(16px);filter:blur(6px)}
+    to{opacity:1;transform:none;filter:blur(0)}}
+  .enter{animation:rise var(--dur-4) var(--ease-out-expo) both;
+    animation-delay:calc(var(--i,0) * 80ms)}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition-duration:0ms!important}
+    .enter{opacity:1;transform:none;filter:none}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#admin-main">Saltar al contenido</a>
+
+<header class="side">
+  <div class="side-bar">
+    <div class="brandrow">
+      <a class="brand" href="/admin">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09 22C7.79 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+        <span>iTech Store</span>
+      </a>
+      <details class="workspace">
+        <summary class="ws">
+          <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M8 10.5 12 14.5 16 10.5"/>
+          </svg>
+          <span class="sr-only">Cambiar de espacio de trabajo</span>
+        </summary>
+        <div class="wsPanel">
+          <p class="wsLabel">Espacio de trabajo</p>
+          <p class="wsName">iTech Store</p>
+          <p class="wsNote">Esta demo tiene un solo espacio de trabajo.</p>
+        </div>
+      </details>
+    </div>
+    <p class="brandmeta">Panel de administración</p>
+
+    <button class="search" type="button" aria-keyshortcuts="Meta+K Control+K">
+      <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/>
+      </svg>
+      <span class="search-label">Buscar en el panel</span>
+      <kbd>⌘K</kbd>
+    </button>
+  </div>
+
+  <div class="strip">
+    <nav class="nav" aria-label="Secciones del panel">
+      <div class="navrow">
+        <a class="navitem" href="/admin">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 4.5h6.5V11H4z"/><path d="M13.5 4.5H20V8.5h-6.5z"/>
+            <path d="M13.5 11H20v8.5h-6.5z"/><path d="M4 13.5h6.5V20H4z"/>
+          </svg>
+          Panel
+        </a>
+      </div>
+      <div class="navrow">
+        <a class="navitem" href="/admin/productos">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3.2 20.5 7.6v8.8L12 20.8 3.5 16.4V7.6L12 3.2z"/>
+            <path d="M3.5 7.6 12 12l8.5-4.4"/><path d="M12 12v8.8"/>
+          </svg>
+          Productos
+        </a>
+      </div>
+      <ul class="subnav" id="sub-productos">
+        <li><a href="/admin/productos">Todos <span class="subcount">14</span></a></li>
+        <li><a href="/admin/productos/nuevo">Nuevo producto</a></li>
+      </ul>
+      <div class="navrow">
+        <a class="navitem" href="/admin/pedidos">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 3.5h12v17l-3-1.8-3 1.8-3-1.8-3 1.8v-17z"/>
+            <path d="M9 8h6"/><path d="M9 11.5h6"/>
+          </svg>
+          Pedidos
+          <span class="badge" aria-hidden="true">2</span>
+          <span class="sr-only">, 2 pedidos a preparar</span>
+        </a>
+      </div>
+      <div class="navrow">
+        <a class="navitem" href="/admin/ajustes" aria-current="page">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 8h5"/><path d="M13 8h7"/><path d="M4 16h7"/><path d="M15 16h5"/>
+            <circle cx="11" cy="8" r="2"/><circle cx="13" cy="16" r="2"/>
+          </svg>
+          Ajustes
+        </a>
+      </div>
+    </nav>
+
+    <div class="side-foot">
+      <nav class="session" aria-label="Sesión">
+        <a class="navitem" href="/catalogo">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M9 6.5 14.5 12 9 17.5"/>
+          </svg>
+          Ver la tienda
+        </a>
+        <a class="navitem" href="/login">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M15 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/>
+            <path d="M9.5 12H19"/><path d="M16 8.5 19.5 12 16 15.5"/>
+          </svg>
+          Cerrar sesión
+        </a>
+      </nav>
+
+      <div class="user">
+        <span class="avatar" aria-hidden="true">SR</span>
+        <span class="user-text">
+          <span class="user-name">Sofía Ramos</span>
+          <span class="user-mail">sofia.ramos@example.com</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="admin-main">
+  <div class="page">
+    <div class="page-head enter">
+      <div>
+        <h1>Ajustes</h1>
+        <p class="deck">Los canales de la tienda, la regla de envío y las fotos que usa el catálogo.</p>
+      </div>
+    </div>
+
+    <div class="top enter" style="--i:1">
+      <section class="section" aria-labelledby="canales">
+        <div class="section-head">
+          <h2 id="canales">Canales</h2>
+          <span class="sec-count">2 sin publicar</span>
+        </div>
+
+        <ul class="channels">
+          <li class="channel">
+            <div class="channel-head">
+              <h3>WhatsApp</h3>
+              <span class="chip">Sin publicar</span>
+            </div>
+            <p>La tienda no confirmó un número: el botón de la tienda lleva a contacto y no abre un
+              chat.</p>
+            <details class="how" open>
+              <summary>
+                Ver cómo se activa
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M8 10.5 12 14.5 16 10.5"/>
+                </svg>
+              </summary>
+              <div class="how-body">Confirmá el número con el que vas a atender los pedidos. Cuando
+                esté confirmado, el canal queda publicado y el botón de la tienda abre el chat.</div>
+            </details>
+          </li>
+
+          <li class="channel">
+            <div class="channel-head">
+              <h3>Email</h3>
+              <span class="chip">Sin publicar</span>
+            </div>
+            <p>La tienda no confirmó una casilla: no se muestra ningún email ni se promete respuesta
+              por correo.</p>
+            <details class="how">
+              <summary>
+                Ver cómo se activa
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M8 10.5 12 14.5 16 10.5"/>
+                </svg>
+              </summary>
+              <div class="how-body">Confirmá la casilla desde la que vas a responder los pedidos.
+                Cuando esté confirmada, el canal queda publicado en la página de contacto.</div>
+            </details>
+          </li>
+        </ul>
+
+        <p class="section-note">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3.8 21 20H3L12 3.8z"/><path d="M12 10v4.6"/><path d="M12 17.4v.4"/>
+          </svg>
+          No inventamos un número ni una casilla: no se publican hasta que los confirmes.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="envio">
+        <div class="section-head">
+          <h2 id="envio">Envío</h2>
+        </div>
+        <p class="sec-deck">La regla es una sola y el pedido no suma envío.</p>
+
+        <div class="ship">
+          <p class="ship-rule">El envío se coordina al finalizar</p>
+          <p class="ship-note">La tienda no calcula un costo de envío. El pedido se cierra y el envío
+            se acuerda después, por el canal que confirmes.</p>
+          <dl class="ship-facts">
+            <div>
+              <dt>Costo calculado</dt>
+              <dd>No</dd>
+            </div>
+            <div>
+              <dt>Zonas y tarifas</dt>
+              <dd>Sin definir</dd>
+            </div>
+            <div>
+              <dt>El total del pedido</dt>
+              <dd>Suma los productos</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+    </div>
+
+    <section class="section media-section enter" aria-labelledby="biblioteca" style="--i:2">
+      <div class="section-head">
+        <h2 id="biblioteca">Biblioteca de imágenes</h2>
+        <span class="sec-count">10 imágenes · 1 de reserva</span>
+      </div>
+      <p class="sec-deck">Las fotos del catálogo y en cuántos productos se usa cada una.</p>
+
+      <ul class="media">
+        <li class="tile">
+          <img class="tile-frame" src="../../public/products/airpods/airpods-pro-3-1.webp" width="640" height="640" alt="">
+          <span class="tile-name">Airpods Pro 3</span>
+          <span class="tile-meta">1 producto · portada</span>
+        </li>
+        <li class="tile">
+          <img class="tile-frame" src="../../public/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp" width="640" height="640" alt="">
+          <span class="tile-name">Apple iPad 11&quot; A16 Chip WI-FI</span>
+          <span class="tile-meta">1 producto · portada</span>
+        </li>
+        <li class="tile">
+          <img class="tile-frame" src="../../public/products/accessory/apple-homepod-mini-2da-generacion-1.webp" width="640" height="640" alt="">
+          <span class="tile-name">Apple HomePod Mini (2da Generación)</span>
+          <span class="tile-meta">1 producto · portada</span>
+        </li>
+        <li class="tile">
+          <img class="tile-frame" src="../../public/products/accessory/apple-tv-4k-2022-1.webp" width="640" height="640" alt="">
+          <span class="tile-name">Apple TV 4K (2022)</span>
+          <span class="tile-meta">1 producto · portada</span>
+        </li>
+        <li class="tile">
+          <img class="tile-frame" src="../../public/products/accessory/pencil-pro-1.webp" width="640" height="640" alt="">
+          <span class="tile-name">Apple Pencil Pro</span>
+          <span class="tile-meta">1 producto · portada</span>
+        </li>
+        <li class="tile">
+          <img class="tile-frame" src="../../public/products/mac/apple-13-macbook-air-chip-m5-1.webp" width="640" height="640" alt="">
+          <span class="tile-name">Apple 13&quot; MacBook Air - Chip M5</span>
+          <span class="tile-meta">1 producto · portada</span>
+        </li>
+        <li class="tile">
+          <img class="tile-frame" src="../../public/products/mac/apple-imac-24-m4-chip-azul-1.webp" width="640" height="640" alt="">
+          <span class="tile-name">Apple iMac 24&quot; M4 Chip Azul</span>
+          <span class="tile-meta">1 producto · portada</span>
+        </li>
+        <li class="tile">
+          <img class="tile-frame" src="../../public/products/watch/watch-se-3-40mm-1.webp" width="640" height="640" alt="">
+          <span class="tile-name">Apple Watch SE 3 40mm</span>
+          <span class="tile-meta">1 producto · portada</span>
+        </li>
+        <li class="tile tile--reserve">
+          <img class="tile-frame" src="../../public/placeholder.webp" width="640" height="640" alt="">
+          <span class="tile-name">Imagen no disponible</span>
+          <span class="tile-meta">0 productos · reserva</span>
+        </li>
+        <li>
+          <button class="tile tile--upload" type="button" disabled>
+            <span class="upload-frame">
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 5v14"/><path d="M5 12h14"/>
+              </svg>
+              <span>Subir</span>
+            </span>
+            <span class="tile-name">Subir una foto</span>
+            <span class="tile-meta">No disponible en esta demo</span>
+          </button>
+        </li>
+      </ul>
+    </section>
+
+    <footer class="page-foot">
+      <span class="foot-rule" aria-hidden="true"></span>
+      <p class="notice">Los canales y el envío son reglas de la tienda: esta demo no tiene integraciones
+        ni tarifas. Las fotos son las del catálogo de ejemplo y los precios no son precios de venta.</p>
+      <p class="routes">/admin/ajustes</p>
+    </footer>
+  </div>
+</main>
+
+</body>
+</html>

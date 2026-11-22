@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Detalle de un producto del panel de iTech Store: variantes editables con precio y stock, fotos en orden con portada, ficha del producto y la confirmación para eliminarlo.">
+<title>Apple iPad 11&quot; A16 Chip WI-FI · Tarjeta flotante — iTech Store</title>
+<!--
+  Direction 01 · Tarjeta flotante — screen 07 of 7 routes: editing one product.
+  The shell is the implemented one, with Productos current. The product is the fixture
+  `apple-ipad-11-a16-chip-wi-fi`: three variants at $ 900.000 / $ 1.035.000 / $ 1.215.000 with
+  5 / 7 / 2 units, 14 units in total, and the four photos that exist under public/products.
+  The second variant is mid-edit, with the focus ring on its price; the third photo is marked to be
+  removed and says so before anything is destroyed. Delete is never a bare button: it opens the
+  confirmation below it, which names the product and what happens to orders that already include it.
+  Two fields are modelled, not stored yet: `destacado` and `createdAt` (the fixture has neither), the
+  same way `published` was modelled before the schema had it. Tokens from design/system.md.
+-->
+<style>
+  :root{
+    --white:#ffffff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
+    --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
+    --s-8:64px; --s-9:88px;
+    --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
+    --e-hairline:inset 0 0 0 1px var(--hairline);
+    --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+    --e-lift:0 12px 32px rgba(0,0,0,.10);
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms; --dur-4:720ms;
+    --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
+    --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+    --t-display-s:clamp(2rem,4.6vw,3.75rem);
+    --t-numeral:clamp(2rem,3.4vw,3.25rem);
+    --t-title:clamp(1.375rem,2.2vw,1.875rem);
+    --t-headline:1.3125rem;
+    --t-body:1.0625rem; --t-body-s:.9375rem; --t-label:.8125rem; --t-caption:.75rem;
+    --side-w:268px;
+    color-scheme:light;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;overflow-x:clip;scrollbar-color:var(--hairline) var(--white)}
+  body{margin:0;background:var(--white);color:var(--ink);font:400 var(--t-body)/1.47 var(--font);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:var(--ink);color:var(--white)}
+  img{max-width:100%;display:block}
+  a{color:var(--link);text-decoration:none}
+  h1,h2,h3{margin:0;font-weight:600;text-wrap:balance;font-optical-sizing:auto}
+  p{margin:0;text-wrap:pretty}
+  ul,ol{margin:0;padding:0;list-style:none}
+  table{border-collapse:collapse}
+  button,select,input{font:inherit;color:inherit}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm)}
+  .is-focused{outline:3px solid var(--accent);outline-offset:2px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
+  .skip{position:absolute;left:12px;top:-56px;z-index:60;background:var(--ink);color:var(--white);
+    padding:12px 20px;border-radius:var(--r-pill);min-height:44px;display:inline-flex;
+    align-items:center;transition:top var(--dur-1) var(--ease-std)}
+  .skip:focus{top:12px}
+
+  .ico{display:block;flex:none;width:20px;height:20px;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .ico-18{width:18px;height:18px}
+  .ico-16{width:16px;height:16px}
+  .ico-14{width:14px;height:14px}
+
+  /* ---------- the floating card: the implemented shell ---------- */
+  .side{position:fixed;left:var(--s-4);top:var(--s-4);bottom:var(--s-4);width:var(--side-w);
+    z-index:30;display:flex;flex-direction:column;padding:var(--s-4);background:var(--white);
+    border-radius:var(--r-xl);box-shadow:var(--e-hairline),var(--e-float)}
+  .side-bar{display:flex;flex-direction:column;gap:var(--s-2)}
+  .brandrow{display:flex;align-items:center;gap:var(--s-2)}
+  .brand{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;color:var(--ink);
+    font-size:var(--t-body-s);font-weight:600;letter-spacing:-.012em;white-space:nowrap;
+    padding-right:var(--s-1)}
+  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor;transform:translateY(-.12em)}
+  .workspace{position:relative;margin-inline-start:auto}
+  .ws{display:inline-flex;align-items:center;justify-content:center;width:44px;min-height:44px;
+    border-radius:var(--r-pill);color:var(--muted);cursor:pointer;list-style:none;
+    transition:background var(--dur-1) linear,color var(--dur-1) linear}
+  .ws::-webkit-details-marker{display:none}
+  .ws:hover{background:var(--surface);color:var(--ink)}
+  .ws .ico{transition:transform var(--dur-2) var(--ease-std)}
+  .workspace[open] .ws .ico{transform:rotate(180deg)}
+  .wsPanel{position:absolute;inset-block-start:calc(100% + var(--s-1));inset-inline-end:0;
+    z-index:40;width:216px;padding:var(--s-3);border-radius:var(--r-md);background:var(--white);
+    box-shadow:var(--e-hairline),var(--e-float)}
+  .wsLabel{color:var(--muted);font-size:var(--t-caption);letter-spacing:.015em}
+  .wsName{margin-top:var(--s-1);color:var(--ink);font-size:var(--t-body-s);font-weight:600}
+  .wsNote{margin-top:var(--s-2);color:var(--muted);font-size:var(--t-caption);line-height:1.4}
+  .brandmeta{margin-top:calc(-1 * var(--s-2));padding-left:calc(20px + var(--s-2));
+    font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+
+  .search{display:flex;align-items:center;gap:var(--s-2);width:100%;min-height:44px;
+    margin-top:var(--s-4);padding:0 var(--s-3);border:0;border-radius:var(--r-md);
+    background:var(--surface);color:var(--ink);cursor:pointer;text-align:left;
+    transition:box-shadow var(--dur-1) linear}
+  .search .ico{color:var(--muted)}
+  .search-label{font-size:var(--t-body-s)}
+  .search kbd{margin-inline-start:auto;font:500 var(--t-caption)/1 var(--mono);color:var(--muted);
+    letter-spacing:.02em;padding:3px 5px;border-radius:var(--r-sm);box-shadow:var(--e-hairline);
+    background:var(--white)}
+  .search:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+
+  .strip{display:flex;flex:1 1 auto;flex-direction:column;min-height:0}
+  .nav{margin-top:var(--s-5);display:grid;gap:2px}
+  .navrow{display:flex;align-items:center}
+  .navitem{display:flex;flex:1 1 auto;align-items:center;gap:var(--s-3);min-height:44px;
+    padding:0 var(--s-3);border-radius:var(--r-pill);color:var(--ink);font-size:var(--t-body-s);
+    transition:background var(--dur-1) linear,color var(--dur-1) linear}
+  .navitem .ico{color:var(--muted)}
+  .navitem:hover{background:var(--surface)}
+  .navitem[aria-current="page"]{background:var(--ink);color:var(--white);font-weight:500}
+  .navitem[aria-current="page"] .ico{color:var(--white)}
+  .badge{margin-inline-start:auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--r-pill);
+    background:var(--accent);color:var(--white);font-size:var(--t-caption);font-weight:600;
+    line-height:20px;text-align:center;font-variant-numeric:tabular-nums}
+  .subnav{display:grid;gap:2px;margin:2px 0 var(--s-2) 30px;padding-left:var(--s-3);
+    border-left:1px solid var(--hairline)}
+  .subnav a{display:flex;align-items:center;min-height:44px;padding:0 var(--s-3);color:var(--ink);
+    font-size:var(--t-body-s);border-radius:var(--r-sm)}
+  .subnav a:hover{background:var(--surface)}
+  .subcount{margin-inline-start:auto;font-size:var(--t-caption);color:var(--muted);
+    font-variant-numeric:tabular-nums}
+
+  .side-foot{margin-top:auto;padding-top:var(--s-3);border-top:1px solid var(--hairline)}
+  .session{display:grid;gap:2px}
+  .user{display:flex;align-items:center;gap:var(--s-3);margin-top:var(--s-3);padding-top:var(--s-3);
+    border-top:1px solid var(--hairline);color:var(--ink)}
+  .user:hover .user-name{color:var(--link)}
+  .avatar{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:var(--r-pill);
+    background:var(--surface);box-shadow:var(--e-hairline);font-size:var(--t-caption);
+    font-weight:600;letter-spacing:.02em;color:var(--ink)}
+  .user-text{min-width:0}
+  .user-name{display:block;font-size:var(--t-label);font-weight:600;letter-spacing:-.008em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .user-mail{display:block;font-size:var(--t-caption);color:var(--muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* ---------- the content column ---------- */
+  main{padding:var(--s-6) var(--s-6) 0}
+  .page{display:flex;flex-direction:column;min-height:calc(100vh - var(--s-6));max-width:1180px}
+  @media (min-width:960px){
+    main{margin-left:calc(var(--side-w) + var(--s-4) + var(--s-6));padding-right:var(--s-7)}
+  }
+
+  .back{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-bottom:var(--s-1);
+    color:var(--link);font-size:var(--t-body-s);font-weight:500}
+  .back .ico{width:14px;height:14px;transition:transform var(--dur-2) var(--ease-std)}
+  .back:hover .ico{transform:translateX(-3px)}
+
+  .page-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--s-4) var(--s-6)}
+  .page-head h1{font-size:var(--t-title);line-height:1.08;letter-spacing:-.022em;max-width:30ch}
+  .meta{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-1) var(--s-2);
+    margin-top:var(--s-2);font-size:var(--t-body-s);color:var(--muted)}
+  .cell-label{display:none}
+  .meta .dot{color:var(--muted)}
+  .chip{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 10px;
+    border-radius:var(--r-pill);font-size:var(--t-caption);letter-spacing:.01em;font-weight:500;
+    white-space:nowrap;color:var(--ink);box-shadow:var(--e-hairline);background:var(--white)}
+  .chip .ico{width:12px;height:12px;stroke-width:2}
+  .head-actions{display:flex;align-items:center;gap:var(--s-4);margin-inline-start:auto}
+  .shop-link{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--link);
+    font-size:var(--t-body-s);font-weight:500;white-space:nowrap}
+  .shop-link .ico{width:16px;height:16px;transition:transform var(--dur-2) var(--ease-std)}
+  .shop-link:hover .ico{transform:translateX(2px)}
+
+  .switch{display:flex;align-items:flex-start;gap:var(--s-3);min-height:44px;cursor:pointer;
+    padding-block:var(--s-2)}
+  .switch input{position:absolute;opacity:0;width:1px;height:1px}
+  .track{position:relative;flex:none;width:44px;height:26px;margin-top:2px;border-radius:var(--r-pill);
+    background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--muted);
+    transition:background var(--dur-2) var(--ease-std),box-shadow var(--dur-2) var(--ease-std)}
+  .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:var(--r-pill);
+    background:var(--white);box-shadow:var(--e-hairline);
+    transition:transform var(--dur-2) var(--ease-std)}
+  .switch input:checked + .track{background:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+  .switch input:checked + .track .knob{transform:translateX(18px)}
+  .switch input:focus-visible + .track{outline:3px solid var(--accent);outline-offset:3px}
+  .switch-text{min-width:0;text-align:start}
+  .switch-name{display:block;font-size:var(--t-body-s);font-weight:500;letter-spacing:-.008em}
+  .switch-note{display:block;margin-top:2px;font-size:var(--t-caption);line-height:1.4;
+    letter-spacing:.015em;color:var(--muted)}
+
+  /* ---------- two columns: the editable work and the sheet ---------- */
+  .grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-6);margin-top:var(--s-5)}
+  @media (min-width:1080px){
+    .grid{grid-template-columns:minmax(0,1fr) 312px;gap:var(--s-7);align-items:start}
+  }
+  .section + .section{margin-top:var(--s-6);padding-top:var(--s-5);border-top:1px solid var(--hairline)}
+  .section-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
+    gap:var(--s-2) var(--s-4)}
+  .section h2{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.012em}
+  .sec-count{font-size:var(--t-label);color:var(--muted);font-variant-numeric:tabular-nums}
+  .sec-deck{margin-top:4px;font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;
+    color:var(--muted);max-width:54ch}
+
+  /* ---------- editable variants ---------- */
+  .variants{width:100%;margin-top:var(--s-3);font-size:var(--t-body-s);table-layout:fixed}
+  .variants th:nth-child(1){width:92px}
+  .variants th:nth-child(2){width:128px}
+  .variants th:nth-child(3){width:84px}
+  .variants th:nth-child(5){width:116px}
+  .variants th{text-align:left;font-size:var(--t-caption);letter-spacing:.015em;font-weight:500;
+    color:var(--muted);padding:0 var(--s-3) 6px 0;border-bottom:1px solid var(--hairline);
+    white-space:nowrap}
+  .variants th:last-child{padding-right:0}
+  .variants td{padding:6px var(--s-3) 6px 0;border-bottom:1px solid var(--hairline);
+    vertical-align:middle}
+  .variants td:last-child{padding-right:0}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .variants th.num,.variants td.num{padding-right:var(--s-4)}
+  .variant-name{font-weight:500;letter-spacing:-.005em;white-space:nowrap}
+  .amount{font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .cur{font-size:.82em;color:var(--muted);margin-right:1px}
+  .stock{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .stock-note{display:block;font-size:var(--t-caption);line-height:1.3;color:var(--muted)}
+  .sku{display:block;font:400 var(--t-caption)/1.4 var(--mono);color:var(--muted);
+    overflow-wrap:anywhere;min-width:0}
+  .row-edit{display:inline-flex;align-items:center;min-height:44px;color:var(--link);
+    font-size:var(--t-label);font-weight:500;background:none;border:0;padding:0;cursor:pointer}
+  /* the row being edited: same table, inputs in place of the values */
+  .variants tr.is-editing{background:var(--surface)}
+  .variants tr.is-editing td{border-bottom-color:var(--hairline)}
+  .cell-input{width:100%;min-height:44px;padding:0 var(--s-2);border:0;border-radius:var(--r-sm);
+    box-shadow:var(--e-hairline);background:var(--white);font:400 var(--t-label)/1.3 var(--font);
+    transition:box-shadow var(--dur-1) linear}
+  .cell-input:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+  .cell-input:focus-visible,.cell-input.is-focused{outline:3px solid var(--accent);
+    outline-offset:2px;box-shadow:inset 0 0 0 1px var(--ink)}
+  .cell-input--num{text-align:right;font-variant-numeric:tabular-nums}
+  .cell-money{position:relative;display:block}
+  .cell-money .cur{position:absolute;left:var(--s-2);top:50%;transform:translateY(-50%)}
+  .cell-money .cell-input{padding-left:var(--s-5);text-align:left}
+  .row-actions{display:flex;align-items:center;justify-content:flex-end;gap:2px}
+  .icon-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;min-height:44px;
+    border:0;border-radius:var(--r-sm);background:none;color:var(--ink);cursor:pointer;
+    transition:background var(--dur-1) linear}
+  .icon-btn:hover{background:var(--surface)}
+  .icon-btn:disabled{color:var(--muted);opacity:.45;cursor:not-allowed}
+  .table-note{margin-top:var(--s-3);display:flex;flex-wrap:wrap;gap:var(--s-1) var(--s-4);
+    justify-content:space-between;font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted);
+    font-variant-numeric:tabular-nums}
+  .btn-2{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0;border:0;
+    background:none;color:var(--link);font:500 var(--t-body-s)/1 var(--font);cursor:pointer}
+  .btn-2 .ico{width:16px;height:16px}
+  .add-variant{margin-top:var(--s-3)}
+
+  /* ---------- photographs, kept in order ---------- */
+  .photos{margin-top:var(--s-3);border-top:1px solid var(--hairline)}
+  .photo{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) 0;
+    border-bottom:1px solid var(--hairline)}
+  .photo-index{flex:none;width:20px;font-size:var(--t-caption);color:var(--muted);
+    font-variant-numeric:tabular-nums;text-align:right}
+  .photo-thumb{flex:none;width:56px;height:56px;padding:4px;border-radius:var(--r-sm);
+    background:var(--surface);object-fit:contain;mix-blend-mode:multiply}
+  .photo-text{min-width:0;flex:1 1 auto}
+  .photo-name{display:block;font-size:var(--t-label);font-weight:500;line-height:1.3;
+    letter-spacing:-.008em}
+  .photo-meta{display:block;margin-top:2px;font-size:var(--t-caption);line-height:1.3;
+    color:var(--muted)}
+  .portada{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 9px;
+    border-radius:var(--r-pill);background:var(--ink);color:var(--white);font-size:var(--t-caption);
+    font-weight:500;letter-spacing:.01em;white-space:nowrap}
+  .photo-actions{display:flex;align-items:center;gap:2px;margin-inline-start:auto}
+  .photo-actions .btn-2{font-size:var(--t-label)}
+  /* the photo that is leaving: it is marked before anything is deleted */
+  .photo.is-removed .photo-thumb{opacity:.45}
+  .photo.is-removed .photo-name{color:var(--muted);text-decoration:line-through;
+    text-decoration-thickness:1px;text-decoration-color:var(--hairline)}
+  .photo.is-removed .photo-actions .btn-2{color:var(--ink);text-decoration:underline;
+    text-decoration-thickness:1px;text-underline-offset:2px}
+
+  /* ---------- the sheet: slug, featured, creation and the end of the product ---------- */
+  .sheet{margin-top:var(--s-3);display:grid;gap:var(--s-2)}
+  .fact{display:grid;grid-template-columns:88px minmax(0,1fr);gap:var(--s-3);
+    padding:var(--s-2) 0;border-bottom:1px solid var(--hairline)}
+  .fact:last-child{border-bottom:0}
+  .fact dt{font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+  .fact dd{margin:0;font-size:var(--t-label);color:var(--ink);min-width:0}
+  .fact dd.is-mono{font-family:var(--mono);font-size:var(--t-caption);line-height:1.5;
+    overflow-wrap:anywhere}
+  .sheet h3{font-size:var(--t-label);letter-spacing:.01em;font-weight:500;color:var(--muted);
+    margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--hairline)}
+  .danger{margin-top:var(--s-5);padding-top:var(--s-4);border-top:1px solid var(--hairline)}
+  .danger h2{font-size:var(--t-label);letter-spacing:.01em;font-weight:500;color:var(--muted)}
+  .danger p{margin-top:var(--s-2);font-size:var(--t-caption);line-height:1.4;
+    letter-spacing:.015em;color:var(--muted);max-width:36ch}
+  .delete-trigger{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;margin-top:var(--s-2);
+    padding:0;border:0;background:none;color:var(--ink);font:500 var(--t-body-s)/1 var(--font);
+    cursor:pointer;text-decoration:underline;text-decoration-thickness:1px;
+    text-decoration-color:var(--hairline);text-underline-offset:3px}
+  .delete-trigger:hover{text-decoration-color:currentColor}
+  .delete-trigger .ico{width:16px;height:16px}
+  /* the confirmation pattern, open in place; in the product it opens with showModal() */
+  .confirm{position:static;width:100%;max-width:none;margin:var(--s-3) 0 0;padding:var(--s-4);
+    border:0;border-radius:var(--r-md);background:var(--white);color:var(--ink);
+    box-shadow:var(--e-hairline),var(--e-float)}
+  .confirm h3{font-size:var(--t-body-s);font-weight:600;line-height:1.3;letter-spacing:-.008em;
+    text-wrap:pretty}
+  .confirm p{margin-top:var(--s-2);font-size:var(--t-caption);line-height:1.4;
+    letter-spacing:.015em;color:var(--muted)}
+  .confirm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-3);margin-top:var(--s-4)}
+  .btn-danger{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;
+    padding:0 var(--s-4);border:0;border-radius:var(--r-pill);background:var(--ink);color:var(--white);
+    font:500 var(--t-label)/1 var(--font);cursor:pointer;
+    transition:background var(--dur-1) linear,transform var(--dur-1) var(--ease-std)}
+  .btn-danger:hover{background:var(--canvas-dark)}
+  .btn-danger:active{transform:scale(.97)}
+  .btn-danger .ico{width:14px;height:14px}
+
+  .page-foot{margin-top:auto;padding:var(--s-6) 0 var(--s-6)}
+  .foot-rule{display:block;height:1px;background:var(--hairline);margin-bottom:var(--s-4)}
+  .notice{font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;color:var(--muted);
+    max-width:80ch}
+  .routes{margin-top:var(--s-2);font:400 var(--t-caption)/1.5 var(--mono);color:var(--muted);
+    word-break:break-word}
+
+  /* ---------- below 960px the card becomes a bar plus a strip ---------- */
+  @media (max-width:959px){
+    .side{position:sticky;top:0;z-index:30;left:auto;bottom:auto;width:auto;margin:0;
+      border-radius:0;padding:var(--s-2) var(--s-4) 0;box-shadow:0 1px 0 var(--hairline);
+      background:rgb(255 255 255 / 82%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+    .side-bar{flex-direction:row;align-items:center;gap:var(--s-2)}
+    .brandmeta{display:none}
+    .search{margin-top:0;width:44px;min-width:44px;margin-inline-start:auto;padding:0;
+      justify-content:center;background:none;box-shadow:none}
+    .search .search-label,.search kbd{display:none}
+    .search:hover{background:var(--surface);box-shadow:none}
+    .strip{flex-direction:row;flex-wrap:nowrap;align-items:center;gap:var(--s-2);
+      margin-inline:calc(-1 * var(--s-4));padding:var(--s-1) var(--s-4) var(--s-2);
+      overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+    .strip::-webkit-scrollbar{display:none}
+    .nav,.navrow,.subnav,.subnav li,.side-foot,.session{display:contents}
+    .navitem{flex:none;gap:var(--s-2);padding:0 var(--s-3);border-radius:var(--r-pill);
+      background:var(--white);box-shadow:var(--e-hairline);font-size:var(--t-label);
+      white-space:nowrap}
+    .navitem[aria-current="page"]{box-shadow:none}
+    .navitem .ico{width:16px;height:16px}
+    .badge{margin-inline-start:0}
+    .subnav a{padding:0 var(--s-3);border-radius:var(--r-pill);background:var(--white);
+      box-shadow:var(--e-hairline);font-size:var(--t-label);white-space:nowrap}
+    .subcount{display:none}
+    .user{margin:0;padding:0 0 0 var(--s-2);border:0;flex:none}
+    .user-mail{display:none}
+    .user-name{max-width:11ch}
+    main{padding:var(--s-5) var(--s-4) 0}
+    .page{min-height:auto}
+    .head-actions{flex-direction:row;align-items:center;gap:var(--s-4);margin-inline-start:0;
+      width:100%}
+    .page-foot{padding-top:var(--s-6)}
+  }
+  @media (max-width:699px){
+    /* the variants stop being a table: each one is a block, the same information in place */
+    .variants,.variants tbody{display:block}
+    .variants thead{display:none}
+    .variants tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px var(--s-3);
+      padding:var(--s-3) 0;border-bottom:1px solid var(--hairline)}
+    .variants td{display:block;padding:0;border:0}
+    .variants td:nth-child(1){grid-column:1;grid-row:1}
+    .variants td:nth-child(2){grid-column:2;grid-row:1;justify-self:end}
+    .variants td:nth-child(3){grid-column:1;grid-row:2;justify-self:start}
+    .variants td:nth-child(4){grid-column:1 / -1;grid-row:3}
+    .variants td:nth-child(5){grid-column:2;grid-row:2;justify-self:end}
+    .variants tr.is-editing td{grid-column:1 / -1;grid-row:auto;width:100%}
+    .variants tr.is-editing td:nth-child(5){grid-column:1 / -1;justify-self:end;margin-top:var(--s-2)}
+    .variants td .cell-label{display:inline;margin-right:6px;font-size:var(--t-caption);
+      letter-spacing:.015em;color:var(--muted)}
+    .variants tr.is-editing .cell-label{display:block;margin:0 0 4px}
+    .variants tr.is-editing td{text-align:left}
+    .photo{flex-wrap:wrap}
+    .photo-actions{margin-inline-start:0;width:100%;justify-content:flex-end}
+  }
+  @media (max-width:479px){
+    .page-head h1{font-size:var(--t-headline)}
+    /* the separators are the first thing to go when the line wraps */
+    .meta{gap:var(--s-1) var(--s-3)}
+    .meta .dot{display:none}
+    .photo-index{width:16px}
+    .photo-thumb{width:48px;height:48px}
+  }
+
+  /* ---------- one authored moment ---------- */
+  @keyframes rise{from{opacity:0;transform:translateY(16px);filter:blur(6px)}
+    to{opacity:1;transform:none;filter:blur(0)}}
+  .enter{animation:rise var(--dur-4) var(--ease-out-expo) both;
+    animation-delay:calc(var(--i,0) * 80ms)}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition-duration:0ms!important}
+    .enter{opacity:1;transform:none;filter:none}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#admin-main">Saltar al contenido</a>
+
+<header class="side">
+  <div class="side-bar">
+    <div class="brandrow">
+      <a class="brand" href="/admin">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09 22C7.79 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+        <span>iTech Store</span>
+      </a>
+      <details class="workspace">
+        <summary class="ws">
+          <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M8 10.5 12 14.5 16 10.5"/>
+          </svg>
+          <span class="sr-only">Cambiar de espacio de trabajo</span>
+        </summary>
+        <div class="wsPanel">
+          <p class="wsLabel">Espacio de trabajo</p>
+          <p class="wsName">iTech Store</p>
+          <p class="wsNote">Esta demo tiene un solo espacio de trabajo.</p>
+        </div>
+      </details>
+    </div>
+    <p class="brandmeta">Panel de administración</p>
+
+    <button class="search" type="button" aria-keyshortcuts="Meta+K Control+K">
+      <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/>
+      </svg>
+      <span class="search-label">Buscar en el panel</span>
+      <kbd>⌘K</kbd>
+    </button>
+  </div>
+
+  <div class="strip">
+    <nav class="nav" aria-label="Secciones del panel">
+      <div class="navrow">
+        <a class="navitem" href="/admin">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 4.5h6.5V11H4z"/><path d="M13.5 4.5H20V8.5h-6.5z"/>
+            <path d="M13.5 11H20v8.5h-6.5z"/><path d="M4 13.5h6.5V20H4z"/>
+          </svg>
+          Panel
+        </a>
+      </div>
+      <div class="navrow">
+        <a class="navitem" href="/admin/productos" aria-current="page">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3.2 20.5 7.6v8.8L12 20.8 3.5 16.4V7.6L12 3.2z"/>
+            <path d="M3.5 7.6 12 12l8.5-4.4"/><path d="M12 12v8.8"/>
+          </svg>
+          Productos
+        </a>
+      </div>
+      <ul class="subnav" id="sub-productos">
+        <li><a href="/admin/productos">Todos <span class="subcount">14</span></a></li>
+        <li><a href="/admin/productos/nuevo">Nuevo producto</a></li>
+      </ul>
+      <div class="navrow">
+        <a class="navitem" href="/admin/pedidos">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 3.5h12v17l-3-1.8-3 1.8-3-1.8-3 1.8v-17z"/>
+            <path d="M9 8h6"/><path d="M9 11.5h6"/>
+          </svg>
+          Pedidos
+          <span class="badge" aria-hidden="true">2</span>
+          <span class="sr-only">, 2 pedidos a preparar</span>
+        </a>
+      </div>
+      <div class="navrow">
+        <a class="navitem" href="/admin/ajustes">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 8h5"/><path d="M13 8h7"/><path d="M4 16h7"/><path d="M15 16h5"/>
+            <circle cx="11" cy="8" r="2"/><circle cx="13" cy="16" r="2"/>
+          </svg>
+          Ajustes
+        </a>
+      </div>
+    </nav>
+
+    <div class="side-foot">
+      <nav class="session" aria-label="Sesión">
+        <a class="navitem" href="/catalogo">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M9 6.5 14.5 12 9 17.5"/>
+          </svg>
+          Ver la tienda
+        </a>
+        <a class="navitem" href="/login">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M15 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/>
+            <path d="M9.5 12H19"/><path d="M16 8.5 19.5 12 16 15.5"/>
+          </svg>
+          Cerrar sesión
+        </a>
+      </nav>
+
+      <div class="user">
+        <span class="avatar" aria-hidden="true">SR</span>
+        <span class="user-text">
+          <span class="user-name">Sofía Ramos</span>
+          <span class="user-mail">sofia.ramos@example.com</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="admin-main">
+  <div class="page">
+    <a class="back enter" href="/admin/productos">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M15 6.5 9.5 12 15 17.5"/>
+      </svg>
+      Productos
+    </a>
+    <div class="page-head enter">
+      <div>
+        <h1>Apple iPad 11&quot; A16 Chip WI-FI</h1>
+        <p class="meta">
+          <span>iPad</span><span class="dot" aria-hidden="true">·</span>
+          <span class="chip"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span>
+          <span class="dot" aria-hidden="true">·</span>
+          <span>3 variantes</span><span class="dot" aria-hidden="true">·</span>
+          <span>14 unidades en total</span>
+        </p>
+      </div>
+      <div class="head-actions">
+        <label class="switch" for="publicado">
+          <input id="publicado" type="checkbox" checked>
+          <span class="track" aria-hidden="true"><span class="knob"></span></span>
+          <span class="switch-text">
+            <span class="switch-name">Publicado</span>
+            <span class="switch-note">Se ve en la tienda.</span>
+          </span>
+        </label>
+        <a class="shop-link" href="/catalogo/apple-ipad-11-a16-chip-wi-fi">
+          Ver en la tienda
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M9 6.5 14.5 12 9 17.5"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="grid enter" style="--i:1">
+      <div class="col-main">
+        <section aria-labelledby="variantes">
+          <div class="section-head">
+            <h2 id="variantes">Variantes</h2>
+            <span class="sec-count">3 variantes · 14 unidades</span>
+          </div>
+          <p class="sec-deck">Cada capacidad tiene su precio y su stock. El catálogo muestra el más
+            bajo como “desde”.</p>
+
+          <table class="variants">
+            <caption class="sr-only">Variantes de Apple iPad 11 pulgadas A16 Chip WI-FI, con precio en pesos, stock y SKU.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Capacidad</th>
+                <th scope="col" class="num">Precio</th>
+                <th scope="col" class="num">Stock</th>
+                <th scope="col">SKU</th>
+                <th scope="col"><span class="sr-only">Acciones</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="variant-name">128 GB</td>
+                <td class="num"><span class="cell-label" aria-hidden="true">Precio</span><span class="amount"><span class="cur">$</span> 900.000</span></td>
+                <td class="num"><span class="cell-label" aria-hidden="true">Stock</span><span class="stock">5 u.</span></td>
+                <td><span class="sku">apple-ipad-11-a16-chip-wi-fi-128gb</span></td>
+                <td>
+                  <span class="row-actions">
+                    <button class="row-edit" type="button">Editar<span class="sr-only"> la variante de 128 GB</span></button>
+                  </span>
+                </td>
+              </tr>
+              <tr class="is-editing">
+                <td>
+                  <span class="cell-label" aria-hidden="true">Capacidad</span>
+                  <label class="sr-only" for="cap-256">Capacidad de la variante en edición</label>
+                  <input class="cell-input" id="cap-256" type="text" value="256 GB">
+                </td>
+                <td class="num">
+                  <span class="cell-label" aria-hidden="true">Precio</span>
+                  <span class="cell-money">
+                    <span class="cur">$</span>
+                    <label class="sr-only" for="precio-256">Precio en pesos de la variante de 256 GB</label>
+                    <input class="cell-input is-focused" id="precio-256" type="text"
+                      inputmode="numeric" value="1.035.000" aria-describedby="edit-note">
+                  </span>
+                </td>
+                <td class="num">
+                  <span class="cell-label" aria-hidden="true">Stock</span>
+                  <label class="sr-only" for="stock-256">Stock de la variante de 256 GB</label>
+                  <input class="cell-input cell-input--num" id="stock-256" type="text"
+                    inputmode="numeric" value="7">
+                </td>
+                <td><span class="cell-label" aria-hidden="true">SKU</span><span class="sku">apple-ipad-11-a16-chip-wi-fi-256gb</span></td>
+                <td>
+                  <span class="row-actions">
+                    <button class="icon-btn" type="button">
+                      <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="m5 12.5 4.2 4.2L19 6.6"/>
+                      </svg>
+                      <span class="sr-only">Guardar los cambios de la variante de 256 GB</span>
+                    </button>
+                    <button class="icon-btn" type="button">
+                      <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M6.5 6.5 17.5 17.5"/><path d="M17.5 6.5 6.5 17.5"/>
+                      </svg>
+                      <span class="sr-only">Cancelar la edición de la variante de 256 GB</span>
+                    </button>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="variant-name">512 GB</td>
+                <td class="num"><span class="cell-label" aria-hidden="true">Precio</span><span class="amount"><span class="cur">$</span> 1.215.000</span></td>
+                <td class="num"><span class="cell-label" aria-hidden="true">Stock</span><span class="stock">2 u.<span class="stock-note">stock bajo</span></span></td>
+                <td><span class="sku">apple-ipad-11-a16-chip-wi-fi-512gb</span></td>
+                <td>
+                  <span class="row-actions">
+                    <button class="row-edit" type="button">Editar<span class="sr-only"> la variante de 512 GB</span></button>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="table-note" id="edit-note">
+            <span>Editando la variante de 256 GB: el precio y el stock se guardan juntos.</span>
+            <span>Desde $ 900.000 · 14 unidades en total</span>
+          </p>
+
+          <button class="btn-2 add-variant" type="button">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 5v14"/><path d="M5 12h14"/>
+            </svg>
+            Agregar variante
+          </button>
+        </section>
+
+        <section aria-labelledby="fotos">
+          <div class="section-head">
+            <h2 id="fotos">Fotos</h2>
+            <span class="sec-count">4 fotos · la primera es la portada</span>
+          </div>
+          <p class="sec-deck">El orden de esta lista es el orden del catálogo.</p>
+
+          <ol class="photos">
+            <li class="photo">
+              <span class="photo-index" aria-hidden="true">1</span>
+              <img class="photo-thumb" src="../../public/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp" width="56" height="56" alt="Apple iPad 11 pulgadas A16 en azul, de frente">
+              <span class="photo-text">
+                <span class="photo-name">Foto 1</span>
+                <span class="photo-meta">La portada del catálogo</span>
+              </span>
+              <span class="portada">Portada</span>
+              <span class="photo-actions">
+                <button class="icon-btn" type="button" disabled>
+                  <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 19V6"/><path d="M6.5 11.5 12 6l5.5 5.5"/>
+                  </svg>
+                  <span class="sr-only">Mover la foto 1 más arriba</span>
+                </button>
+                <button class="icon-btn" type="button">
+                  <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 5v13"/><path d="M6.5 12.5 12 18l5.5-5.5"/>
+                  </svg>
+                  <span class="sr-only">Mover la foto 1 más abajo</span>
+                </button>
+                <button class="btn-2" type="button">Quitar<span class="sr-only"> la foto 1</span></button>
+              </span>
+            </li>
+
+            <li class="photo">
+              <span class="photo-index" aria-hidden="true">2</span>
+              <img class="photo-thumb" src="../../public/products/ipad/apple-ipad-11-a16-chip-wi-fi-2.webp" width="56" height="56" alt="Apple iPad 11 pulgadas A16, foto 2">
+              <span class="photo-text">
+                <span class="photo-name">Foto 2</span>
+                <span class="photo-meta">Se ve después de la portada</span>
+              </span>
+              <span class="photo-actions">
+                <button class="icon-btn" type="button">
+                  <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 19V6"/><path d="M6.5 11.5 12 6l5.5 5.5"/>
+                  </svg>
+                  <span class="sr-only">Mover la foto 2 más arriba</span>
+                </button>
+                <button class="icon-btn" type="button">
+                  <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 5v13"/><path d="M6.5 12.5 12 18l5.5-5.5"/>
+                  </svg>
+                  <span class="sr-only">Mover la foto 2 más abajo</span>
+                </button>
+                <button class="btn-2" type="button">Quitar<span class="sr-only"> la foto 2</span></button>
+              </span>
+            </li>
+
+            <li class="photo is-removed">
+              <span class="photo-index" aria-hidden="true">3</span>
+              <img class="photo-thumb" src="../../public/products/ipad/apple-ipad-11-a16-chip-wi-fi-3.webp" width="56" height="56" alt="Apple iPad 11 pulgadas A16, foto 3">
+              <span class="photo-text">
+                <span class="photo-name">Foto 3</span>
+                <span class="photo-meta">Se quita cuando guardes</span>
+              </span>
+              <span class="photo-actions">
+                <button class="icon-btn" type="button">
+                  <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 19V6"/><path d="M6.5 11.5 12 6l5.5 5.5"/>
+                  </svg>
+                  <span class="sr-only">Mover la foto 3 más arriba</span>
+                </button>
+                <button class="icon-btn" type="button">
+                  <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 5v13"/><path d="M6.5 12.5 12 18l5.5-5.5"/>
+                  </svg>
+                  <span class="sr-only">Mover la foto 3 más abajo</span>
+                </button>
+                <button class="btn-2" type="button">Deshacer<span class="sr-only"> la quita de la foto 3</span></button>
+              </span>
+            </li>
+
+            <li class="photo">
+              <span class="photo-index" aria-hidden="true">4</span>
+              <img class="photo-thumb" src="../../public/products/ipad/apple-ipad-11-a16-chip-wi-fi-4.webp" width="56" height="56" alt="Apple iPad 11 pulgadas A16, foto 4">
+              <span class="photo-text">
+                <span class="photo-name">Foto 4</span>
+                <span class="photo-meta">La última de la ficha</span>
+              </span>
+              <span class="photo-actions">
+                <button class="icon-btn" type="button">
+                  <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 19V6"/><path d="M6.5 11.5 12 6l5.5 5.5"/>
+                  </svg>
+                  <span class="sr-only">Mover la foto 4 más arriba</span>
+                </button>
+                <button class="icon-btn" type="button" disabled>
+                  <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 5v13"/><path d="M6.5 12.5 12 18l5.5-5.5"/>
+                  </svg>
+                  <span class="sr-only">Mover la foto 4 más abajo</span>
+                </button>
+                <button class="btn-2" type="button">Quitar<span class="sr-only"> la foto 4</span></button>
+              </span>
+            </li>
+          </ol>
+        </section>
+      </div>
+
+      <aside class="col-side">
+        <section aria-labelledby="ficha">
+          <div class="section-head">
+            <h2 id="ficha">Ficha</h2>
+          </div>
+
+          <dl class="sheet">
+            <div class="fact">
+              <dt>Slug</dt>
+              <dd class="is-mono">apple-ipad-11-a16-chip-wi-fi</dd>
+            </div>
+            <div class="fact">
+              <dt>Creado</dt>
+              <dd>12 de septiembre de 2026</dd>
+            </div>
+            <div class="fact">
+              <dt>Fotos</dt>
+              <dd>4, una por cada ángulo</dd>
+            </div>
+          </dl>
+
+          <h3>Publicación</h3>
+          <label class="switch" for="destacado">
+            <input id="destacado" type="checkbox">
+            <span class="track" aria-hidden="true"><span class="knob"></span></span>
+            <span class="switch-text">
+              <span class="switch-name">Destacado</span>
+              <span class="switch-note">Aún no tiene la estrella del catálogo.</span>
+            </span>
+          </label>
+        </section>
+
+        <section class="danger" aria-labelledby="eliminar">
+            <h2 id="eliminar">Eliminar</h2>
+            <p>Sacar el producto lo quita del catálogo y de la tienda. Los pedidos que ya lo incluyen
+              no cambian.</p>
+            <button class="delete-trigger" type="button" aria-expanded="true" aria-controls="confirmar-eliminar">
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 7h14"/><path d="M9.5 7V4.8h5V7"/>
+                <path d="M6.8 7l.9 12.2h8.6L17.2 7"/><path d="M10.5 10.5v5.5M13.5 10.5v5.5"/>
+              </svg>
+              Eliminar producto
+            </button>
+
+            <dialog class="confirm" id="confirmar-eliminar" open
+              aria-labelledby="del-title" aria-describedby="del-note">
+              <h3 id="del-title">¿Eliminar Apple iPad 11&quot; A16 Chip WI-FI?</h3>
+              <p id="del-note">Se borra del catálogo, de la tienda y de la biblioteca. No se puede
+                deshacer.</p>
+              <div class="confirm-actions">
+                <button class="btn-danger" type="button">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M5 7h14"/><path d="M9.5 7V4.8h5V7"/>
+                    <path d="M6.8 7l.9 12.2h8.6L17.2 7"/>
+                  </svg>
+                  Sí, eliminar
+                </button>
+                <button class="btn-2" type="button">Cancelar</button>
+              </div>
+            </dialog>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="page-foot">
+      <span class="foot-rule" aria-hidden="true"></span>
+      <p class="notice">Los datos de este panel son de ejemplo: el producto, sus precios y sus fotos
+        son los del catálogo de la demo. Los precios son de muestra y no son precios de venta.</p>
+      <p class="routes">/admin/productos/apple-ipad-11-a16-chip-wi-fi · /catalogo/apple-ipad-11-a16-chip-wi-fi</p>
+    </footer>
+  </div>
+</main>
+
+</body>
+</html>
