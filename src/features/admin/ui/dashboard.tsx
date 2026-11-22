@@ -127,57 +127,59 @@ export function AdminDashboard({ metrics }: { metrics: DashboardMetrics }) {
 						</Link>
 					</div>
 
-					<table className={styles.orders}>
-						<caption className="sr-only">
-							Pedidos de {period}, con comprador, fecha, total y estado.
-						</caption>
-						<thead>
-							<tr>
-								<th className={styles.pad} scope="col">
-									Pedido
-								</th>
-								<th className={styles.pad} scope="col">
-									Comprador
-								</th>
-								<th className={`${styles.pad} ${styles.dateCell}`} scope="col">
-									Fecha
-								</th>
-								<th className={`${styles.num} ${styles.pad}`} scope="col">
-									Total
-								</th>
-								<th scope="col">Estado</th>
-							</tr>
-						</thead>
-						<tbody>
-							{metrics.orders.recent.map((order) => (
-								<tr key={order.number}>
-									<td className={styles.pad}>
-										<span className={styles.orderNumber}>{order.number}</span>
-									</td>
-									<td className={styles.pad}>
-										<span className={styles.buyer}>{order.buyer.name}</span>
-										<span className={styles.city}>{order.buyer.city}</span>
-									</td>
-									<td className={`${styles.pad} ${styles.dateCell}`}>
-										<span className={styles.date}>
-											{orderDateLabel(order.createdAt)}
-										</span>
-									</td>
-									<td className={`${styles.num} ${styles.pad}`}>
-										<Money
-											cents={order.totals.totalCents}
-											className={styles.amount}
-										/>
-									</td>
-									<td>
-										<span className={CHIP_CLASS[order.status]}>
-											{order.status}
-										</span>
-									</td>
+					<div className={styles.scroller}>
+						<table className={styles.orders}>
+							<caption className="sr-only">
+								Pedidos de {period}, con comprador, fecha, total y estado.
+							</caption>
+							<thead>
+								<tr>
+									<th className={styles.pad} scope="col">
+										Pedido
+									</th>
+									<th className={styles.pad} scope="col">
+										Comprador
+									</th>
+									<th className={`${styles.pad} ${styles.dateCell}`} scope="col">
+										Fecha
+									</th>
+									<th className={`${styles.num} ${styles.pad}`} scope="col">
+										Total
+									</th>
+									<th scope="col">Estado</th>
 								</tr>
-							))}
-						</tbody>
-					</table>
+							</thead>
+							<tbody>
+								{metrics.orders.recent.map((order) => (
+									<tr key={order.number}>
+										<td className={styles.pad}>
+											<span className={styles.orderNumber}>{order.number}</span>
+										</td>
+										<td className={styles.pad}>
+											<span className={styles.buyer}>{order.buyer.name}</span>
+											<span className={styles.city}>{order.buyer.city}</span>
+										</td>
+										<td className={`${styles.pad} ${styles.dateCell}`}>
+											<span className={styles.date}>
+												{orderDateLabel(order.createdAt)}
+											</span>
+										</td>
+										<td className={`${styles.num} ${styles.pad}`}>
+											<Money
+												cents={order.totals.totalCents}
+												className={styles.amount}
+											/>
+										</td>
+										<td>
+											<span className={CHIP_CLASS[order.status]}>
+												{order.status}
+											</span>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
 
 					<p className={styles.tableFoot}>
 						{metrics.orders.count} pedidos: {metrics.sold.orders} cobrados por{" "}

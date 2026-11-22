@@ -150,6 +150,10 @@
 	color: var(--muted);
 }
 
+.scroller {
+	overflow-x: auto;
+}
+
 .blocks {
 	display: grid;
 	gap: var(--s-7);
@@ -434,6 +438,20 @@
 	animation-delay: calc(var(--i, 0) * 80ms);
 }
 
+@media (max-width: 1359px) {
+	.blocks {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.metrics {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.lead {
+		grid-column: 1 / -1;
+	}
+}
+
 @media (max-width: 959px) {
 	.page {
 		min-height: auto;
@@ -451,7 +469,6 @@
 	.blocks {
 		gap: var(--s-6);
 		margin-top: var(--s-6);
-		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.actions {
