@@ -1,6 +1,7 @@
 export type ScratchUrlProblem =
 	| "missing"
 	| "not-postgres"
+	| "app-url-unreadable"
 	| "same-as-app"
 	| "same-host-and-database";
 
@@ -10,6 +11,18 @@ export type ScratchUrlResult =
 
 const ENV_APP = "DATABASE_URL";
 const ENV_SCRATCH = "SCRATCH_DATABASE_URL";
+
+const DEFAULT_POSTGRES_PORT = "5432";
+
+function normalizeHost(parsed: URL): string {
+	const port = parsed.port === "" || parsed.port === DEFAULT_POSTGRES_PORT ? "" : `:${parsed.port}`;
+
+	return `${parsed.hostname.toLowerCase()}${port}`;
+}
+
+function normalizeDatabase(parsed: URL): string {
+	return parsed.pathname.replace(/^\/+/, "").replace(/\/+$/, "").toLowerCase();
+}
 
 function parse(url: string): URL | null {
 	try {
@@ -52,25 +65,34 @@ export function resolveScratchUrl(
 		};
 	}
 
-	const appParsed = app === undefined ? null : parse(app);
+	if (app !== undefined && app.trim() !== "") {
+		const appParsed = parse(app);
 
-	if (
-		appParsed !== null &&
-		appParsed.host === parsed.host &&
-		appParsed.pathname === parsed.pathname
-	) {
+		if (appParsed === null) {
+			return {
+				ok: false,
+				problem: "app-url-unreadable",
+				detail: `${ENV_APP} cannot be parsed, so the scratch URL cannot be proven different from it.`,
+			};
+		}
+
+		if (
+			normalizeHost(appParsed) === normalizeHost(parsed) &&
+			normalizeDatabase(appParsed) === normalizeDatabase(parsed)
+		) {
 		return {
 			ok: false,
 			problem: "same-host-and-database",
 			detail: `${ENV_SCRATCH} points at the same host and database as ${ENV_APP}. Refusing to touch the app's database.`,
-		};
+			};
+		}
 	}
 
 	return {
 		ok: true,
 		url: scratch,
-		host: parsed.host,
-		database: parsed.pathname.replace(/^\//, ""),
+		host: normalizeHost(parsed),
+		database: normalizeDatabase(parsed),
 	};
 }
 

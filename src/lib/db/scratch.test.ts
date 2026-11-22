@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
 
 import { describeScratchTarget, resolveScratchUrl } from "./scratch";
@@ -14,7 +16,7 @@ describe("resolveScratchUrl", () => {
 
 		expect(result.ok).toBe(true);
 		expect(result.ok && result.database).toBe("itech_scratch");
-		expect(result.ok && result.host).toBe("scratch.prisma.io:5432");
+		expect(result.ok && result.host).toBe("scratch.prisma.io");
 	});
 
 	it("refuses when the scratch URL is missing", () => {
@@ -85,5 +87,56 @@ describe("resolveScratchUrl", () => {
 
 		expect(described).toContain("itech_scratch");
 		expect(described).not.toContain("pass");
+	});
+});
+
+describe("resolveScratchUrl, spellings of the app database", () => {
+	it("refuses the same database written with and without the default port", () => {
+		const result = resolveScratchUrl({
+			DATABASE_URL: "postgresql://user:pass@db.prisma.io/itech",
+			SCRATCH_DATABASE_URL: "postgresql://user:pass@db.prisma.io:5432/itech",
+		});
+
+		expect(result.ok === false && result.problem).toBe("same-host-and-database");
+	});
+
+	it("refuses the same database written with a different host case", () => {
+		const result = resolveScratchUrl({
+			DATABASE_URL: "postgresql://user:pass@DB.Prisma.io:5432/itech",
+			SCRATCH_DATABASE_URL: "postgresql://user:pass@db.prisma.io/itech",
+		});
+
+		expect(result.ok === false && result.problem).toBe("same-host-and-database");
+	});
+
+	it("refuses when the app URL cannot be parsed, instead of skipping the check", () => {
+		const result = resolveScratchUrl({
+			DATABASE_URL: "not-a-url",
+			SCRATCH_DATABASE_URL: SCRATCH,
+		});
+
+		expect(result.ok === false && result.problem).toBe("app-url-unreadable");
+	});
+
+	it("still allows the same host with a different database", () => {
+		const result = resolveScratchUrl({
+			DATABASE_URL: "postgresql://user:pass@db.prisma.io/itech",
+			SCRATCH_DATABASE_URL: "postgresql://user:pass@db.prisma.io:5432/itech_scratch",
+		});
+
+		expect(result.ok).toBe(true);
+	});
+});
+
+describe("the db:scratch script", () => {
+	it("passes a command, so the entry point cannot exit with usage", () => {
+		const scripts = JSON.parse(readFileSync("package.json", "utf8")).scripts as Record<
+			string,
+			string
+		>;
+
+		for (const name of ["db:scratch", "db:scratch:dev"]) {
+			expect(scripts[name]).toMatch(/db-scratch\.ts (deploy|dev)$/);
+		}
 	});
 });

@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 
 import { describeScratchTarget, resolveScratchUrl } from "../src/lib/db/scratch";
 
-const COMMANDS = ["deploy", "status", "reset"] as const;
+const COMMANDS = ["deploy", "status", "reset", "dev"] as const;
 type Command = (typeof COMMANDS)[number];
 
 function isCommand(value: string | undefined): value is Command {
@@ -33,7 +33,9 @@ const args =
 		? ["prisma", "migrate", "status"]
 		: command === "reset"
 			? ["prisma", "migrate", "reset", "--force", "--skip-seed"]
-			: ["prisma", "migrate", "deploy"];
+			: command === "dev"
+				? ["prisma", "migrate", "dev", ...process.argv.slice(3)]
+				: ["prisma", "migrate", "deploy"];
 
 try {
 	execFileSync("pnpm", args, {
