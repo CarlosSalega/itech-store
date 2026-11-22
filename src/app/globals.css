@@ -10,6 +10,13 @@
 	--accent: #0071e3;
 	--accent-press: #0062c4;
 
+	--success: #1d7a3f;
+	--success-soft: #e8f5ec;
+	--warning: #95650a;
+	--warning-soft: #fdf1dc;
+	--danger: #b3261e;
+	--danger-soft: #fdecea;
+
 	--font-sans:
 		-apple-system, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto,
 		"Helvetica Neue", Arial, sans-serif;

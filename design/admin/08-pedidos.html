@@ -26,6 +26,9 @@
   :root{
     --white:#ffffff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
     --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --success:#1d7a3f; --success-soft:#e8f5ec;
+    --warning:#95650a; --warning-soft:#fdf1dc;
+    --danger:#b3261e; --danger-soft:#fdecea;
     --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
     --s-8:64px; --s-9:88px;
     --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
@@ -204,6 +207,11 @@
     color:var(--ink);font:500 var(--t-label)/1 var(--font);cursor:pointer;
     transition:box-shadow var(--dur-1) linear}
   .status-select:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+  /* the status is the state; its word carries the meaning and the colour only ranks it */
+  .status-select--prep{color:var(--warning)}
+  .status-select--done{color:var(--success)}
+  .status-select--sent{color:var(--muted)}
+  .status-select--cancel{color:var(--danger)}
   .status-wrap .ico{position:absolute;right:var(--s-3);top:50%;transform:translateY(-50%);
     width:12px;height:12px;color:var(--muted);pointer-events:none}
   .expand{display:inline-flex;align-items:center;justify-content:center;width:44px;min-height:44px;
@@ -522,7 +530,7 @@
             <td>
               <span class="status-wrap">
                 <label class="sr-only" for="estado-0005">Estado del pedido IT-2026-0005</label>
-                <select class="status-select" id="estado-0005">
+                <select class="status-select status-select--cancel" id="estado-0005">
                   <option>nuevo</option>
                   <option>en preparación</option>
                   <option>enviado</option>
@@ -552,7 +560,7 @@
             <td>
               <span class="status-wrap">
                 <label class="sr-only" for="estado-0004">Estado del pedido IT-2026-0004</label>
-                <select class="status-select" id="estado-0004">
+                <select class="status-select status-select--done" id="estado-0004">
                   <option>nuevo</option>
                   <option>en preparación</option>
                   <option>enviado</option>
@@ -582,7 +590,7 @@
             <td>
               <span class="status-wrap">
                 <label class="sr-only" for="estado-0003">Estado del pedido IT-2026-0003</label>
-                <select class="status-select" id="estado-0003">
+                <select class="status-select status-select--sent" id="estado-0003">
                   <option>nuevo</option>
                   <option>en preparación</option>
                   <option selected>enviado</option>
@@ -670,7 +678,7 @@
             <td>
               <span class="status-wrap">
                 <label class="sr-only" for="estado-0002">Estado del pedido IT-2026-0002</label>
-                <select class="status-select" id="estado-0002">
+                <select class="status-select status-select--prep" id="estado-0002">
                   <option>nuevo</option>
                   <option selected>en preparación</option>
                   <option>enviado</option>

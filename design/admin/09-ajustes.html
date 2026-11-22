@@ -23,6 +23,9 @@
   :root{
     --white:#ffffff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
     --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --success:#1d7a3f; --success-soft:#e8f5ec;
+    --warning:#95650a; --warning-soft:#fdf1dc;
+    --danger:#b3261e; --danger-soft:#fdecea;
     --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
     --s-8:64px; --s-9:88px;
     --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
@@ -172,9 +175,13 @@
   .channel{padding:var(--s-3) 0;border-bottom:1px solid var(--hairline)}
   .channel-head{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-2) var(--s-3)}
   .channel h3{font-size:var(--t-body-s);font-weight:600;letter-spacing:-.008em}
-  .chip{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:var(--r-pill);
+  .chip{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 10px;
+    border-radius:var(--r-pill);
     font-size:var(--t-caption);letter-spacing:.01em;font-weight:500;white-space:nowrap;
     color:var(--muted);outline:1px dashed var(--hairline);outline-offset:-1px}
+  .chip .ico{width:12px;height:12px;stroke-width:2}
+  /* the channel the store has not confirmed: attention, not failure */
+  .chip--attention{background:var(--warning-soft);color:var(--warning);outline:0}
   .channel p{margin-top:var(--s-2);font-size:var(--t-label);line-height:1.45;color:var(--ink);
     max-width:58ch}
   .how{margin-top:var(--s-1)}
@@ -406,7 +413,7 @@
           <li class="channel">
             <div class="channel-head">
               <h3>WhatsApp</h3>
-              <span class="chip">Sin publicar</span>
+              <span class="chip chip--attention"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.8 21 20H3L12 3.8z"/><path d="M12 10v4.6"/><path d="M12 17.4v.4"/></svg>Sin publicar</span>
             </div>
             <p>La tienda no confirmó un número: el botón de la tienda lleva a contacto y no abre un
               chat.</p>
@@ -425,7 +432,7 @@
           <li class="channel">
             <div class="channel-head">
               <h3>Email</h3>
-              <span class="chip">Sin publicar</span>
+              <span class="chip chip--attention"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.8 21 20H3L12 3.8z"/><path d="M12 10v4.6"/><path d="M12 17.4v.4"/></svg>Sin publicar</span>
             </div>
             <p>La tienda no confirmó una casilla: no se muestra ningún email ni se promete respuesta
               por correo.</p>
