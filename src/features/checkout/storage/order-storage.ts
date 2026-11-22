@@ -5,9 +5,11 @@ import { parseCart } from "@/features/cart/storage/local-storage";
 import {
 	BUYER_FIELDS,
 	ORDER_NUMBER_PATTERN,
+	ORDER_STATUSES,
 	type Order,
 	type OrderBuyer,
 	type OrderPayment,
+	type OrderStatus,
 } from "../domain/order";
 import { FIXTURE_ORDERS } from "../fixtures/orders";
 
@@ -59,6 +61,10 @@ function readPayment(value: unknown): OrderPayment | null {
 	return PAYMENTS.find((payment) => payment === value) ?? null;
 }
 
+function readStatus(value: unknown): OrderStatus | null {
+	return ORDER_STATUSES.find((status) => status === value) ?? null;
+}
+
 function readCreatedAt(value: unknown): string | null {
 	if (typeof value !== "string" || Number.isNaN(Date.parse(value))) {
 		return null;
@@ -75,6 +81,7 @@ function parseOrder(value: unknown): Order | null {
 	const number = readString(value.number);
 	const buyer = readBuyer(value.buyer);
 	const payment = readPayment(value.payment);
+	const status = readStatus(value.status);
 	const lines = readLines(value.lines);
 	const createdAt = readCreatedAt(value.createdAt);
 
@@ -83,10 +90,10 @@ function parseOrder(value: unknown): Order | null {
 		!ORDER_NUMBER_PATTERN.test(number) ||
 		buyer === null ||
 		payment === null ||
+		status === null ||
 		lines === null ||
 		createdAt === null ||
-		value.delivery !== "coordinated" ||
-		value.status !== "confirmed"
+		value.delivery !== "coordinated"
 	) {
 		return null;
 	}
@@ -98,7 +105,7 @@ function parseOrder(value: unknown): Order | null {
 		payment,
 		lines,
 		totals: cartTotals({ lines, lastAddedVariantId: null }),
-		status: "confirmed",
+		status,
 		createdAt,
 	};
 }

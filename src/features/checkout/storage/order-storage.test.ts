@@ -55,7 +55,7 @@ function rawOrder(overrides: Record<string, unknown> = {}): Record<string, unkno
 		payment: "transfer",
 		lines: [rawLine()],
 		totals: { lineCount: 1, unitCount: 1, totalCents: 103_500_000 },
-		status: "confirmed",
+		status: "nuevo",
 		createdAt: "2026-11-22T01:42:42.000Z",
 		...overrides,
 	};
@@ -140,6 +140,14 @@ describe("reading the stored orders", () => {
 		);
 
 		expect(numbers(parsed)).toEqual(["IT-2026-0009", "IT-2026-0010"]);
+	});
+
+	it("keeps the status it reads instead of rewriting it", () => {
+		const parsed = parseOrders(
+			envelope([rawOrder({ number: "IT-2026-0009", status: "cancelado" })]),
+		);
+
+		expect(parsed[0]?.status).toBe("cancelado");
 	});
 
 	it("recomputes the totals from the lines instead of trusting them", () => {

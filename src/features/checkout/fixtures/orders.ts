@@ -43,6 +43,20 @@ const IPAD_11: CartLine = {
 	available: true,
 };
 
+const IPAD_11_512: CartLine = {
+	variantId: "fx-ipad-11-512",
+	sku: "apple-ipad-11-a16-chip-wi-fi-512gb",
+	productSlug: "apple-ipad-11-a16-chip-wi-fi",
+	productName: 'Apple iPad 11" A16 Chip WI-FI',
+	familyLabel: "iPad",
+	variantLabel: "Capacidad 512 GB",
+	imageUrl: "/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp",
+	imageAlt: "Apple iPad 11 pulgadas A16 en azul, de frente",
+	unitPriceCents: 121_500_000,
+	quantity: 1,
+	available: true,
+};
+
 const MACBOOK_AIR_13: CartLine = {
 	variantId: "fx-macbook-air-13",
 	sku: "apple-13-macbook-air-chip-m5",
@@ -144,24 +158,43 @@ const AIRPODS_PRO_3: CartLine = {
 
 export const FIXTURE_ORDERS: readonly Order[] = [
 	createOrder({
-		cartLines: [IPAD_11, MACBOOK_AIR_13, WATCH_SERIES_11, HOMEPOD_MINI],
-		buyer: SOFIA,
+		cartLines: [MACBOOK_AIR_15, MAGIC_KEYBOARD],
+		buyer: CAMILA,
 		payment: "transfer",
-		number: "IT-2026-0003",
-		createdAt: "2026-11-20T14:05:00.000Z",
+		number: "IT-2026-0005",
+		createdAt: "2026-11-24T16:40:00.000Z",
+		status: "cancelado",
 	}),
 	createOrder({
 		cartLines: [WATCH_SE_3, AIRPODS_PRO_3],
 		buyer: JULIAN,
 		payment: "cash",
-		number: "IT-2026-0002",
-		createdAt: "2026-11-12T18:20:00.000Z",
+		number: "IT-2026-0004",
+		createdAt: "2026-11-22T18:20:00.000Z",
+		status: "entregado",
 	}),
 	createOrder({
-		cartLines: [MACBOOK_AIR_15, MAGIC_KEYBOARD],
+		cartLines: [IPAD_11, MACBOOK_AIR_13, WATCH_SERIES_11, HOMEPOD_MINI],
+		buyer: SOFIA,
+		payment: "transfer",
+		number: "IT-2026-0003",
+		createdAt: "2026-11-20T14:05:00.000Z",
+		status: "enviado",
+	}),
+	createOrder({
+		cartLines: [AIRPODS_PRO_3],
+		buyer: JULIAN,
+		payment: "cash",
+		number: "IT-2026-0002",
+		createdAt: "2026-11-12T13:10:00.000Z",
+		status: "en preparación",
+	}),
+	createOrder({
+		cartLines: [IPAD_11_512],
 		buyer: CAMILA,
 		payment: "transfer",
 		number: "IT-2026-0001",
 		createdAt: "2026-11-03T11:48:00.000Z",
+		status: "nuevo",
 	}),
 ];
