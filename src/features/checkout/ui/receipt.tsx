@@ -84,9 +84,13 @@ function OrderReceipt({ order }: { order: Order }) {
 				current="confirmacion"
 			>
 				<h1 className={styles.heading} ref={headingRef} tabIndex={-1}>
-					Listo: el pedido quedó confirmado
+					{order.status === "nuevo" ? "Listo: el pedido quedó confirmado" : "Tu pedido"}
 				</h1>
-				<p className={styles.lead}>Guardá el número para encontrarlo después.</p>
+				<p className={styles.lead}>
+					{order.status === "nuevo"
+						? "Guardá el número para encontrarlo después."
+						: `Estado del pedido: ${order.status}. Guardá el número para encontrarlo después.`}
+				</p>
 
 				<div className={styles.order}>
 					<span className={styles.orderLabel}>Número de pedido</span>
