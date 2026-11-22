@@ -1,11 +1,15 @@
-import { AdminPlaceholder } from "@/features/admin/ui/placeholder";
+import { Suspense } from "react";
 
-export default function AdminPedidosPage() {
+import { listAdminOrders } from "@/features/admin/server/order-repository";
+import { OrdersInbox } from "@/features/admin/ui/orders-inbox";
+import { ScreenPending } from "@/features/admin/ui/screen";
+
+export default async function AdminPedidosPage() {
+	const orders = await listAdminOrders();
+
 	return (
-		<AdminPlaceholder
-			deck="Los pedidos de la demo, con su comprador, su total y su estado."
-			next="Esta pantalla es la próxima entrega del panel: por ahora los pedidos se ven en el tablero."
-			title="Pedidos"
-		/>
+		<Suspense fallback={<ScreenPending label="Cargando los pedidos…" />}>
+			<OrdersInbox initialOrders={orders} />
+		</Suspense>
 	);
 }

@@ -1,11 +1,8 @@
-import { AdminPlaceholder } from "@/features/admin/ui/placeholder";
+import { listAdminProducts } from "@/features/admin/server/product-repository";
+import { SettingsScreen } from "@/features/admin/ui/settings-screen";
 
-export default function AdminAjustesPage() {
-	return (
-		<AdminPlaceholder
-			deck="Los datos de la tienda y la biblioteca de imágenes."
-			next="Esta pantalla es la próxima entrega del panel: todavía no hay nada que editar."
-			title="Ajustes"
-		/>
-	);
+export default async function AdminAjustesPage() {
+	const products = await listAdminProducts();
+
+	return <SettingsScreen initialProducts={products} />;
 }

@@ -12,7 +12,6 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
 		listAdminOrders(),
 		listAdminProducts(),
 	]);
-	const pendingOrders = orders.filter(isOpenOrder).length;
 
 	return (
 		<AdminShell
@@ -21,15 +20,12 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
 					fallback={
 						<AdminNav
 							current={null}
-							pendingOrders={pendingOrders}
+							pendingOrders={orders.filter(isOpenOrder).length}
 							productCount={products.length}
 						/>
 					}
 				>
-					<RouteNav
-						pendingOrders={pendingOrders}
-						productCount={products.length}
-					/>
+					<RouteNav initialOrders={orders} initialProducts={products} />
 				</Suspense>
 			}
 		>

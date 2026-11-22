@@ -1,8 +1,6 @@
-import { dashboardMetrics } from "@/features/admin/domain/metrics";
-import { DASHBOARD_BASELINE } from "@/features/admin/fixtures/baseline";
+import { DashboardLive } from "@/features/admin/ui/dashboard-live";
 import { listAdminOrders } from "@/features/admin/server/order-repository";
 import { listAdminProducts } from "@/features/admin/server/product-repository";
-import { AdminDashboard } from "@/features/admin/ui/dashboard";
 
 export default async function AdminPanelPage() {
 	const [orders, products] = await Promise.all([
@@ -10,11 +8,5 @@ export default async function AdminPanelPage() {
 		listAdminProducts(),
 	]);
 
-	const metrics = dashboardMetrics({
-		orders,
-		products,
-		baseline: DASHBOARD_BASELINE,
-	});
-
-	return <AdminDashboard metrics={metrics} />;
+	return <DashboardLive initialOrders={orders} initialProducts={products} />;
 }

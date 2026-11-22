@@ -1,0 +1,6 @@
+.currency {
+	margin-inline-end: 1px;
+	color: var(--muted);
+	font-size: 0.8em;
+	letter-spacing: 0;
+}

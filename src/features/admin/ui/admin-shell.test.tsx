@@ -5,12 +5,16 @@ import type { AdminDestinationId } from "../domain/navigation";
 import { AdminNav } from "./admin-nav";
 import { AdminShell } from "./admin-shell";
 
-const mark = (current: AdminDestinationId | null) =>
+const mark = (
+	current: AdminDestinationId | null,
+	currentProductHref: string | null = null,
+) =>
 	renderToStaticMarkup(
 		<AdminShell
 			nav={
 				<AdminNav
 					current={current}
+					currentProductHref={currentProductHref}
 					pendingOrders={2}
 					productCount={14}
 				/>
@@ -76,6 +80,25 @@ describe("the admin shell", () => {
 		expect(markup).toContain("sofia.ramos@example.com");
 		expect(markup).toContain("Cerrar sesión");
 		expect(markup).toContain('href="/catalogo"');
+	});
+
+	it.each([
+		["/admin/productos"],
+		["/admin/productos/nuevo"],
+	] as const)("marks the products sub-link %s and keeps the section marked", (href) => {
+		const marked =
+			mark("productos", href).match(/<a[^>]*aria-current="page"[^>]*>[\s\S]*?<\/a>/g) ?? [];
+
+		expect(marked).toHaveLength(2);
+		expect(marked.some((link) => link.includes(`href="${href}"`))).toBe(true);
+		expect(marked.some((link) => link.includes('href="/admin/productos"'))).toBe(true);
+	});
+
+	it("leaves the products sub-navigation unmarked on a product detail", () => {
+		const marked =
+			mark("productos", null).match(/<a[^>]*aria-current="page"[^>]*>/g) ?? [];
+
+		expect(marked).toHaveLength(1);
 	});
 
 	it("says there is one workspace instead of faking a switcher", () => {

@@ -14,8 +14,11 @@ import {
 
 export type DeltaDirection = "up" | "down" | "flat";
 
+export type DeltaTone = "good" | "attention" | "flat";
+
 export type DashboardDelta = {
 	direction: DeltaDirection;
+	tone: DeltaTone;
 	label: string;
 	base: string;
 };
@@ -121,13 +124,27 @@ function directionOf(current: number, previous: number): DeltaDirection {
 	return current < previous ? "down" : "flat";
 }
 
+function toneOf(direction: DeltaDirection, better: "higher" | "lower"): DeltaTone {
+	if (direction === "flat") {
+		return "flat";
+	}
+
+	const rising = direction === "up";
+
+	return rising === (better === "higher") ? "good" : "attention";
+}
+
 function countDelta(
 	current: number,
 	previous: number,
 	base: string,
+	better: "higher" | "lower",
 ): DashboardDelta {
+	const direction = directionOf(current, previous);
+
 	return {
-		direction: directionOf(current, previous),
+		direction,
+		tone: toneOf(direction, better),
 		label: signed(current - previous),
 		base,
 	};
@@ -137,12 +154,15 @@ function percentageDelta(
 	current: number,
 	previous: number,
 	base: string,
+	better: "higher" | "lower",
 ): DashboardDelta {
 	const percentage =
 		previous === 0 ? 0 : Math.round(((current - previous) / previous) * 100);
+	const direction = directionOf(current, previous);
 
 	return {
-		direction: directionOf(current, previous),
+		direction,
+		tone: toneOf(direction, better),
 		label: `${signed(percentage)} %`,
 		base,
 	};
@@ -224,6 +244,7 @@ export function dashboardMetrics({
 				`contra ${
 					period === null ? "el mes pasado" : monthName(previousMonth(period))
 				} · ${paid.length} pedidos cobrados`,
+				"higher",
 			),
 		},
 		toFulfil: {
@@ -232,6 +253,7 @@ export function dashboardMetrics({
 				toFulfilCount,
 				baseline.toFulfilYesterday,
 				"contra ayer",
+				"lower",
 			),
 		},
 		published: {
@@ -240,6 +262,7 @@ export function dashboardMetrics({
 				publishedCount,
 				baseline.publishedProductsLastMonth,
 				"contra el mes pasado",
+				"higher",
 			),
 		},
 		lowStock: {
@@ -250,6 +273,7 @@ export function dashboardMetrics({
 				entries.length,
 				baseline.lowStockLastWeek,
 				"contra la semana pasada",
+				"lower",
 			),
 		},
 		orders: {

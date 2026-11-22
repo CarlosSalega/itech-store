@@ -6,6 +6,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: "Airpods Pro 3",
 		category: "AIRPODS",
 		image: "/products/airpods/airpods-pro-3-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-03T10:15:00.000Z",
 		published: true,
 		variants: [
 			{ sku: "airpods-pro-3", label: null, priceCents: 25_000_000, stock: 1 },
@@ -16,6 +19,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: 'Apple iPad 11" A16 Chip WI-FI',
 		category: "IPAD",
 		image: "/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-04T09:20:00.000Z",
 		published: true,
 		variants: [
 			{
@@ -43,6 +49,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: "Apple HomePod Mini (2da Generación)",
 		category: "ACCESSORY",
 		image: "/products/accessory/apple-homepod-mini-2da-generacion-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-05T14:05:00.000Z",
 		published: true,
 		variants: [
 			{
@@ -58,6 +67,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: "Apple TV 4K (2022)",
 		category: "ACCESSORY",
 		image: "/products/accessory/apple-tv-4k-2022-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-06T11:40:00.000Z",
 		published: true,
 		variants: [
 			{ sku: "apple-tv-4k-2022-64gb", label: "64 GB", priceCents: 3_000_000, stock: 1 },
@@ -68,6 +80,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: "Apple Pencil Pro",
 		category: "ACCESSORY",
 		image: "/products/accessory/pencil-pro-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-07T16:25:00.000Z",
 		published: true,
 		variants: [{ sku: "pencil-pro", label: null, priceCents: 3_000_000, stock: 2 }],
 	},
@@ -76,6 +91,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: 'Apple 13" MacBook Air - Chip M5',
 		category: "MAC",
 		image: "/products/mac/apple-13-macbook-air-chip-m5-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-10T10:05:00.000Z",
 		published: true,
 		variants: [
 			{
@@ -91,6 +109,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: 'Apple 15" MacBook Air - Chip M5',
 		category: "MAC",
 		image: "/products/mac/apple-15-macbook-air-chip-m5-1.webp",
+		description: null,
+		destacado: true,
+		createdAt: "2026-11-10T10:20:00.000Z",
 		published: true,
 		variants: [
 			{
@@ -106,6 +127,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: "Apple Watch Series 11 - Caja Aluminio Negro - Correa Deportiva Negra",
 		category: "WATCH",
 		image: "/products/watch/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-12T12:10:00.000Z",
 		published: true,
 		variants: [
 			{
@@ -121,6 +145,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: "Apple Watch SE 3 40mm",
 		category: "WATCH",
 		image: "/products/watch/watch-se-3-40mm-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-13T09:45:00.000Z",
 		published: true,
 		variants: [{ sku: "watch-se-3-40mm", label: null, priceCents: 60_000_000, stock: 8 }],
 	},
@@ -129,6 +156,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: 'Apple iMac 24" M4 Chip Azul',
 		category: "MAC",
 		image: "/products/mac/apple-imac-24-m4-chip-azul-1.webp",
+		description: null,
+		destacado: true,
+		createdAt: "2026-11-14T15:30:00.000Z",
 		published: true,
 		variants: [
 			{ sku: "apple-imac-24-m4-chip-azul", label: null, priceCents: 200_000_000, stock: 5 },
@@ -139,6 +169,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: "Apple Airpods 5th Generación con cancelación de ruido",
 		category: "AIRPODS",
 		image: "/products/airpods/apple-airpods-5th-generacion-con-cancelacion-de-ruido-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-17T11:00:00.000Z",
 		published: true,
 		variants: [
 			{
@@ -154,6 +187,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: "Apple Mac Mini Chip M4 Pro",
 		category: "MAC",
 		image: "/products/mac/apple-mac-mini-chip-m4-pro-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-18T13:15:00.000Z",
 		published: true,
 		variants: [
 			{ sku: "apple-mac-mini-chip-m4-pro", label: null, priceCents: 200_000_000, stock: 8 },
@@ -164,6 +200,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: 'Apple 11" iPad Air M4 Space Gray',
 		category: "IPAD",
 		image: "/products/ipad/apple-11-ipad-air-m4-space-gray-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-20T10:40:00.000Z",
 		published: false,
 		variants: [
 			{
@@ -179,6 +218,9 @@ export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
 		name: "Apple Watch Ultra 3 - 49mm GPS-CELL - Caja Titanio Black - Correa Ocean Black",
 		category: "WATCH",
 		image: "/products/watch/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp",
+		description: null,
+		destacado: false,
+		createdAt: "2026-11-21T12:05:00.000Z",
 		published: false,
 		variants: [
 			{

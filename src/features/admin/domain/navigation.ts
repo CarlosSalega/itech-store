@@ -39,3 +39,9 @@ export function activeDestination(pathname: string): AdminDestinationId | null {
 
 	return nested?.id ?? null;
 }
+
+export function activeProductLink(pathname: string): string | null {
+	const path = withoutTrailingSlash(pathname);
+
+	return ADMIN_PRODUCT_LINKS.find((link) => link.href === path)?.href ?? null;
+}

@@ -23,6 +23,7 @@ const DESTINATION_ICON: Record<
 
 type AdminNavProps = {
 	current: AdminDestinationId | null;
+	currentProductHref?: string | null;
 	pendingOrders: number;
 	productCount: number;
 };
@@ -60,12 +61,22 @@ function DestinationLink({
 	);
 }
 
-function ProductsSubnav({ productCount }: { productCount: number }) {
+function ProductsSubnav({
+	currentProductHref,
+	productCount,
+}: {
+	currentProductHref?: string | null;
+	productCount: number;
+}) {
 	return (
 		<ul className={styles.subnav}>
 			{ADMIN_PRODUCT_LINKS.map((link, index) => (
 				<li key={link.href}>
-					<Link className={styles.subnavLink} href={link.href}>
+					<Link
+						aria-current={currentProductHref === link.href ? "page" : undefined}
+						className={styles.subnavLink}
+						href={link.href}
+					>
 						{link.label}
 						{index === 0 ? (
 							<span className={styles.subCount}>{productCount}</span>
@@ -77,7 +88,12 @@ function ProductsSubnav({ productCount }: { productCount: number }) {
 	);
 }
 
-export function AdminNav({ current, pendingOrders, productCount }: AdminNavProps) {
+export function AdminNav({
+	current,
+	currentProductHref = null,
+	pendingOrders,
+	productCount,
+}: AdminNavProps) {
 	return (
 		<nav aria-label="Secciones del panel" className={styles.nav}>
 			{ADMIN_DESTINATIONS.map((destination) => (
@@ -90,7 +106,10 @@ export function AdminNav({ current, pendingOrders, productCount }: AdminNavProps
 						/>
 					</div>
 					{destination.id === "productos" ? (
-						<ProductsSubnav productCount={productCount} />
+						<ProductsSubnav
+							currentProductHref={currentProductHref}
+							productCount={productCount}
+						/>
 					) : null}
 				</Fragment>
 			))}
