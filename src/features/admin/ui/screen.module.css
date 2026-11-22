@@ -1,0 +1,49 @@
+.page {
+	display: flex;
+	flex-direction: column;
+	max-width: 1180px;
+	min-height: calc(100vh - var(--s-6));
+}
+
+.foot {
+	margin-top: auto;
+	padding: var(--s-7) 0 var(--s-6);
+}
+
+.footRule {
+	display: block;
+	height: 1px;
+	margin-bottom: var(--s-4);
+	background: var(--hairline);
+}
+
+.notice {
+	max-width: 80ch;
+	color: var(--muted);
+	font-size: var(--t-caption);
+	line-height: 1.4;
+	letter-spacing: 0.015em;
+}
+
+.routes {
+	margin-top: var(--s-2);
+	color: var(--muted);
+	font-family: var(--font-mono);
+	font-size: var(--t-caption);
+	line-height: 1.5;
+	overflow-wrap: anywhere;
+}
+
+.pending {
+	min-height: 240px;
+}
+
+@media (max-width: 959px) {
+	.page {
+		min-height: auto;
+	}
+
+	.foot {
+		padding-top: var(--s-6);
+	}
+}

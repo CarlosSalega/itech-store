@@ -150,6 +150,16 @@
 	color: var(--muted);
 }
 
+.deltaGood,
+.deltaGood .deltaIcon {
+	color: var(--success);
+}
+
+.deltaAttention,
+.deltaAttention .deltaIcon {
+	color: var(--warning);
+}
+
 .scroller {
 	overflow-x: auto;
 }
@@ -384,7 +394,7 @@
 }
 
 .units {
-	color: var(--ink);
+	color: var(--warning);
 	font-size: var(--t-label);
 	font-weight: 500;
 	font-variant-numeric: tabular-nums;

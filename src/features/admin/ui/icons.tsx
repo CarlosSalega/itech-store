@@ -92,3 +92,40 @@ export function ArrowDownIcon({ className }: IconProps) {
 		</svg>
 	);
 }
+
+export function StarIcon({ className }: IconProps) {
+	return (
+		<svg {...iconProps} className={className}>
+			<path d="m12 3.7 2.55 5.17 5.7.83-4.12 4.02.97 5.68L12 16.72l-5.1 2.68.97-5.68L3.75 9.7l5.7-.83z" />
+		</svg>
+	);
+}
+
+export function AlertIcon({ className }: IconProps) {
+	return (
+		<svg {...iconProps} className={className}>
+			<path d="M12 3.8 21 20H3L12 3.8z" />
+			<path d="M12 10v4.6" />
+			<path d="M12 17.4v.4" />
+		</svg>
+	);
+}
+
+export function ImageIcon({ className }: IconProps) {
+	return (
+		<svg {...iconProps} className={className}>
+			<path d="M4 5.5h16v13H4z" />
+			<circle cx="9" cy="10" r="1.6" />
+			<path d="m5 16.5 4.5-4 3.5 3 2.5-2 3.5 3" />
+		</svg>
+	);
+}
+
+export function PencilIcon({ className }: IconProps) {
+	return (
+		<svg {...iconProps} className={className}>
+			<path d="M4.5 19.5h4l10-10-4-4-10 10z" />
+			<path d="m14.5 5.5 4 4" />
+		</svg>
+	);
+}

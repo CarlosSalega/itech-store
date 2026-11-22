@@ -26,10 +26,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
 						/>
 					}
 				>
-					<RouteNav
-						pendingOrders={pendingOrders}
-						productCount={products.length}
-					/>
+					<RouteNav pendingOrders={pendingOrders} />
 				</Suspense>
 			}
 		>

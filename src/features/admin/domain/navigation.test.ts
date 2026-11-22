@@ -4,6 +4,7 @@ import {
 	ADMIN_DESTINATIONS,
 	ADMIN_PRODUCT_LINKS,
 	activeDestination,
+	activeProductLink,
 } from "./navigation";
 
 describe("where the shell says you are", () => {
@@ -42,5 +43,24 @@ describe("the destinations in the card", () => {
 			{ href: "/admin/productos", label: "Todos" },
 			{ href: "/admin/productos/nuevo", label: "Nuevo producto" },
 		]);
+	});
+});
+
+describe("which products link is the current one", () => {
+	it.each([
+		["/admin/productos", "/admin/productos"],
+		["/admin/productos/", "/admin/productos"],
+		["/admin/productos/nuevo", "/admin/productos/nuevo"],
+	] as const)("marks %s as %s", (pathname, href) => {
+		expect(activeProductLink(pathname)).toBe(href);
+	});
+
+	it.each([
+		["/admin/productos/airpods-pro-3"],
+		["/admin"],
+		["/admin/pedidos"],
+		["/catalogo"],
+	])("marks nothing for %s", (pathname) => {
+		expect(activeProductLink(pathname)).toBeNull();
 	});
 });

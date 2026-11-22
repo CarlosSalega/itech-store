@@ -61,9 +61,12 @@ const productsWithStock = (stocks: number[], published = true) => [
 	{
 		slug: "apple-tv-4k-2022",
 		name: "Apple TV 4K (2022)",
+		description: null,
 		category: "ACCESSORY" as const,
 		image: "/products/accessory/apple-tv-4k-2022-1.webp",
 		published,
+		destacado: false,
+		createdAt: "2026-11-08T12:00:00.000Z",
 		variants: stocks.map((stock, index) => ({
 			sku: `apple-tv-4k-2022-${index}`,
 			label: null,
@@ -152,6 +155,7 @@ describe("orders to fulfil", () => {
 	it("names yesterday as its base", () => {
 		expect(metrics.toFulfil.delta).toEqual({
 			direction: "down",
+			tone: "good",
 			label: "−1",
 			base: "contra ayer",
 		});
@@ -181,6 +185,7 @@ describe("the products", () => {
 	it("compares the published count with last month", () => {
 		expect(metrics.published.delta).toEqual({
 			direction: "up",
+			tone: "good",
 			label: "+2",
 			base: "contra el mes pasado",
 		});
@@ -223,6 +228,7 @@ describe("the products", () => {
 	it("compares the low-stock count with last week", () => {
 		expect(metrics.lowStock.delta).toEqual({
 			direction: "up",
+			tone: "attention",
 			label: "+3",
 			base: "contra la semana pasada",
 		});
@@ -230,6 +236,50 @@ describe("the products", () => {
 
 	it("knows how many products the panel carries", () => {
 		expect(metrics.productCount).toBe(14);
+	});
+});
+
+describe("the tone a delta takes", () => {
+	it("reads more money as a good month", () => {
+		expect(metrics.sold.delta.tone).toBe("good");
+	});
+
+	it("reads fewer orders waiting as good, even though the arrow points down", () => {
+		expect(metrics.toFulfil.delta.direction).toBe("down");
+		expect(metrics.toFulfil.delta.tone).toBe("good");
+	});
+
+	it("reads more low-stock products as attention, even though the arrow points up", () => {
+		expect(metrics.lowStock.delta.direction).toBe("up");
+		expect(metrics.lowStock.delta.tone).toBe("attention");
+	});
+
+	it("reads a flat movement as neither", () => {
+		const flat = dashboardMetrics({
+			orders: FIXTURE_ORDERS,
+			products: ADMIN_PRODUCTS,
+			baseline: {
+				...DASHBOARD_BASELINE,
+				soldCentsPreviousMonth: 601_000_000,
+			},
+		}).sold.delta;
+
+		expect(flat.direction).toBe("flat");
+		expect(flat.tone).toBe("flat");
+	});
+
+	it("reads a month that sold less as attention", () => {
+		const sold = dashboardMetrics({
+			orders: FIXTURE_ORDERS,
+			products: ADMIN_PRODUCTS,
+			baseline: {
+				...DASHBOARD_BASELINE,
+				soldCentsPreviousMonth: 900_000_000,
+			},
+		}).sold.delta;
+
+		expect(sold.direction).toBe("down");
+		expect(sold.tone).toBe("attention");
 	});
 });
 

@@ -1,11 +1,15 @@
-import { AdminPlaceholder } from "@/features/admin/ui/placeholder";
+import { Suspense } from "react";
 
-export default function AdminProductosPage() {
+import { listAdminProducts } from "@/features/admin/server/product-repository";
+import { ProductsList } from "@/features/admin/ui/products-list";
+import { ScreenPending } from "@/features/admin/ui/screen";
+
+export default async function AdminProductosPage() {
+	const products = await listAdminProducts();
+
 	return (
-		<AdminPlaceholder
-			deck="El catálogo completo, con las variantes, los precios y el stock de cada producto."
-			next="Esta pantalla es la próxima entrega del panel: la cáscara ya está y los datos siguen siendo de ejemplo."
-			title="Productos"
-		/>
+		<Suspense fallback={<ScreenPending label="Cargando los productos…" />}>
+			<ProductsList initialProducts={products} />
+		</Suspense>
 	);
 }

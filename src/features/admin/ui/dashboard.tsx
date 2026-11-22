@@ -43,9 +43,15 @@ function Delta({ delta }: { delta: DashboardDelta }) {
 			: delta.direction === "down"
 				? ArrowDownIcon
 				: null;
+	const tone =
+		delta.tone === "good"
+			? styles.deltaGood
+			: delta.tone === "attention"
+				? styles.deltaAttention
+				: null;
 
 	return (
-		<p className={styles.delta}>
+		<p className={tone === null ? styles.delta : `${styles.delta} ${tone}`}>
 			<span className={styles.deltaLine}>
 				{Icon === null ? null : <Icon className={styles.deltaIcon} />}
 				<strong>{delta.label}</strong>
@@ -216,7 +222,7 @@ export function AdminDashboard({ metrics }: { metrics: DashboardMetrics }) {
 									src={product.image ?? PLACEHOLDER_IMAGE}
 									width={52}
 								/>
-								<span className={styles.stockText}>
+								<span>
 									<Link
 										className={styles.stockName}
 										href={`/admin/productos/${product.slug}`}
