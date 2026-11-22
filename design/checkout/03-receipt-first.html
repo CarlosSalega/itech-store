@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Dirección 03 para el checkout de iTech Store: el pedido como comprobante a la izquierda desde la primera pantalla y un formulario mínimo a la derecha.">
+<title>Checkout · Comprobante primero — iTech Store</title>
+<!--
+  Direction 03 · Comprobante primero — the order is the object.
+  The receipt is on screen from the first step, already numbered IT-2026-0001, and it fills as
+  the visitor types: the buyer line is a state on screen 1, real on screens 2 and 3. The form
+  is demoted to a minimal sheet on the right with underlined fields, and the confirmation is
+  the same receipt with a stamp — no new layout at the end.
+  Tradeoff: the strongest confidence and the most memorable ending, at the cost of a dense
+  left column on narrow screens and a receipt that carries the same facts twice.
+  Tokens come from design/system.md; product photos resolve from the repo root, so run the
+  canvas from there (pnpm design:photos inlines them into design/checkout-photos/).
+  Note on demo data: the buyer in these boards is fixture content (an @example.com email,
+  a 5555 phone number, a street address). It is not a store channel: CONTACT stays null.
+-->
+<style>
+  :root{
+    --white:#ffffff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
+    --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
+    --s-8:64px; --s-9:88px; --s-10:120px; --s-11:160px;
+    --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
+    --e-hairline:inset 0 0 0 1px var(--hairline);
+    --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms; --dur-4:720ms;
+    --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
+    --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+    --t-display-s:clamp(2rem,4.6vw,3.75rem);
+    --t-numeral:clamp(2rem,3.4vw,3.25rem);
+    --t-title:clamp(1.375rem,2.2vw,1.875rem);
+    --t-headline:1.3125rem;
+    --t-body:1.0625rem; --t-body-s:.9375rem; --t-label:.8125rem; --t-caption:.75rem;
+    --g:var(--s-5);
+    color-scheme:light;
+  }
+  @media (min-width:900px){ :root{ --g:var(--s-8) } }
+  @media (max-width:479px){ :root{ --g:var(--s-4) } }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;overflow-x:clip;scrollbar-color:var(--hairline) var(--white);
+    scroll-padding-top:112px}
+  body{margin:0;background:var(--white);color:var(--ink);font:400 var(--t-body)/1.47 var(--font);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:var(--ink);color:var(--white)}
+  img{max-width:100%;display:block}
+  a{color:var(--link);text-decoration:none}
+  h1,h2,h3{margin:0;font-weight:600;text-wrap:balance;font-optical-sizing:auto}
+  p{margin:0;text-wrap:pretty}
+  ol,ul{margin:0;padding:0;list-style:none}
+  dl,dd,dt,fieldset,legend,figure{margin:0;padding:0;border:0}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
+  .skip{position:absolute;left:12px;top:-56px;z-index:50;background:var(--ink);color:var(--white);
+    padding:12px 20px;border-radius:var(--r-pill);min-height:44px;display:inline-flex;align-items:center;
+    transition:top var(--dur-1) var(--ease-std)}
+  .skip:focus{top:12px}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 var(--g)}
+  .rule{height:1px;background:var(--hairline);margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw)}
+
+  .ico{display:block;flex:none;width:20px;height:20px;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .ico-16{width:16px;height:16px}
+
+  /* ---------- header: the floating pill, its content on the .wrap axis ---------- */
+  .head-shell{position:sticky;top:var(--s-3);z-index:30;margin-top:var(--s-3)}
+  .head{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:var(--s-5);
+    min-height:56px;padding:0 var(--g);border-radius:var(--r-lg);
+    background:rgba(255,255,255,.82);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);
+    box-shadow:var(--e-hairline),var(--e-float)}
+  @media (max-width:899px){
+    .head{margin-inline:var(--s-2);padding-inline:calc(var(--g) - var(--s-2))}
+  }
+  .brand{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;color:var(--ink);
+    font-size:var(--t-body-s);font-weight:600;letter-spacing:-.012em;white-space:nowrap}
+  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor}
+  .nav-main{display:none}
+  @media (min-width:900px){ .nav-main{display:flex;align-items:center;gap:var(--s-6)} }
+  .nav-main a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;
+    min-height:44px;position:relative}
+  .nav-main a::after{content:"";position:absolute;left:0;right:0;bottom:10px;height:1px;
+    background:var(--ink);transform:scaleX(0);transform-origin:left;
+    transition:transform var(--dur-2) var(--ease-std)}
+  .nav-main a:hover::after,.nav-main a:focus-visible::after{transform:scaleX(1)}
+  .tools{display:flex;align-items:center;gap:var(--s-1);margin-inline-start:auto}
+  .icon-btn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;
+    color:var(--ink);border-radius:var(--r-pill);border:0;background:none;cursor:pointer;
+    position:relative;transition:background var(--dur-1) linear}
+  .icon-btn:hover{background:var(--surface)}
+  .icon-btn .badge{position:absolute;transform:translate(14px,-14px);min-width:16px;height:16px;
+    padding:0 4px;border-radius:var(--r-pill);background:var(--accent);color:var(--white);
+    font-size:.75rem;font-weight:600;line-height:16px;text-align:center;
+    font-variant-numeric:tabular-nums}
+  .menu{position:relative}
+  @media (min-width:900px){ .menu{display:none} }
+  .menu summary{list-style:none;cursor:pointer;min-height:44px;padding:0 var(--s-3);display:inline-flex;
+    align-items:center;gap:var(--s-2);font-size:var(--t-body-s);border-radius:var(--r-pill);
+    transition:background var(--dur-1) linear}
+  .menu summary::-webkit-details-marker{display:none}
+  .menu summary:hover,.menu[open] summary{background:var(--surface)}
+  .menu summary .i-close,.menu[open] summary .i-menu{display:none}
+  .menu[open] summary .i-close{display:block}
+  .menu nav{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;max-width:calc(100vw - 48px);
+    background:var(--white);border-radius:var(--r-lg);box-shadow:var(--e-hairline),var(--e-float);
+    padding:var(--s-3);display:grid;z-index:2}
+  .menu nav a{color:var(--ink);padding:0 var(--s-4);min-height:44px;display:flex;align-items:center;
+    border-radius:var(--r-sm)}
+  .menu nav a:hover{background:var(--surface)}
+  @media (max-width:479px){
+    .head{gap:var(--s-3)} .brand span{font-size:var(--t-body-s)}
+    .menu-word{display:none} .menu summary{padding:0;justify-content:center}
+  }
+
+  /* ---------- intro ---------- */
+  .intro{padding-block:clamp(32px,4vw,56px) var(--s-5)}
+  .intro h1{font-size:var(--t-display-s);line-height:1.02;letter-spacing:-.03em;max-width:24ch}
+  .intro .deck{margin-top:var(--s-4);max-width:62ch;color:var(--muted);font-size:var(--t-body)}
+
+  /* ---------- one screen: receipt on the left, sheet on the right ---------- */
+  .step{padding-top:var(--s-6);border-top:1px solid var(--hairline)}
+  .step:last-of-type{padding-bottom:var(--s-6)}
+  .caption{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s-4);
+    margin-bottom:var(--s-5);font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+  .caption .route{font-family:var(--mono);font-size:var(--t-caption);letter-spacing:0;
+    color:var(--muted);word-break:break-all}
+  @media (max-width:600px){ .caption{flex-direction:column;align-items:flex-start;gap:2px} }
+  .zones{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-7)}
+  @media (min-width:1000px){
+    .zones{grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:var(--s-9);align-items:start}
+  }
+
+  /* ---------- the receipt ---------- */
+  .receipt{max-width:440px;padding:var(--s-5);border-radius:var(--r-lg);background:var(--surface)}
+  .receipt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s-4)}
+  .receipt-brand{font-size:var(--t-body-s);font-weight:600;letter-spacing:-.012em}
+  .receipt-kind{margin-top:2px;font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+  .state{flex:none;display:inline-flex;align-items:center;gap:var(--s-2);padding:4px 10px;
+    border-radius:var(--r-pill);box-shadow:inset 0 0 0 1px var(--muted);
+    font-size:var(--t-caption);letter-spacing:.015em;color:var(--ink);white-space:nowrap}
+  .stamp{flex:none;display:inline-flex;align-items:center;gap:var(--s-2);padding:5px 10px 5px 8px;
+    border-radius:var(--r-sm);box-shadow:inset 0 0 0 2px var(--ink);background:var(--white);
+    font-size:var(--t-label);font-weight:600;letter-spacing:.01em;color:var(--ink);
+    transform:rotate(-1.5deg)}
+  .stamp .ico{width:14px;height:14px;stroke-width:2.2}
+  .receipt-id{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);
+    margin-top:var(--s-4);padding-top:var(--s-3);border-top:1px solid var(--hairline)}
+  .receipt-id dt{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted)}
+  .receipt-id dd{font-family:var(--mono);font-size:var(--t-body-s);font-weight:500;
+    letter-spacing:-.01em}
+  .receipt-lines{margin-top:var(--s-3)}
+  .receipt-lines li{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:var(--s-3);
+    align-items:center;padding:var(--s-3) 0;border-top:1px solid var(--hairline)}
+  .receipt-lines img{width:40px;height:40px;object-fit:contain;mix-blend-mode:multiply}
+  /* a phone receipt is text: the name gets the whole row instead of sharing it with a thumbnail */
+  @media (max-width:520px){
+    .receipt-lines li{grid-template-columns:minmax(0,1fr) auto;align-items:start}
+    .receipt-lines img{display:none}
+  }
+  .receipt-lines li:first-child{border-top:0}
+  .receipt-lines .name{display:block;font-size:var(--t-body-s);font-weight:500;line-height:1.3;
+    letter-spacing:-.008em}
+  .receipt-lines .name:hover{color:var(--link)}
+  .receipt-lines .meta{margin-top:2px;font-size:var(--t-caption);letter-spacing:.015em;
+    color:var(--muted)}
+  .receipt-lines .amount{font-size:var(--t-body-s);font-weight:500;font-variant-numeric:tabular-nums;
+    white-space:nowrap;letter-spacing:-.01em}
+  .receipt-totals{margin-top:var(--s-2);padding-top:var(--s-3);border-top:1px solid var(--hairline)}
+  .receipt-totals div{display:flex;align-items:baseline;justify-content:space-between;
+    gap:var(--s-3);padding:3px 0;font-size:var(--t-caption);letter-spacing:.015em}
+  .receipt-totals dt{color:var(--muted)}
+  .receipt-totals dd{font-variant-numeric:tabular-nums;color:var(--ink)}
+  .receipt-totals .grand{margin-top:var(--s-2);padding-top:var(--s-3);
+    border-top:1px solid var(--hairline);font-size:var(--t-body-s);letter-spacing:0}
+  .receipt-totals .grand dd{font-size:var(--t-title);font-weight:500;line-height:1;
+    letter-spacing:-.022em}
+  .receipt-totals .cur{font-size:.85em;color:var(--muted);margin-right:1px}
+  .receipt-buyer{margin-top:var(--s-4);padding-top:var(--s-3);border-top:1px solid var(--hairline)}
+  .receipt-buyer dt{font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+  .receipt-buyer dd{margin-top:2px;font-size:var(--t-body-s);line-height:1.35;letter-spacing:-.005em}
+  .receipt-buyer dd.is-empty{color:var(--muted)}
+  .receipt-note{margin-top:var(--s-3);font-size:var(--t-caption);line-height:1.35;
+    letter-spacing:.015em;color:var(--muted)}
+
+  /* ---------- the sheet: minimal, underlined fields ---------- */
+  .sheet{padding:var(--s-6);border-radius:var(--r-lg);background:var(--white);
+    box-shadow:var(--e-hairline)}
+  @media (max-width:479px){ .sheet{padding:var(--s-5)} }
+  .sheet h2{font-size:var(--t-title);line-height:1.08;letter-spacing:-.022em}
+  .sheet .lead{margin-top:var(--s-2);color:var(--muted);font-size:var(--t-body-s);max-width:52ch}
+  .fields{display:grid;gap:var(--s-4);margin-top:var(--s-5)}
+  .grid-2{display:grid;gap:var(--s-4)}
+  @media (min-width:560px){ .grid-2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} }
+  .field label{display:block;margin-bottom:2px;font-size:var(--t-label);letter-spacing:.01em;
+    font-weight:500;color:var(--muted)}
+  .field input{width:100%;min-height:44px;padding:4px 0;border:0;border-bottom:1px solid var(--hairline);
+    border-radius:0;background:none;color:var(--ink);font:400 var(--t-body)/1.4 var(--font);
+    transition:border-color var(--dur-1) linear}
+  .field input:hover{border-bottom-color:var(--muted)}
+  .field input:focus-visible,.field input.is-focused{outline:3px solid var(--accent);
+    outline-offset:3px;border-bottom-color:var(--ink)}
+  .field .help{margin-top:var(--s-2);font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+  .field--error input{border-bottom:2px solid var(--ink)}
+  .field--error .error{margin-top:var(--s-2);font-size:var(--t-caption);letter-spacing:.015em;
+    color:var(--ink);display:flex;gap:var(--s-2);align-items:flex-start}
+  .field--error .error .ico{width:14px;height:14px;margin-top:2px;stroke-width:2}
+  .ship-note{display:flex;gap:var(--s-3);align-items:center;margin-top:var(--s-4);
+    padding-top:var(--s-3);border-top:1px solid var(--hairline);font-size:var(--t-body-s);color:var(--ink)}
+  .ship-note .ico{width:18px;height:18px;color:var(--muted)}
+
+  .actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-3) var(--s-5);margin-top:var(--s-5)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+    padding:0 var(--s-5);border:0;border-radius:var(--r-pill);background:var(--accent);
+    color:var(--white);font:500 var(--t-body-s)/1 var(--font);cursor:pointer;
+    transition:background var(--dur-1) linear,transform var(--dur-1) var(--ease-std)}
+  .btn:hover{background:var(--accent-press)}
+  .btn:active{transform:scale(.97)}
+  .btn-2{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--link);
+    font-size:var(--t-body-s);font-weight:500;background:none;border:0;padding:0;cursor:pointer;
+    font-family:var(--font)}
+  .btn-2 .ico{width:16px;height:16px;transition:transform var(--dur-2) var(--ease-std)}
+  .btn-2:hover .ico{transform:translateX(3px)}
+  .btn-2--back:hover .ico{transform:translateX(-3px)}
+
+  /* ---------- payment ---------- */
+  .simulation{margin-top:var(--s-5);padding:var(--s-4) var(--s-5);border-radius:var(--r-lg);
+    background:var(--surface)}
+  .simulation h3{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.012em;
+    display:flex;align-items:center;gap:var(--s-2)}
+  .simulation h3 .ico{width:18px;height:18px}
+  .simulation p{margin-top:var(--s-2);font-size:var(--t-body-s);color:var(--ink);max-width:46ch}
+  .pay{margin-top:var(--s-5)}
+  .pay legend{font-size:var(--t-label);letter-spacing:.01em;font-weight:500;color:var(--muted);
+    margin-bottom:var(--s-2)}
+  .pay-option{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);
+    align-items:start;gap:var(--s-3);
+    min-height:44px;padding:var(--s-3) var(--s-4);margin-bottom:var(--s-2);border-radius:var(--r-md);
+    cursor:pointer;background:var(--white);box-shadow:var(--e-hairline);
+    transition:background var(--dur-1) linear,box-shadow var(--dur-1) linear,color var(--dur-1) linear}
+  .pay-option:last-of-type{margin-bottom:0}
+  .pay-option input{position:absolute;opacity:0;width:1px;height:1px}
+  .pay-option .dot{width:18px;height:18px;margin-top:2px;border-radius:var(--r-pill);
+    box-shadow:inset 0 0 0 1.5px var(--muted)}
+  .pay-name{display:block;font-size:var(--t-body-s);font-weight:500}
+  .pay-note{display:block;margin-top:2px;font-size:var(--t-caption);letter-spacing:.015em;
+    color:var(--muted)}
+  .pay-option:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+  .pay-option:has(input:checked){background:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);
+    color:var(--white)}
+  .pay-option:has(input:checked) .dot{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.74);
+    background:radial-gradient(circle at 50% 50%,var(--white) 0 40%,transparent 41%)}
+  .pay-option:has(input:checked) .pay-note{color:rgba(255,255,255,.74)}
+  .pay-option:focus-within{outline:3px solid var(--accent);outline-offset:3px}
+  .pay-state{display:inline-flex;align-items:center;gap:var(--s-2);margin-top:var(--s-3);
+    font-size:var(--t-caption);letter-spacing:.015em;color:rgba(255,255,255,.74)}
+  .pay-state .ico{width:14px;height:14px}
+
+  /* ---------- what happens next, on the last screen ---------- */
+  .next{margin-top:var(--s-5);counter-reset:n;display:grid;gap:var(--s-5)}
+  .next li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--s-3);
+    font-size:var(--t-body-s);color:var(--ink);counter-increment:n}
+  .next li::before{content:counter(n);font-size:var(--t-label);font-variant-numeric:tabular-nums;
+    font-weight:500;color:var(--muted);padding-top:2px}
+  .next .mail{display:block;margin-top:var(--s-2);color:var(--ink);word-break:break-word}
+
+  /* ---------- footer ---------- */
+  .site-foot{border-top:1px solid var(--hairline);padding:var(--s-6) 0 var(--s-7)}
+  .foot{display:grid;gap:var(--s-5)}
+  @media (min-width:760px){ .foot{grid-template-columns:minmax(0,1fr) auto;align-items:start;
+    gap:var(--s-8)} }
+  .foot-brand{font-size:var(--t-body-s);font-weight:600;letter-spacing:-.012em}
+  .foot .notice{margin-top:var(--s-2);max-width:78ch;font-size:var(--t-caption);line-height:1.35;
+    letter-spacing:.015em;color:var(--muted)}
+  .foot-links{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-5)}
+  .foot-links a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;
+    min-height:44px}
+  .foot-links a:hover{color:var(--link)}
+
+  /* ---------- one authored moment ---------- */
+  @keyframes rise{from{opacity:0;transform:translateY(24px);filter:blur(6px)}
+    to{opacity:1;transform:none;filter:blur(0)}}
+  .enter{animation:rise var(--dur-4) var(--ease-out-expo) both;
+    animation-delay:calc(var(--i,0) * 90ms)}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition-duration:0ms!important}
+    .enter{opacity:1;transform:none;filter:none}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<div class="head-shell">
+  <header class="head">
+    <a class="brand" href="/">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09 22C7.79 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+      <span>iTech Store</span>
+    </a>
+    <nav class="nav-main" aria-label="Principal">
+      <a href="/catalogo?familia=mac">Mac</a>
+      <a href="/catalogo?familia=ipad">iPad</a>
+      <a href="/catalogo?familia=watch">Watch</a>
+      <a href="/catalogo?familia=airpods">AirPods</a>
+      <a href="/catalogo?familia=accessory">Accesorios</a>
+      <a href="/contacto">Contacto</a>
+    </nav>
+    <div class="tools">
+      <a class="icon-btn" href="/catalogo">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/>
+        </svg>
+        <span class="sr-only">Buscar en el catálogo</span>
+      </a>
+      <a class="icon-btn" href="/finalizar-compra" aria-current="page">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6 8h12l-1 12H7L6 8z"/><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"/>
+        </svg>
+        <span class="sr-only">Carrito, 3 productos</span>
+        <span class="badge" aria-hidden="true">3</span>
+      </a>
+      <details class="menu">
+        <summary aria-label="Menú"><span class="menu-word">Menú</span>
+          <svg class="ico i-menu" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 8.5h16"/><path d="M4 15.5h16"/>
+          </svg>
+          <svg class="ico i-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6.5 6.5 17.5 17.5"/><path d="M17.5 6.5 6.5 17.5"/>
+          </svg>
+        </summary>
+        <nav aria-label="Principal en móvil">
+          <a href="/catalogo?familia=mac">Mac</a>
+          <a href="/catalogo?familia=ipad">iPad</a>
+          <a href="/catalogo?familia=watch">Watch</a>
+          <a href="/catalogo?familia=airpods">AirPods</a>
+          <a href="/catalogo?familia=accessory">Accesorios</a>
+          <a href="/contacto">Contacto</a>
+        </nav>
+      </details>
+    </div>
+  </header>
+</div>
+
+<main id="main">
+  <div class="wrap intro">
+    <h1 class="enter">Tu pedido, a la vista desde el principio</h1>
+    <p class="deck enter" style="--i:1">El comprobante se arma a la izquierda mientras completás lo
+      mínimo a la derecha. Al final lo sellamos y queda el mismo papel, sin pantallas nuevas.</p>
+  </div>
+
+  <div class="rule"></div>
+
+  <section class="step" id="datos" aria-labelledby="datos-title">
+    <div class="wrap">
+      <p class="caption">Paso 1 de 3 · Datos <span class="route">/finalizar-compra/datos</span></p>
+
+      <div class="zones">
+        <article class="receipt" aria-label="Comprobante de compra IT-2026-0001">
+          <header class="receipt-head">
+            <div>
+              <p class="receipt-brand">iTech Store</p>
+              <p class="receipt-kind">Comprobante de compra</p>
+            </div>
+            <span class="state">Borrador</span>
+          </header>
+
+          <dl class="receipt-id">
+            <dt>Pedido</dt>
+            <dd>IT-2026-0001</dd>
+          </dl>
+
+          <ul class="receipt-lines">
+            <li>
+              <img src="../../public/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp" alt="Apple iPad 11 pulgadas A16 en azul, de frente" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-ipad-11-a16-chip-wi-fi">Apple iPad 11&quot; A16 Chip WI-FI</a>
+                <p class="meta">Capacidad 256 GB · 1 unidad</p>
+              </div>
+              <span class="amount">$ 1.035.000</span>
+            </li>
+            <li>
+              <img src="../../public/products/mac/apple-13-macbook-air-chip-m5-1.webp" alt="Apple MacBook Air de 13 pulgadas con chip M5, abierta de frente" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-13-macbook-air-chip-m5">Apple 13&quot; MacBook Air - Chip M5</a>
+                <p class="meta">Mac · 1 unidad</p>
+              </div>
+              <span class="amount">$ 2.000.000</span>
+            </li>
+            <li>
+              <img src="../../public/products/watch/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-1.webp" alt="Apple Watch Series 11 con caja de aluminio negro y correa deportiva negra" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra">Apple Watch Series 11 - Caja Aluminio Negro - Correa Deportiva Negra</a>
+                <p class="meta">Watch · 1 unidad</p>
+              </div>
+              <span class="amount">$ 600.000</span>
+            </li>
+          </ul>
+
+          <dl class="receipt-totals">
+            <div><dt>Productos (3)</dt><dd>$ 3.635.000</dd></div>
+            <div><dt>Envío</dt><dd>A coordinar</dd></div>
+            <div><dt>Pago</dt><dd>A elegir</dd></div>
+            <div class="grand"><dt>Total</dt><dd><span class="cur">$</span> 3.635.000</dd></div>
+          </dl>
+
+          <dl class="receipt-buyer">
+            <dt>Recibe</dt>
+            <dd class="is-empty">Completá tus datos y aparecen acá.</dd>
+          </dl>
+
+          <p class="receipt-note">Pedido de demostración: no se cobró nada.</p>
+        </article>
+
+        <div class="sheet">
+          <h2 id="datos-title">¿Quién recibe el pedido?</h2>
+          <p class="lead">Cuatro datos y el comprobante queda con tu nombre.</p>
+
+          <div class="fields">
+            <div class="field">
+              <label for="nombre">Nombre y apellido</label>
+              <input id="nombre" name="nombre" type="text" autocomplete="name" value="Sofía Ramos">
+            </div>
+            <div class="grid-2">
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email"
+                  aria-describedby="email-help" value="sofia.ramos@example.com">
+              </div>
+              <div class="field">
+                <label for="telefono">Teléfono</label>
+                <input id="telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel"
+                  value="11 5555 0100">
+              </div>
+            </div>
+            <p class="help" id="email-help">Al email te escribimos para coordinar el envío y el pago.</p>
+            <div class="field">
+              <label for="direccion">Dirección</label>
+              <input id="direccion" name="direccion" type="text" autocomplete="street-address"
+                class="is-focused" value="Av. Córdoba 1875, 4.º B">
+            </div>
+            <div class="grid-2">
+              <div class="field">
+                <label for="ciudad">Ciudad</label>
+                <input id="ciudad" name="ciudad" type="text" autocomplete="address-level2"
+                  value="CABA">
+              </div>
+              <div class="field field--error">
+                <label for="cp">Código postal</label>
+                <input id="cp" name="cp" type="text" autocomplete="postal-code" inputmode="numeric"
+                  aria-invalid="true" aria-describedby="cp-error" value="">
+                <p class="error" id="cp-error" role="alert">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 7.5v6"/><path d="M12 16.5v.5"/>
+                    <path d="M12 3.5 21 20H3L12 3.5z"/>
+                  </svg>
+                  Falta el código postal.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p class="ship-note">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M3 7.5h10v9H3z"/><path d="M13 10.5h4l4 3v3h-8z"/>
+              <circle cx="7" cy="18.5" r="1.6"/><circle cx="17" cy="18.5" r="1.6"/>
+            </svg>
+            <span>El envío se coordina al finalizar.</span>
+          </p>
+
+          <div class="actions">
+            <a class="btn" href="#pago">Ir al pago</a>
+            <a class="btn-2 btn-2--back" href="/catalogo">
+              <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M14.5 5.5 8 12l6.5 6.5"/>
+              </svg>
+              Seguir comprando
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" id="pago" aria-labelledby="pago-title">
+    <div class="wrap">
+      <p class="caption">Paso 2 de 3 · Pago <span class="route">/finalizar-compra/pago</span></p>
+
+      <div class="zones">
+        <article class="receipt" aria-label="Comprobante de compra IT-2026-0001">
+          <header class="receipt-head">
+            <div>
+              <p class="receipt-brand">iTech Store</p>
+              <p class="receipt-kind">Comprobante de compra</p>
+            </div>
+            <span class="state">Esperando confirmación</span>
+          </header>
+
+          <dl class="receipt-id">
+            <dt>Pedido</dt>
+            <dd>IT-2026-0001</dd>
+          </dl>
+
+          <ul class="receipt-lines">
+            <li>
+              <img src="../../public/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp" alt="Apple iPad 11 pulgadas A16 en azul, de frente" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-ipad-11-a16-chip-wi-fi">Apple iPad 11&quot; A16 Chip WI-FI</a>
+                <p class="meta">Capacidad 256 GB · 1 unidad</p>
+              </div>
+              <span class="amount">$ 1.035.000</span>
+            </li>
+            <li>
+              <img src="../../public/products/mac/apple-13-macbook-air-chip-m5-1.webp" alt="Apple MacBook Air de 13 pulgadas con chip M5, abierta de frente" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-13-macbook-air-chip-m5">Apple 13&quot; MacBook Air - Chip M5</a>
+                <p class="meta">Mac · 1 unidad</p>
+              </div>
+              <span class="amount">$ 2.000.000</span>
+            </li>
+            <li>
+              <img src="../../public/products/watch/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-1.webp" alt="Apple Watch Series 11 con caja de aluminio negro y correa deportiva negra" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra">Apple Watch Series 11 - Caja Aluminio Negro - Correa Deportiva Negra</a>
+                <p class="meta">Watch · 1 unidad</p>
+              </div>
+              <span class="amount">$ 600.000</span>
+            </li>
+          </ul>
+
+          <dl class="receipt-totals">
+            <div><dt>Productos (3)</dt><dd>$ 3.635.000</dd></div>
+            <div><dt>Envío</dt><dd>A coordinar</dd></div>
+            <div><dt>Pago</dt><dd>Transferencia, a coordinar</dd></div>
+            <div class="grand"><dt>Total</dt><dd><span class="cur">$</span> 3.635.000</dd></div>
+          </dl>
+
+          <dl class="receipt-buyer">
+            <dt>Recibe</dt>
+            <dd>Sofía Ramos · Av. Córdoba 1875, 4.º B, CABA</dd>
+          </dl>
+
+          <p class="receipt-note">Pedido de demostración: no se cobró nada.</p>
+        </article>
+
+        <div class="sheet">
+          <h2 id="pago-title">¿Cómo querés pagar?</h2>
+          <p class="lead">El comprobante ya tiene tu nombre y el medio de pago elegido.</p>
+
+          <div class="simulation">
+            <h3>
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>
+              </svg>
+              Esto es una simulación
+            </h3>
+            <p>No cobramos nada y no guardamos datos de tarjetas. Este paso no tiene campos de
+              tarjeta a propósito: si algo te pide un número de tarjeta, no es esta demo.</p>
+          </div>
+
+          <fieldset class="pay">
+            <legend>Medio de pago</legend>
+            <label class="pay-option">
+              <input type="radio" name="medio" value="transferencia" checked>
+              <span class="dot" aria-hidden="true"></span>
+              <span>
+                <span class="pay-name">Transferencia bancaria</span>
+                <span class="pay-note">Te pasamos los datos cuando confirmes el pedido.</span>
+                <span class="pay-state">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M5 12.5l4.5 4.5L19 7.5"/>
+                  </svg>
+                  Elegido
+                </span>
+              </span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="medio" value="efectivo">
+              <span class="dot" aria-hidden="true"></span>
+              <span>
+                <span class="pay-name">Efectivo al recibir</span>
+                <span class="pay-note">Coordinamos el día y la dirección con vos.</span>
+              </span>
+            </label>
+          </fieldset>
+
+          <div class="actions">
+            <a class="btn" href="#confirmacion">Confirmar el pedido</a>
+            <a class="btn-2 btn-2--back" href="#datos">
+              <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M14.5 5.5 8 12l6.5 6.5"/>
+              </svg>
+              Volver a los datos
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" id="confirmacion" aria-labelledby="confirmacion-title">
+    <div class="wrap">
+      <p class="caption">Paso 3 de 3 · Confirmación
+        <span class="route">/pedido/IT-2026-0001</span></p>
+
+      <div class="zones">
+        <article class="receipt" aria-label="Comprobante de compra IT-2026-0001">
+          <header class="receipt-head">
+            <div>
+              <p class="receipt-brand">iTech Store</p>
+              <p class="receipt-kind">Comprobante de compra</p>
+            </div>
+            <span class="stamp">
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 12.5l4.5 4.5L19 7.5"/>
+              </svg>
+              Confirmado
+            </span>
+          </header>
+
+          <dl class="receipt-id">
+            <dt>Pedido</dt>
+            <dd>IT-2026-0001</dd>
+          </dl>
+
+          <ul class="receipt-lines">
+            <li>
+              <img src="../../public/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp" alt="Apple iPad 11 pulgadas A16 en azul, de frente" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-ipad-11-a16-chip-wi-fi">Apple iPad 11&quot; A16 Chip WI-FI</a>
+                <p class="meta">Capacidad 256 GB · 1 unidad</p>
+              </div>
+              <span class="amount">$ 1.035.000</span>
+            </li>
+            <li>
+              <img src="../../public/products/mac/apple-13-macbook-air-chip-m5-1.webp" alt="Apple MacBook Air de 13 pulgadas con chip M5, abierta de frente" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-13-macbook-air-chip-m5">Apple 13&quot; MacBook Air - Chip M5</a>
+                <p class="meta">Mac · 1 unidad</p>
+              </div>
+              <span class="amount">$ 2.000.000</span>
+            </li>
+            <li>
+              <img src="../../public/products/watch/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-1.webp" alt="Apple Watch Series 11 con caja de aluminio negro y correa deportiva negra" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra">Apple Watch Series 11 - Caja Aluminio Negro - Correa Deportiva Negra</a>
+                <p class="meta">Watch · 1 unidad</p>
+              </div>
+              <span class="amount">$ 600.000</span>
+            </li>
+          </ul>
+
+          <dl class="receipt-totals">
+            <div><dt>Productos (3)</dt><dd>$ 3.635.000</dd></div>
+            <div><dt>Envío</dt><dd>A coordinar</dd></div>
+            <div><dt>Pago</dt><dd>Transferencia, a coordinar</dd></div>
+            <div class="grand"><dt>Total</dt><dd><span class="cur">$</span> 3.635.000</dd></div>
+          </dl>
+
+          <dl class="receipt-buyer">
+            <dt>Recibe</dt>
+            <dd>Sofía Ramos · Av. Córdoba 1875, 4.º B, CABA</dd>
+          </dl>
+
+          <p class="receipt-note">Pedido de demostración: no se cobró nada.</p>
+        </article>
+
+        <div class="sheet">
+          <h2 id="confirmacion-title">Quedó confirmado</h2>
+          <p class="lead">El comprobante de la izquierda es tu pedido. Guardá el número
+            IT-2026-0001 y listo.</p>
+
+          <ol class="next">
+            <li>
+              <span>
+                Te escribimos para coordinar el envío y el pago.
+                <span class="mail">sofia.ramos@example.com</span>
+              </span>
+            </li>
+            <li>El envío se coordina al finalizar: no sale del local hasta que hablemos.</li>
+          </ol>
+
+          <div class="actions">
+            <a class="btn" href="/catalogo">Seguir comprando</a>
+            <a class="btn-2" href="/contacto">
+              ¿Algo no cierra? Escribinos
+              <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M9.5 5.5 16 12l-6.5 6.5"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot">
+    <div>
+      <p class="foot-brand">iTech Store</p>
+      <p class="notice">Los precios de este catálogo son de ejemplo y no son precios de venta.
+        La compra es una demostración: el pago es simulado, no se cobra nada y los datos que
+        escribís no se guardan.</p>
+    </div>
+    <nav class="foot-links" aria-label="Enlaces del pie">
+      <a href="/catalogo">Catálogo</a>
+      <a href="/contacto">Contacto</a>
+      <a href="#datos">Volver al paso 1</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
