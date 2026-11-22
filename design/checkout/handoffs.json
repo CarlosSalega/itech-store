@@ -3,12 +3,13 @@
   "chosen": "02-wizard.html",
   "handoffs": {
     "02-wizard.html": {
-      "status": "sent",
+      "status": "in_progress",
       "queued": true,
       "sentAt": "2026-11-22T01:42:42.751Z",
-      "startedAt": null,
+      "startedAt": "2026-11-22T01:45:00.199Z",
       "implementedAt": null,
-      "feature": "odd/tasks/demo-flows.md"
+      "feature": "odd/tasks/demo-flows.md",
+      "note": "T2 en curso: wizard de tres pasos sobre el stack real, con pedidos fixture en localStorage detrás de un repositorio."
     }
   }
 }
