@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "chosen": "01-floating-card.html",
+  "handoffs": {
+    "01-floating-card.html": {
+      "status": "in_progress",
+      "queued": false,
+      "sentAt": "2026-11-22T03:50:05.477Z",
+      "startedAt": "2026-11-22T03:50:17.137Z",
+      "implementedAt": null,
+      "feature": "odd/tasks/demo-flows.md",
+      "note": "T4 en curso: shell de tarjeta flotante, login, dashboard y las seis pantallas restantes sobre fixtures."
+    }
+  }
+}
