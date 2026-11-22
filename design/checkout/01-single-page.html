@@ -83,7 +83,8 @@
   }
   .brand{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;color:var(--ink);
     font-size:var(--t-body-s);font-weight:600;letter-spacing:-.012em;white-space:nowrap}
-  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor}
+  /* the mark is raised in em on purpose: geometry symmetric, perception not */
+  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor;transform:translateY(-.12em)}
   .nav-main{display:none}
   @media (min-width:900px){ .nav-main{display:flex;align-items:center;gap:var(--s-6)} }
   .nav-main a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;
@@ -129,7 +130,7 @@
 
   /* ---------- one column of steps, one sticky summary ---------- */
   .page-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--section-tight);
-    padding-bottom:var(--s-6)}
+    padding-block:var(--s-6)}
   @media (min-width:1000px){
     .page-grid{grid-template-columns:minmax(0,1fr) minmax(320px,368px);gap:var(--s-9);
       align-items:start}
@@ -240,6 +241,10 @@
   .total-row dd{font-size:var(--t-title);font-weight:500;line-height:1;letter-spacing:-.022em;
     font-variant-numeric:tabular-nums}
   .total-row .cur{font-size:.85em;color:var(--muted);margin-right:1px}
+  .paid-row{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);
+    margin-top:var(--s-3);font-size:var(--t-body-s)}
+  .paid-row dt{color:var(--muted)}
+  .paid-row dd{color:var(--ink)}
   .next{margin-top:var(--s-5)}
   .next h3{font-size:var(--t-headline);line-height:1.2;letter-spacing:-.012em}
   .next ol{margin-top:var(--s-3);counter-reset:n;display:grid;gap:var(--s-2);max-width:56ch}
@@ -262,9 +267,9 @@
   .summary .line:first-child{border-top:0}
   .summary img{width:48px;height:48px;object-fit:contain;mix-blend-mode:multiply}
   .summary .line-name{display:block;font-size:var(--t-label);line-height:1.3;font-weight:500;
-    letter-spacing:-.005em;color:var(--ink)}
-  .summary .line-variant{margin-top:2px;font-size:var(--t-caption);letter-spacing:.015em;
-    color:var(--muted)}
+    letter-spacing:.01em;color:var(--ink)}
+  .summary .line-variant{display:block;text-wrap:pretty;margin-top:2px;font-size:var(--t-caption);
+    letter-spacing:.015em;color:var(--muted)}
   .summary .line-amount{font-size:var(--t-label);font-weight:500;font-variant-numeric:tabular-nums;
     white-space:nowrap}
   .summary .totals{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);
@@ -328,12 +333,12 @@
         </svg>
         <span class="sr-only">Buscar en el catálogo</span>
       </a>
-      <a class="icon-btn" href="/finalizar-compra" aria-current="page">
+      <a class="icon-btn" href="/finalizar-compra">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M6 8h12l-1 12H7L6 8z"/><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"/>
         </svg>
-        <span class="sr-only">Carrito, 3 productos</span>
-        <span class="badge" aria-hidden="true">3</span>
+        <span class="sr-only">Carrito, 5 unidades</span>
+        <span class="badge" aria-hidden="true">5</span>
       </a>
       <details class="menu">
         <summary aria-label="Menú"><span class="menu-word">Menú</span>
@@ -371,7 +376,7 @@
     <aside class="summary" aria-labelledby="resumen-title">
       <div class="summary-head">
         <h2 id="resumen-title">Tu pedido</h2>
-        <span class="count">3 productos · 3 unidades</span>
+        <span class="count">4 productos · 5 unidades</span>
       </div>
       <ul class="lines">
         <li class="line">
@@ -401,10 +406,19 @@
           </div>
           <span class="line-amount">$ 600.000</span>
         </li>
+        <li class="line">
+          <img src="../../public/products/accessory/apple-homepod-mini-1.webp"
+            alt="Apple HomePod Mini, altavoz inteligente" width="640" height="640">
+          <div>
+            <span class="line-name">Apple HomePod Mini</span>
+            <span class="line-variant">Accesorios · 2 unidades</span>
+          </div>
+          <span class="line-amount">$ 60.000</span>
+        </li>
       </ul>
       <dl class="totals">
         <dt>Total</dt>
-        <dd><span class="cur">$</span> 3.635.000</dd>
+        <dd><span class="cur">$</span> 3.695.000</dd>
       </dl>
       <button class="edit" type="button">
         Editar el carrito
@@ -576,11 +590,24 @@
             </div>
             <span class="amount">$ 600.000</span>
           </li>
+          <li>
+            <img src="../../public/products/accessory/apple-homepod-mini-1.webp"
+              alt="Apple HomePod Mini, altavoz inteligente" width="640" height="640">
+            <div>
+              <a class="name" href="/catalogo/apple-homepod-mini">Apple HomePod Mini</a>
+              <p class="variant">Accesorios · 2 unidades</p>
+            </div>
+            <span class="amount">$ 60.000</span>
+          </li>
         </ul>
 
         <dl class="total-row">
           <dt>Total</dt>
-          <dd><span class="cur">$</span> 3.635.000</dd>
+          <dd><span class="cur">$</span> 3.695.000</dd>
+        </dl>
+        <dl class="paid-row">
+          <dt>Pago elegido</dt>
+          <dd>Transferencia bancaria, a coordinar</dd>
         </dl>
 
         <div class="next">

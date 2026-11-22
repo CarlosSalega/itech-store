@@ -63,8 +63,6 @@
     transition:top var(--dur-1) var(--ease-std)}
   .skip:focus{top:12px}
   .wrap{max-width:1200px;margin:0 auto;padding:0 var(--g)}
-  .rule{height:1px;background:var(--hairline);margin-left:calc(50% - 50vw);
-    margin-right:calc(50% - 50vw)}
 
   .ico{display:block;flex:none;width:20px;height:20px;fill:none;stroke:currentColor;
     stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -82,7 +80,8 @@
   }
   .brand{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;color:var(--ink);
     font-size:var(--t-body-s);font-weight:600;letter-spacing:-.012em;white-space:nowrap}
-  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor}
+  /* the mark is raised in em on purpose: geometry symmetric, perception not */
+  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor;transform:translateY(-.12em)}
   .nav-main{display:none}
   @media (min-width:900px){ .nav-main{display:flex;align-items:center;gap:var(--s-6)} }
   .nav-main a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;
@@ -320,12 +319,12 @@
         </svg>
         <span class="sr-only">Buscar en el catálogo</span>
       </a>
-      <a class="icon-btn" href="/finalizar-compra" aria-current="page">
+      <a class="icon-btn" href="/finalizar-compra">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M6 8h12l-1 12H7L6 8z"/><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"/>
         </svg>
-        <span class="sr-only">Carrito, 3 productos</span>
-        <span class="badge" aria-hidden="true">3</span>
+        <span class="sr-only">Carrito, 5 unidades</span>
+        <span class="badge" aria-hidden="true">5</span>
       </a>
       <details class="menu">
         <summary aria-label="Menú"><span class="menu-word">Menú</span>
@@ -355,8 +354,6 @@
     <p class="deck enter" style="--i:1">El comprobante se arma a la izquierda mientras completás lo
       mínimo a la derecha. Al final lo sellamos y queda el mismo papel, sin pantallas nuevas.</p>
   </div>
-
-  <div class="rule"></div>
 
   <section class="step" id="datos" aria-labelledby="datos-title">
     <div class="wrap">
@@ -402,18 +399,26 @@
               </div>
               <span class="amount">$ 600.000</span>
             </li>
+            <li>
+              <img src="../../public/products/accessory/apple-homepod-mini-1.webp" alt="Apple HomePod Mini, altavoz inteligente" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-homepod-mini">Apple HomePod Mini</a>
+                <p class="meta">Accesorios · 2 unidades</p>
+              </div>
+              <span class="amount">$ 60.000</span>
+            </li>
           </ul>
 
           <dl class="receipt-totals">
-            <div><dt>Productos (3)</dt><dd>$ 3.635.000</dd></div>
+            <div><dt>Productos (4)</dt><dd>$ 3.695.000</dd></div>
             <div><dt>Envío</dt><dd>A coordinar</dd></div>
             <div><dt>Pago</dt><dd>A elegir</dd></div>
-            <div class="grand"><dt>Total</dt><dd><span class="cur">$</span> 3.635.000</dd></div>
+            <div class="grand"><dt>Total</dt><dd><span class="cur">$</span> 3.695.000</dd></div>
           </dl>
 
           <dl class="receipt-buyer">
             <dt>Recibe</dt>
-            <dd class="is-empty">Completá tus datos y aparecen acá.</dd>
+            <dd class="is-empty">Se completa cuando confirmes los datos.</dd>
           </dl>
 
           <p class="receipt-note">Pedido de demostración: no se cobró nada.</p>
@@ -433,6 +438,7 @@
                 <label for="email">Email</label>
                 <input id="email" name="email" type="email" autocomplete="email"
                   aria-describedby="email-help" value="sofia.ramos@example.com">
+                <p class="help" id="email-help">Al email te escribimos para coordinar el envío y el pago.</p>
               </div>
               <div class="field">
                 <label for="telefono">Teléfono</label>
@@ -440,7 +446,6 @@
                   value="11 5555 0100">
               </div>
             </div>
-            <p class="help" id="email-help">Al email te escribimos para coordinar el envío y el pago.</p>
             <div class="field">
               <label for="direccion">Dirección</label>
               <input id="direccion" name="direccion" type="text" autocomplete="street-address"
@@ -533,13 +538,21 @@
               </div>
               <span class="amount">$ 600.000</span>
             </li>
+            <li>
+              <img src="../../public/products/accessory/apple-homepod-mini-1.webp" alt="Apple HomePod Mini, altavoz inteligente" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-homepod-mini">Apple HomePod Mini</a>
+                <p class="meta">Accesorios · 2 unidades</p>
+              </div>
+              <span class="amount">$ 60.000</span>
+            </li>
           </ul>
 
           <dl class="receipt-totals">
-            <div><dt>Productos (3)</dt><dd>$ 3.635.000</dd></div>
+            <div><dt>Productos (4)</dt><dd>$ 3.695.000</dd></div>
             <div><dt>Envío</dt><dd>A coordinar</dd></div>
             <div><dt>Pago</dt><dd>Transferencia, a coordinar</dd></div>
-            <div class="grand"><dt>Total</dt><dd><span class="cur">$</span> 3.635.000</dd></div>
+            <div class="grand"><dt>Total</dt><dd><span class="cur">$</span> 3.695.000</dd></div>
           </dl>
 
           <dl class="receipt-buyer">
@@ -655,13 +668,21 @@
               </div>
               <span class="amount">$ 600.000</span>
             </li>
+            <li>
+              <img src="../../public/products/accessory/apple-homepod-mini-1.webp" alt="Apple HomePod Mini, altavoz inteligente" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-homepod-mini">Apple HomePod Mini</a>
+                <p class="meta">Accesorios · 2 unidades</p>
+              </div>
+              <span class="amount">$ 60.000</span>
+            </li>
           </ul>
 
           <dl class="receipt-totals">
-            <div><dt>Productos (3)</dt><dd>$ 3.635.000</dd></div>
+            <div><dt>Productos (4)</dt><dd>$ 3.695.000</dd></div>
             <div><dt>Envío</dt><dd>A coordinar</dd></div>
             <div><dt>Pago</dt><dd>Transferencia, a coordinar</dd></div>
-            <div class="grand"><dt>Total</dt><dd><span class="cur">$</span> 3.635.000</dd></div>
+            <div class="grand"><dt>Total</dt><dd><span class="cur">$</span> 3.695.000</dd></div>
           </dl>
 
           <dl class="receipt-buyer">

@@ -9,7 +9,7 @@
 			"tradeoff": "Los tres pasos en una sola página con el resumen pegado al costado: se completa rápido y el total nunca sale de la vista. Cuesta el sentido de progreso —nada avanza ni se cierra hasta el final— y el resumen deja la columna derecha quieta mientras se llena el resto.",
 			"signature": "El resumen que acompaña: la tarjeta del pedido se queda arriba, al lado de los tres pasos, sin repetirse.",
 			"width": 1440,
-			"height": 2600
+			"height": 2725
 		},
 		{
 			"file": "02-wizard.html",
@@ -17,7 +17,7 @@
 			"tradeoff": "Una decisión por pantalla, con pasos numerados, barra de progreso y el resumen al costado: el avance se ve y hay menos margen de error. Cuesta clics y layout —tres pantallas que mantener— y en el teléfono el total queda debajo de la acción cuando el resumen se apila.",
 			"signature": "La barra que se llena: tres pasos numerados y una barra que avanza de un tercio a entero, pantalla por pantalla.",
 			"width": 1440,
-			"height": 2600
+			"height": 2699
 		},
 		{
 			"file": "03-receipt-first.html",
@@ -25,7 +25,7 @@
 			"tradeoff": "El pedido armado como comprobante desde la primera pantalla, con un formulario mínimo al costado: da confianza y el cierre es el mismo papel sellado, sin pantallas nuevas. Cuesta densidad en el teléfono —el comprobante va primero y se lleva una pantalla entera antes del formulario— y cuenta los mismos datos dos veces.",
 			"signature": "El sello: el comprobante pasa de Borrador a Esperando confirmación y termina sellado como Confirmado, con el mismo número desde el principio.",
 			"width": 1440,
-			"height": 2600
+			"height": 2759
 		}
 	]
 }

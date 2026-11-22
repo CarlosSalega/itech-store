@@ -61,8 +61,6 @@
     transition:top var(--dur-1) var(--ease-std)}
   .skip:focus{top:12px}
   .wrap{max-width:1200px;margin:0 auto;padding:0 var(--g)}
-  .rule{height:1px;background:var(--hairline);margin-left:calc(50% - 50vw);
-    margin-right:calc(50% - 50vw)}
 
   .ico{display:block;flex:none;width:20px;height:20px;fill:none;stroke:currentColor;
     stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -80,7 +78,8 @@
   }
   .brand{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;color:var(--ink);
     font-size:var(--t-body-s);font-weight:600;letter-spacing:-.012em;white-space:nowrap}
-  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor}
+  /* the mark is raised in em on purpose: geometry symmetric, perception not */
+  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor;transform:translateY(-.12em)}
   .nav-main{display:none}
   @media (min-width:900px){ .nav-main{display:flex;align-items:center;gap:var(--s-6)} }
   .nav-main a{color:var(--ink);font-size:var(--t-body-s);display:inline-flex;align-items:center;
@@ -196,7 +195,7 @@
   .field--error .error{margin-top:var(--s-2);font-size:var(--t-caption);letter-spacing:.015em;
     color:var(--ink);display:flex;gap:var(--s-2);align-items:flex-start}
   .field--error .error .ico{width:14px;height:14px;margin-top:2px;stroke-width:2}
-  .ship-note{display:flex;gap:var(--s-3);align-items:center;max-width:560px;margin-top:var(--s-4);
+  .ship-note{display:flex;gap:var(--s-3);align-items:flex-start;max-width:560px;margin-top:var(--s-4);
     padding-top:var(--s-3);border-top:1px solid var(--hairline);font-size:var(--t-body-s);color:var(--ink)}
   .ship-note .ico{width:18px;height:18px;margin-top:2px;color:var(--muted)}
 
@@ -290,8 +289,9 @@
   .lines li:first-child{border-top:0}
   .lines img{width:48px;height:48px;object-fit:contain;mix-blend-mode:multiply}
   .line-name{display:block;font-size:var(--t-label);line-height:1.3;font-weight:500;
-    letter-spacing:-.005em;color:var(--ink)}
-  .line-variant{margin-top:2px;font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+    letter-spacing:.01em;color:var(--ink)}
+  .line-variant{display:block;text-wrap:pretty;margin-top:2px;font-size:var(--t-caption);
+    letter-spacing:.015em;color:var(--muted)}
   .line-amount{font-size:var(--t-label);font-weight:500;font-variant-numeric:tabular-nums;
     white-space:nowrap}
   .totals{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);
@@ -367,12 +367,12 @@
         </svg>
         <span class="sr-only">Buscar en el catálogo</span>
       </a>
-      <a class="icon-btn" href="/finalizar-compra" aria-current="page">
+      <a class="icon-btn" href="/finalizar-compra">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M6 8h12l-1 12H7L6 8z"/><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"/>
         </svg>
-        <span class="sr-only">Carrito, 3 productos</span>
-        <span class="badge" aria-hidden="true">3</span>
+        <span class="sr-only">Carrito, 5 unidades</span>
+        <span class="badge" aria-hidden="true">5</span>
       </a>
       <details class="menu">
         <summary aria-label="Menú"><span class="menu-word">Menú</span>
@@ -402,8 +402,6 @@
     <p class="deck enter" style="--i:1">Una decisión por pantalla: quién lo recibe, cómo lo pagás
       y el comprobante. Podés volver atrás sin perder lo que escribiste.</p>
   </div>
-
-  <div class="rule"></div>
 
   <section class="screen" id="paso1" aria-labelledby="paso1-title">
     <div class="wrap">
@@ -437,6 +435,7 @@
                   <label for="email">Email</label>
                   <input id="email" name="email" type="email" autocomplete="email"
                     aria-describedby="email-help" value="sofia.ramos@example.com">
+                  <p class="help" id="email-help">Al email te escribimos para coordinar el envío y el pago.</p>
                 </div>
                 <div class="field">
                   <label for="telefono">Teléfono</label>
@@ -444,7 +443,6 @@
                     value="11 5555 0100">
                 </div>
               </div>
-              <p class="help" id="email-help">Al email te escribimos para coordinar el envío y el pago.</p>
             </div>
           </div>
 
@@ -500,7 +498,7 @@
         <aside class="aside" aria-labelledby="paso1-resumen">
           <div class="aside-head">
             <h2 id="paso1-resumen">Tu pedido</h2>
-            <span class="count">3 productos</span>
+            <span class="count">4 productos · 5 unidades</span>
           </div>
           <ul class="lines">
             <li>
@@ -508,7 +506,7 @@
                 alt="Apple iPad 11 pulgadas A16 en azul, de frente" width="640" height="640">
               <div>
                 <span class="line-name">Apple iPad 11&quot; A16 Chip WI-FI</span>
-                <span class="line-variant">256 GB · 1 unidad</span>
+                <span class="line-variant">Capacidad 256 GB · 1 unidad</span>
               </div>
               <span class="line-amount">$ 1.035.000</span>
             </li>
@@ -530,10 +528,19 @@
               </div>
               <span class="line-amount">$ 600.000</span>
             </li>
+            <li>
+              <img src="../../public/products/accessory/apple-homepod-mini-1.webp"
+                alt="Apple HomePod Mini, altavoz inteligente" width="640" height="640">
+              <div>
+                <span class="line-name">Apple HomePod Mini</span>
+                <span class="line-variant">Accesorios · 2 unidades</span>
+              </div>
+              <span class="line-amount">$ 60.000</span>
+            </li>
           </ul>
           <dl class="totals">
             <dt>Total</dt>
-            <dd><span class="cur">$</span> 3.635.000</dd>
+            <dd><span class="cur">$</span> 3.695.000</dd>
           </dl>
           <button class="edit" type="button">
             Editar el carrito
@@ -627,7 +634,7 @@
         <aside class="aside" aria-labelledby="paso2-resumen">
           <div class="aside-head">
             <h2 id="paso2-resumen">Tu pedido</h2>
-            <span class="count">3 productos</span>
+            <span class="count">4 productos · 5 unidades</span>
           </div>
           <ul class="lines">
             <li>
@@ -635,7 +642,7 @@
                 alt="Apple iPad 11 pulgadas A16 en azul, de frente" width="640" height="640">
               <div>
                 <span class="line-name">Apple iPad 11&quot; A16 Chip WI-FI</span>
-                <span class="line-variant">256 GB · 1 unidad</span>
+                <span class="line-variant">Capacidad 256 GB · 1 unidad</span>
               </div>
               <span class="line-amount">$ 1.035.000</span>
             </li>
@@ -657,10 +664,19 @@
               </div>
               <span class="line-amount">$ 600.000</span>
             </li>
+            <li>
+              <img src="../../public/products/accessory/apple-homepod-mini-1.webp"
+                alt="Apple HomePod Mini, altavoz inteligente" width="640" height="640">
+              <div>
+                <span class="line-name">Apple HomePod Mini</span>
+                <span class="line-variant">Accesorios · 2 unidades</span>
+              </div>
+              <span class="line-amount">$ 60.000</span>
+            </li>
           </ul>
           <dl class="totals">
             <dt>Total</dt>
-            <dd><span class="cur">$</span> 3.635.000</dd>
+            <dd><span class="cur">$</span> 3.695.000</dd>
           </dl>
           <button class="edit" type="button">
             Editar el carrito
@@ -753,11 +769,20 @@
               </div>
               <span class="amount">$ 600.000</span>
             </li>
+            <li>
+              <img src="../../public/products/accessory/apple-homepod-mini-1.webp"
+                alt="Apple HomePod Mini, altavoz inteligente" width="640" height="640">
+              <div>
+                <a class="name" href="/catalogo/apple-homepod-mini">Apple HomePod Mini</a>
+                <p class="variant">Accesorios · 2 unidades</p>
+              </div>
+              <span class="amount">$ 60.000</span>
+            </li>
           </ul>
 
           <dl class="total-row">
             <dt>Total</dt>
-            <dd><span class="cur">$</span> 3.635.000</dd>
+            <dd><span class="cur">$</span> 3.695.000</dd>
           </dl>
           <dl class="paid-row">
             <dt>Pago elegido</dt>
