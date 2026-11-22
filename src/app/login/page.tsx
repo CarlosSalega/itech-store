@@ -1,16 +1,8 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import { enterAdminDemo } from "./actions";
 
 import styles from "./login.module.css";
-
-export const metadata: Metadata = {
-	title: "Entrar al panel — iTech Store",
-	description:
-		"El acceso de demostración al panel de iTech Store: no hay sesión real y no se revisa ninguna contraseña.",
-	robots: { index: false, follow: false },
-};
 
 export default function LoginPage() {
 	return (

@@ -1,15 +1,7 @@
-import type { Metadata } from "next";
-
 import { findAdminProduct } from "@/features/admin/server/product-repository";
 import { AdminPlaceholder } from "@/features/admin/ui/placeholder";
 
 export const instant = false;
-
-export const metadata: Metadata = {
-	title: "Producto — iTech Store",
-	description: "La ficha de un producto del catálogo de iTech Store.",
-	robots: { index: false, follow: false },
-};
 
 export default async function AdminProductoPage({
 	params,
