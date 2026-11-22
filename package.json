@@ -15,7 +15,12 @@
 		"prepare": "husky || true",
 		"catalog:extract": "tsx scripts/extract-catalog.ts",
 		"catalog:extract:apple": "tsx scripts/extract-apple-catalogue.ts",
-		"design:photos": "tsx scripts/inline-design-images.ts"
+		"design:photos": "tsx scripts/inline-design-images.ts",
+		"db:scratch": "tsx scripts/db-scratch.ts deploy",
+		"db:scratch:status": "tsx scripts/db-scratch.ts status",
+		"db:scratch:reset": "tsx scripts/db-scratch.ts reset",
+		"db:scratch:dev": "tsx scripts/db-scratch.ts dev",
+		"db:scratch:seed": "tsx scripts/db-scratch.ts seed"
 	},
 	"dependencies": {
 		"@prisma/adapter-pg": "7.10.1",
