@@ -1,0 +1,363 @@
+.page {
+	padding: var(--s-6) 0 var(--s-8);
+}
+
+.intro {
+	padding-bottom: var(--s-5);
+}
+
+.title {
+	max-width: 24ch;
+	font-size: var(--t-display-s);
+	font-weight: 600;
+	font-optical-sizing: auto;
+	line-height: 1.02;
+	letter-spacing: -0.03em;
+	animation: rise var(--dur-4) var(--ease-out-expo) both;
+}
+
+.deck {
+	max-width: 62ch;
+	margin-top: var(--s-4);
+	color: var(--muted);
+	font-size: var(--t-body);
+	animation: rise var(--dur-4) var(--ease-out-expo) both;
+	animation-delay: 90ms;
+}
+
+@keyframes rise {
+	from {
+		opacity: 0;
+		transform: translateY(24px);
+		filter: blur(6px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+		filter: blur(0);
+	}
+}
+
+.heading {
+	font-size: var(--t-title);
+	font-weight: 600;
+	font-optical-sizing: auto;
+	line-height: 1.08;
+	letter-spacing: -0.022em;
+}
+
+.group {
+	max-width: 560px;
+	margin-top: var(--s-4);
+}
+
+.group + .group {
+	margin-top: var(--s-5);
+	padding-top: var(--s-4);
+	border-top: 1px solid var(--hairline);
+}
+
+.groupTitle {
+	color: var(--muted);
+	font-size: var(--t-label);
+	font-weight: 500;
+	letter-spacing: 0.01em;
+}
+
+.fields {
+	display: grid;
+	gap: var(--s-3);
+	margin-top: var(--s-3);
+}
+
+.row {
+	display: grid;
+	gap: var(--s-4);
+}
+
+@media (min-width: 620px) {
+	.row {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 200px);
+	}
+}
+
+.label {
+	display: block;
+	margin-bottom: 6px;
+	color: var(--muted);
+	font-size: var(--t-label);
+	font-weight: 500;
+	letter-spacing: 0.01em;
+}
+
+.input {
+	width: 100%;
+	min-height: 44px;
+	padding: 0 var(--s-4);
+	border: 0;
+	border-radius: var(--r-sm);
+	background: var(--white);
+	box-shadow: var(--e-hairline);
+	color: var(--ink);
+	font: inherit;
+	font-size: var(--t-body);
+	transition: box-shadow var(--dur-1) linear;
+}
+
+.input:hover {
+	box-shadow: inset 0 0 0 1px var(--muted);
+}
+
+.input:focus-visible {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+	box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.invalid,
+.invalid:hover {
+	box-shadow: inset 0 0 0 2px var(--ink);
+}
+
+.help {
+	margin-top: var(--s-2);
+	color: var(--muted);
+	font-size: var(--t-caption);
+	letter-spacing: 0.015em;
+}
+
+.error {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--s-2);
+	margin-top: var(--s-2);
+	color: var(--ink);
+	font-size: var(--t-caption);
+	letter-spacing: 0.015em;
+}
+
+.errorIcon {
+	flex: none;
+	width: 14px;
+	height: 14px;
+	margin-top: 2px;
+	stroke-width: 2;
+}
+
+.shipNote {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--s-3);
+	max-width: 560px;
+	margin-top: var(--s-4);
+	padding-top: var(--s-3);
+	border-top: 1px solid var(--hairline);
+	color: var(--ink);
+	font-size: var(--t-body-s);
+}
+
+.shipIcon {
+	flex: none;
+	width: 18px;
+	height: 18px;
+	margin-top: 2px;
+	color: var(--muted);
+}
+
+.simulation {
+	max-width: 560px;
+	margin-top: var(--s-5);
+	padding: var(--s-4) var(--s-5);
+	border-radius: var(--r-lg);
+	background: var(--surface);
+}
+
+.simulationTitle {
+	display: flex;
+	align-items: center;
+	gap: var(--s-2);
+	font-size: var(--t-headline);
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: -0.012em;
+}
+
+.simulationIcon {
+	flex: none;
+	width: 18px;
+	height: 18px;
+}
+
+.simulationCopy {
+	max-width: 48ch;
+	margin-top: var(--s-2);
+	font-size: var(--t-body-s);
+}
+
+.pay {
+	max-width: 560px;
+	margin: var(--s-5) 0 0;
+	padding: 0;
+	border: 0;
+}
+
+.legend {
+	margin-bottom: var(--s-2);
+	padding: 0;
+	color: var(--muted);
+	font-size: var(--t-label);
+	font-weight: 500;
+	letter-spacing: 0.01em;
+}
+
+.option {
+	position: relative;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: start;
+	gap: var(--s-3);
+	min-height: 44px;
+	margin-bottom: var(--s-2);
+	padding: var(--s-3) var(--s-4);
+	border-radius: var(--r-md);
+	background: var(--white);
+	box-shadow: var(--e-hairline);
+	cursor: pointer;
+	transition:
+		background var(--dur-1) linear,
+		box-shadow var(--dur-1) linear;
+}
+
+.option:last-of-type {
+	margin-bottom: 0;
+}
+
+.option:hover {
+	box-shadow: inset 0 0 0 1px var(--muted);
+}
+
+.option:focus-within {
+	outline: 3px solid var(--accent);
+	outline-offset: 3px;
+}
+
+.option:has(.radio:checked) {
+	background: var(--ink);
+	box-shadow: inset 0 0 0 1px var(--ink);
+	color: var(--white);
+}
+
+.radio {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+}
+
+.dot {
+	width: 18px;
+	height: 18px;
+	margin-top: 2px;
+	border-radius: var(--r-pill);
+	box-shadow: inset 0 0 0 1.5px var(--muted);
+}
+
+.option:has(.radio:checked) .dot {
+	background: radial-gradient(circle at 50% 50%, var(--white) 0 40%, transparent 41%);
+	box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 74%);
+}
+
+.payName {
+	display: block;
+	font-size: var(--t-body-s);
+	font-weight: 500;
+}
+
+.note {
+	display: block;
+	margin-top: 2px;
+	color: var(--muted);
+	font-size: var(--t-caption);
+	letter-spacing: 0.015em;
+}
+
+.option:has(.radio:checked) .note {
+	color: rgb(255 255 255 / 74%);
+}
+
+.state {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--s-2);
+	margin-top: var(--s-3);
+	color: rgb(255 255 255 / 74%);
+	font-size: var(--t-caption);
+	letter-spacing: 0.015em;
+}
+
+.stateIcon {
+	width: 14px;
+	height: 14px;
+	stroke-width: 2;
+}
+
+.empty {
+	max-width: 560px;
+	padding: var(--s-6) var(--s-5);
+	border-radius: var(--r-lg);
+	background: var(--surface);
+	text-align: center;
+}
+
+.emptyMark {
+	display: grid;
+	place-items: center;
+	width: 56px;
+	height: 56px;
+	margin: 0 auto;
+	border-radius: var(--r-pill);
+	background: var(--white);
+	color: var(--muted);
+}
+
+.emptyIcon {
+	width: 22px;
+	height: 22px;
+}
+
+.emptyTitle {
+	margin: var(--s-5) 0 var(--s-2);
+	font-size: var(--t-title);
+	font-weight: 600;
+	line-height: 1.1;
+	letter-spacing: -0.022em;
+}
+
+.emptyCopy {
+	max-width: 40ch;
+	margin: 0 auto var(--s-5);
+	color: var(--muted);
+	font-size: var(--t-body-s);
+}
+
+.emptyLink {
+	display: inline-grid;
+	place-items: center;
+	min-height: 44px;
+	padding: 0 var(--s-5);
+	border-radius: var(--r-pill);
+	background: var(--white);
+	box-shadow: var(--e-hairline);
+	color: var(--ink);
+	font-size: var(--t-body-s);
+	font-weight: 500;
+}
+
+.emptyLink:hover {
+	background: var(--surface);
+}
+
+.pending {
+	min-height: 420px;
+}
