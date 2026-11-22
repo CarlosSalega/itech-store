@@ -10,6 +10,9 @@
     --canvas-dark:#0a0a0a; --surface-dark:#101010; --surface-raised:#161618; --ink-dark:#ededed; --muted-dark:#a1a1a6;
     --hairline-dark:#262628; --hairline-strong:#3a3a3d;
     --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --success:#1d7a3f; --success-soft:#e8f5ec;
+    --warning:#95650a; --warning-soft:#fdf1dc;
+    --danger:#b3261e; --danger-soft:#fdecea;
     --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:88px; --s-10:120px;
     --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
     --e-hairline:inset 0 0 0 1px var(--hairline);
@@ -175,7 +178,9 @@
 
   <section id="color" aria-labelledby="tc">
     <h2 id="tc">Color</h2>
-    <p class="lede">Una sola rampa neutra. Ningún tono se gasta en decoración.</p>
+    <p class="lede">Una sola rampa neutra. Ningún tono se gasta en decoración. Abajo va aparte la
+      capa semántica del panel privado: verde, ámbar y rojo describen un estado, nunca una
+      decoración, y el catálogo público sigue siendo monocromo.</p>
     <ul class="sw">
       <li><div class="chip" style="background:#fff;box-shadow:inset 0 0 0 1px #d2d2d7"></div><div class="meta"><b>--white</b><span>#ffffff</span></div></li>
       <li><div class="chip" style="background:#171717"></div><div class="meta"><b>--ink</b><span>#171717</span></div></li>
@@ -192,6 +197,21 @@
       <li><div class="chip" style="background:#0066cc"></div><div class="meta"><b>--link</b><span>#0066cc</span></div></li>
       <li><div class="chip" style="background:#0071e3"></div><div class="meta"><b>--accent</b><span>#0071e3</span></div></li>
       <li><div class="chip" style="background:#0062c4"></div><div class="meta"><b>--accent-press</b><span>#0062c4</span></div></li>
+    </ul>
+
+    <h3>Capa semántica — un estado, no una decoración</h3>
+    <p class="c1" style="max-width:66ch">Verde: un estado bueno. Ámbar: atención, todavía no un error.
+      Rojo: algo está mal o no se puede deshacer. No hay un cuarto color: un hecho neutro es
+      <code>--muted</code> y un fondo neutro es <code>--surface</code>. El ícono o la marca lleva el
+      color fuerte; la pastilla o el chip que necesita fondo lleva el <code>-soft</code> con el fuerte
+      como texto. El color nunca carga solo el significado: el ícono conserva su forma y su palabra.</p>
+    <ul class="sw">
+      <li><div class="chip" style="background:var(--success)"></div><div class="meta"><b>--success</b><span>#1d7a3f<br>5.37:1</span></div></li>
+      <li><div class="chip" style="background:var(--success-soft)"></div><div class="meta"><b>--success-soft</b><span>#e8f5ec<br>texto 4.79:1</span></div></li>
+      <li><div class="chip" style="background:var(--warning)"></div><div class="meta"><b>--warning</b><span>#95650a<br>5.07:1</span></div></li>
+      <li><div class="chip" style="background:var(--warning-soft)"></div><div class="meta"><b>--warning-soft</b><span>#fdf1dc<br>texto 4.54:1</span></div></li>
+      <li><div class="chip" style="background:var(--danger)"></div><div class="meta"><b>--danger</b><span>#b3261e<br>6.54:1</span></div></li>
+      <li><div class="chip" style="background:var(--danger-soft)"></div><div class="meta"><b>--danger-soft</b><span>#fdecea<br>texto 5.72:1</span></div></li>
     </ul>
   </section>
 

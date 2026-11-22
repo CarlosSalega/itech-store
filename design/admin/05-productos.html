@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Productos del panel de iTech Store: la tabla del catálogo con foto, familia, variantes, precio desde, stock, estado de publicación y destacados.">
+<title>Productos · Tarjeta flotante — iTech Store</title>
+<!--
+  Direction 01 · Tarjeta flotante — screen 05 of 7: the catalogue table.
+  The shell is the implemented one (src/features/admin/ui/admin-shell.tsx and admin-nav.tsx):
+  the workspace switcher with its honest sentence, the search button, Productos current, the
+  sub-navigation, the Pedidos badge at 2 and the person at the foot. Only the content area changes.
+  Every row is a fixture from src/features/admin/fixtures/products.ts, in the fixture's own order:
+  14 products, 16 variants, 12 published, 5 with a variant at 2 units or less, 76 units in total.
+  "Precio desde" is the lowest variant price (productPriceFrom); stock is the sum of the variants.
+  The featured mark is a flag the fixture does not carry yet: like `published` it is modelled here
+  for the schema the admin will need, and the table foot explains the mark instead of assuming it.
+  Tokens come from design/system.md; product photos resolve from the repo root, so
+  `pnpm design:photos admin` inlines them into design/admin-photos/.
+-->
+<style>
+  :root{
+    --white:#ffffff; --ink:#171717; --muted:#6e6e73; --hairline:#d2d2d7; --surface:#f5f5f7;
+    --link:#0066cc; --accent:#0071e3; --accent-press:#0062c4;
+    --success:#1d7a3f; --success-soft:#e8f5ec;
+    --warning:#95650a; --warning-soft:#fdf1dc;
+    --danger:#b3261e; --danger-soft:#fdecea;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
+    --s-8:64px; --s-9:88px;
+    --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:28px; --r-pill:980px;
+    --e-hairline:inset 0 0 0 1px var(--hairline);
+    --e-float:0 1px 0 rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+    --e-lift:0 12px 32px rgba(0,0,0,.10);
+    --dur-1:120ms; --dur-2:220ms; --dur-3:420ms; --dur-4:720ms;
+    --ease-std:cubic-bezier(.28,.11,.32,1); --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
+    --font:-apple-system,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+    --t-display-s:clamp(2rem,4.6vw,3.75rem);
+    --t-numeral:clamp(2rem,3.4vw,3.25rem);
+    --t-title:clamp(1.375rem,2.2vw,1.875rem);
+    --t-headline:1.3125rem;
+    --t-body:1.0625rem; --t-body-s:.9375rem; --t-label:.8125rem; --t-caption:.75rem;
+    --side-w:268px;
+    color-scheme:light;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;overflow-x:clip;scrollbar-color:var(--hairline) var(--white)}
+  body{margin:0;background:var(--white);color:var(--ink);font:400 var(--t-body)/1.47 var(--font);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:var(--ink);color:var(--white)}
+  img{max-width:100%;display:block}
+  a{color:var(--link);text-decoration:none}
+  h1,h2{margin:0;font-weight:600;text-wrap:balance;font-optical-sizing:auto}
+  p{margin:0;text-wrap:pretty}
+  ul{margin:0;padding:0;list-style:none}
+  table{border-collapse:collapse}
+  button,select,input{font:inherit;color:inherit}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm)}
+  .is-focused{outline:3px solid var(--accent);outline-offset:3px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;border:0}
+  .skip{position:absolute;left:12px;top:-56px;z-index:60;background:var(--ink);color:var(--white);
+    padding:12px 20px;border-radius:var(--r-pill);min-height:44px;display:inline-flex;
+    align-items:center;transition:top var(--dur-1) var(--ease-std)}
+  .skip:focus{top:12px}
+
+  .ico{display:block;flex:none;width:20px;height:20px;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .ico-18{width:18px;height:18px}
+  .ico-16{width:16px;height:16px}
+  .ico-14{width:14px;height:14px}
+
+  /* ---------- the floating card: the implemented shell ---------- */
+  .side{position:fixed;left:var(--s-4);top:var(--s-4);bottom:var(--s-4);width:var(--side-w);
+    z-index:30;display:flex;flex-direction:column;padding:var(--s-4);background:var(--white);
+    border-radius:var(--r-xl);box-shadow:var(--e-hairline),var(--e-float)}
+  .side-bar{display:flex;flex-direction:column;gap:var(--s-2)}
+  .brandrow{display:flex;align-items:center;gap:var(--s-2)}
+  .brand{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;color:var(--ink);
+    font-size:var(--t-body-s);font-weight:600;letter-spacing:-.012em;white-space:nowrap;
+    padding-right:var(--s-1)}
+  /* the mark is raised in em on purpose: geometry symmetric, perception not */
+  .brand .mark{width:20px;height:20px;flex:none;fill:currentColor;transform:translateY(-.12em)}
+  .workspace{position:relative;margin-inline-start:auto}
+  .ws{display:inline-flex;align-items:center;justify-content:center;width:44px;min-height:44px;
+    border-radius:var(--r-pill);color:var(--muted);cursor:pointer;list-style:none;
+    transition:background var(--dur-1) linear,color var(--dur-1) linear}
+  .ws::-webkit-details-marker{display:none}
+  .ws:hover{background:var(--surface);color:var(--ink)}
+  .ws .ico{transition:transform var(--dur-2) var(--ease-std)}
+  .workspace[open] .ws .ico{transform:rotate(180deg)}
+  .wsPanel{position:absolute;inset-block-start:calc(100% + var(--s-1));inset-inline-end:0;
+    z-index:40;width:216px;padding:var(--s-3);border-radius:var(--r-md);background:var(--white);
+    box-shadow:var(--e-hairline),var(--e-float)}
+  .wsLabel{color:var(--muted);font-size:var(--t-caption);letter-spacing:.015em}
+  .wsName{margin-top:var(--s-1);color:var(--ink);font-size:var(--t-body-s);font-weight:600}
+  .wsNote{margin-top:var(--s-2);color:var(--muted);font-size:var(--t-caption);line-height:1.4}
+  .brandmeta{margin-top:calc(-1 * var(--s-2));padding-left:calc(20px + var(--s-2));
+    font-size:var(--t-caption);letter-spacing:.015em;color:var(--muted)}
+
+  .search{display:flex;align-items:center;gap:var(--s-2);width:100%;min-height:44px;
+    margin-top:var(--s-4);padding:0 var(--s-3);border:0;border-radius:var(--r-md);
+    background:var(--surface);color:var(--ink);cursor:pointer;text-align:left;
+    transition:box-shadow var(--dur-1) linear}
+  .search .ico{color:var(--muted)}
+  .search-label{font-size:var(--t-body-s)}
+  .search kbd{margin-inline-start:auto;font:500 var(--t-caption)/1 var(--mono);color:var(--muted);
+    letter-spacing:.02em;padding:3px 5px;border-radius:var(--r-sm);box-shadow:var(--e-hairline);
+    background:var(--white)}
+  .search:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+
+  .strip{display:flex;flex:1 1 auto;flex-direction:column;min-height:0}
+  .nav{margin-top:var(--s-5);display:grid;gap:2px}
+  .navrow{display:flex;align-items:center}
+  .navitem{display:flex;flex:1 1 auto;align-items:center;gap:var(--s-3);min-height:44px;
+    padding:0 var(--s-3);border-radius:var(--r-pill);color:var(--ink);font-size:var(--t-body-s);
+    transition:background var(--dur-1) linear,color var(--dur-1) linear}
+  .navitem .ico{color:var(--muted)}
+  .navitem:hover{background:var(--surface)}
+  .navitem[aria-current="page"]{background:var(--ink);color:var(--white);font-weight:500}
+  .navitem[aria-current="page"] .ico{color:var(--white)}
+  .badge{margin-inline-start:auto;min-width:20px;height:20px;padding:0 6px;border-radius:var(--r-pill);
+    background:var(--accent);color:var(--white);font-size:var(--t-caption);font-weight:600;
+    line-height:20px;text-align:center;font-variant-numeric:tabular-nums}
+  .subnav{display:grid;gap:2px;margin:2px 0 var(--s-2) 30px;padding-left:var(--s-3);
+    border-left:1px solid var(--hairline)}
+  .subnav a{display:flex;align-items:center;min-height:44px;padding:0 var(--s-3);color:var(--ink);
+    font-size:var(--t-body-s);border-radius:var(--r-sm)}
+  .subnav a:hover{background:var(--surface)}
+  .subcount{margin-inline-start:auto;font-size:var(--t-caption);color:var(--muted);
+    font-variant-numeric:tabular-nums}
+  .subnav a:hover .subcount{color:var(--ink)}
+
+  .side-foot{margin-top:auto;padding-top:var(--s-3);border-top:1px solid var(--hairline)}
+  .session{display:grid;gap:2px}
+  .user{display:flex;align-items:center;gap:var(--s-3);margin-top:var(--s-3);padding-top:var(--s-3);
+    border-top:1px solid var(--hairline);color:var(--ink)}
+  .user:hover .user-name{color:var(--link)}
+  .avatar{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:var(--r-pill);
+    background:var(--surface);box-shadow:var(--e-hairline);font-size:var(--t-caption);
+    font-weight:600;letter-spacing:.02em;color:var(--ink)}
+  .user-text{min-width:0}
+  .user-name{display:block;font-size:var(--t-label);font-weight:600;letter-spacing:-.008em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .user-mail{display:block;font-size:var(--t-caption);color:var(--muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* ---------- the content column ---------- */
+  main{padding:var(--s-6) var(--s-6) 0}
+  .page{display:flex;flex-direction:column;min-height:calc(100vh - var(--s-6));max-width:1180px}
+  @media (min-width:960px){
+    main{margin-left:calc(var(--side-w) + var(--s-4) + var(--s-6));padding-right:var(--s-7)}
+  }
+
+  .page-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--s-4) var(--s-6)}
+  .page-head h1{font-size:var(--t-title);line-height:1.08;letter-spacing:-.022em}
+  .deck{margin-top:var(--s-2);max-width:70ch;color:var(--muted);font-size:var(--t-body-s)}
+
+  /* ---------- toolbar: search, two filters, one primary action ---------- */
+  .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-3);margin-top:var(--s-5)}
+  .search-field{display:flex;align-items:center;gap:var(--s-2);flex:1 1 240px;min-width:0;
+    min-height:44px;padding:0 var(--s-3);border-radius:var(--r-md);background:var(--white);
+    box-shadow:var(--e-hairline)}
+  .search-field .ico{color:var(--muted)}
+  .search-field input{flex:1 1 auto;min-width:0;border:0;background:none;outline:none;
+    font:400 var(--t-body-s)/1.4 var(--font)}
+  .search-field input::placeholder{color:var(--muted)}
+  .search-field:focus-within{outline:3px solid var(--accent);outline-offset:2px}
+  .filter{position:relative;display:inline-flex;align-items:center;gap:var(--s-2)}
+  .filter label{font-size:var(--t-label);letter-spacing:.01em;color:var(--muted);white-space:nowrap}
+  .filter select{appearance:none;min-height:44px;padding:0 var(--s-6) 0 var(--s-4);border:0;
+    border-radius:var(--r-pill);background:var(--white);box-shadow:var(--e-hairline);
+    color:var(--ink);font:500 var(--t-body-s)/1 var(--font);cursor:pointer;
+    transition:box-shadow var(--dur-1) linear}
+  .filter select:hover{box-shadow:inset 0 0 0 1px var(--muted)}
+  .filter .ico{position:absolute;right:var(--s-3);color:var(--muted);pointer-events:none;
+    width:14px;height:14px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);
+    min-height:44px;padding:0 var(--s-5);border:0;border-radius:var(--r-pill);
+    background:var(--accent);color:var(--white);font:500 var(--t-body-s)/1 var(--font);
+    cursor:pointer;transition:background var(--dur-1) linear,transform var(--dur-1) var(--ease-std)}
+  .btn:hover{background:var(--accent-press)}
+  .btn:active{transform:scale(.97)}
+  .toolbar .btn{margin-inline-start:auto}
+
+  /* ---------- the table: one hairline per row, numerals aligned ---------- */
+  .table-wrap{margin-top:var(--s-3)}
+  .products{width:100%;font-size:var(--t-body-s)}
+  .products th{text-align:left;font-size:var(--t-caption);letter-spacing:.015em;font-weight:500;
+    color:var(--muted);padding:0 var(--s-3) 6px 0;border-bottom:1px solid var(--hairline);
+    white-space:nowrap}
+  .products th:last-child{padding-right:0}
+  .products td{padding:4px var(--s-3) 4px 0;border-bottom:1px solid var(--hairline);
+    vertical-align:middle}
+  .products td:last-child{padding-right:0}
+  .products tbody tr:hover{background:var(--surface)}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .products th.num{padding-right:var(--s-5)}
+  .products td.num{padding-right:var(--s-5)}
+  .cell-pad{padding-left:var(--s-1)}
+  .thumb{width:36px;height:36px;object-fit:contain;mix-blend-mode:multiply}
+  .product-cell{display:flex;align-items:center;gap:var(--s-3);min-width:0}
+  .product-text{min-width:0}
+  .p-name{display:block;font-size:var(--t-label);font-weight:500;line-height:1.3;
+    letter-spacing:-.008em;color:var(--ink);text-wrap:pretty}
+  .p-name:hover{color:var(--link)}
+  .p-star{display:inline-block;vertical-align:-2px;margin-right:5px;color:var(--ink)}
+  .p-meta{display:block;margin-top:2px;font-size:var(--t-caption);line-height:1.3;color:var(--muted)}
+  .variants{font-size:var(--t-label);color:var(--ink);white-space:nowrap;line-height:1.3;
+    font-variant-numeric:tabular-nums}
+  .price{font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.3}
+  .cur{font-size:.82em;color:var(--muted);margin-right:1px}
+  .stock{font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.3}
+  .stock-note{display:block;font-size:var(--t-caption);font-weight:400;line-height:1.3;color:var(--warning)}
+  .chip{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 10px;
+    border-radius:var(--r-pill);font-size:var(--t-caption);letter-spacing:.01em;font-weight:500;
+    white-space:nowrap;color:var(--ink);box-shadow:var(--e-hairline);background:var(--white)}
+  .chip .ico{width:12px;height:12px;stroke-width:2}
+  .chip--pub{background:var(--success-soft);box-shadow:none;color:var(--success)}
+  .chip--off{color:var(--muted);background:none;box-shadow:none;
+    outline:1px dashed var(--hairline);outline-offset:-1px}
+  .row-actions{display:flex;align-items:center;justify-content:flex-end;gap:var(--s-2)}
+  .row-action{display:inline-flex;align-items:center;min-height:44px;font-size:var(--t-label);
+    font-weight:500;color:var(--link);white-space:nowrap}
+  .row-action .ico{width:14px;height:14px;transition:transform var(--dur-2) var(--ease-std)}
+  .row-action--icon{width:44px;justify-content:center}
+  .row-action:hover .ico{transform:translateX(2px)}
+  .table-foot{margin-top:var(--s-2);display:flex;flex-wrap:wrap;gap:var(--s-1) var(--s-4);
+    justify-content:space-between;font-size:var(--t-caption);letter-spacing:.015em;
+    color:var(--muted);font-variant-numeric:tabular-nums}
+  .table-foot .legend{max-width:52ch}
+
+  /* ---------- page foot ---------- */
+  .page-foot{margin-top:auto;padding:var(--s-6) 0 var(--s-6)}
+  .foot-rule{display:block;height:1px;background:var(--hairline);margin-bottom:var(--s-4)}
+  .notice{font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;color:var(--muted);
+    max-width:80ch}
+  .routes{margin-top:var(--s-2);font:400 var(--t-caption)/1.5 var(--mono);color:var(--muted);
+    word-break:break-word}
+
+  /* ---------- below 960px the card becomes a bar plus a strip ---------- */
+  @media (max-width:959px){
+    .side{position:sticky;top:0;z-index:30;left:auto;bottom:auto;width:auto;margin:0;
+      border-radius:0;padding:var(--s-2) var(--s-4) 0;box-shadow:0 1px 0 var(--hairline);
+      background:rgb(255 255 255 / 82%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+    .side-bar{flex-direction:row;align-items:center;gap:var(--s-2)}
+    .brandmeta{display:none}
+    .search{margin-top:0;width:44px;min-width:44px;margin-inline-start:auto;padding:0;
+      justify-content:center;background:none;box-shadow:none}
+    .search .search-label,.search kbd{display:none}
+    .search:hover{background:var(--surface);box-shadow:none}
+    .strip{flex-direction:row;flex-wrap:nowrap;align-items:center;gap:var(--s-2);
+      margin-inline:calc(-1 * var(--s-4));padding:var(--s-1) var(--s-4) var(--s-2);
+      overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+    .strip::-webkit-scrollbar{display:none}
+    .nav,.navrow,.subnav,.subnav li,.side-foot,.session{display:contents}
+    .navitem{flex:none;gap:var(--s-2);padding:0 var(--s-3);border-radius:var(--r-pill);
+      background:var(--white);box-shadow:var(--e-hairline);font-size:var(--t-label);
+      white-space:nowrap}
+    .navitem[aria-current="page"]{box-shadow:none}
+    .navitem .ico{width:16px;height:16px}
+    .badge{margin-inline-start:0}
+    .subnav a{padding:0 var(--s-3);border-radius:var(--r-pill);background:var(--white);
+      box-shadow:var(--e-hairline);font-size:var(--t-label);white-space:nowrap}
+    .subcount{display:none}
+    .user{margin:0;padding:0 0 0 var(--s-2);border:0;flex:none}
+    .user-mail{display:none}
+    .user-name{max-width:11ch}
+    main{padding:var(--s-5) var(--s-4) 0}
+    .page{min-height:auto}
+    .toolbar{margin-top:var(--s-5)}
+    .toolbar .btn{margin-inline-start:0;flex:1 1 100%}
+    .page-foot{padding-top:var(--s-6)}
+  }
+
+  @media (max-width:719px){
+    .filter{display:grid;gap:6px;flex:1 1 0;min-width:0}
+    .filter select{width:100%}
+    .filter .ico{inset-block-end:15px}
+    /* each product becomes one block: photo, name and state on top, then
+       variants, price, stock and the row's action. No sideways scroll. */
+    .products,.products tbody{display:block}
+    .products colgroup{display:none}
+    .products thead{display:none}
+    .products tr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;
+      column-gap:var(--s-2);row-gap:var(--s-2);padding:var(--s-3) 0;
+      border-bottom:1px solid var(--hairline)}
+    .products td{display:block;padding:0;border:0}
+    .products td:nth-child(1){grid-column:1;grid-row:1;min-width:0}
+    .products td:nth-child(2){grid-column:1;grid-row:2;justify-self:start}
+    .products td:nth-child(3){grid-column:2;grid-row:2;justify-self:end;padding-left:var(--s-3)}
+    .products td:nth-child(4){grid-column:3;grid-row:2;justify-self:end;padding-left:var(--s-3)}
+    .products td:nth-child(5){grid-column:2;grid-row:1;justify-self:end;align-self:center;
+      padding-left:var(--s-2)}
+    .products td:nth-child(6){grid-column:3;grid-row:1;justify-self:end;align-self:center}
+    .thumb{width:44px;height:44px}
+    /* the name is already the edit link, so the row keeps one 44px target here */
+    .row-action:not(.row-action--icon){display:none}
+    .table-foot{flex-direction:column;gap:var(--s-2)}
+  }
+  @media (max-width:479px){
+    .filter{flex:1 1 100%}
+    .page-head h1{font-size:var(--t-headline)}
+    /* the chip keeps its word but gives up its glyph */
+    .chip{padding:0 8px}
+    .chip .ico{display:none}
+    /* at 320px the name gets the whole first line instead of sharing it with the chip */
+    .products tr{grid-template-rows:auto auto auto}
+    .products td:nth-child(1){grid-column:1 / -1;grid-row:1}
+    .products td:nth-child(5){grid-column:1;grid-row:2;justify-self:start}
+    .products td:nth-child(3){grid-column:2;grid-row:2}
+    .products td:nth-child(4){grid-column:3;grid-row:2}
+    .products td:nth-child(2){grid-column:1;grid-row:3;justify-self:start}
+    .products td:nth-child(6){grid-column:2 / -1;grid-row:3;justify-self:end}
+    .thumb{width:40px;height:40px}
+  }
+
+  /* ---------- one authored moment ---------- */
+  @keyframes rise{from{opacity:0;transform:translateY(16px);filter:blur(6px)}
+    to{opacity:1;transform:none;filter:blur(0)}}
+  .enter{animation:rise var(--dur-4) var(--ease-out-expo) both;
+    animation-delay:calc(var(--i,0) * 80ms)}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition-duration:0ms!important}
+    .enter{opacity:1;transform:none;filter:none}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#admin-main">Saltar al contenido</a>
+
+<header class="side">
+  <div class="side-bar">
+    <div class="brandrow">
+      <a class="brand" href="/admin">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09 22C7.79 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+        <span>iTech Store</span>
+      </a>
+      <details class="workspace">
+        <summary class="ws">
+          <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M8 10.5 12 14.5 16 10.5"/>
+          </svg>
+          <span class="sr-only">Cambiar de espacio de trabajo</span>
+        </summary>
+        <div class="wsPanel">
+          <p class="wsLabel">Espacio de trabajo</p>
+          <p class="wsName">iTech Store</p>
+          <p class="wsNote">Esta demo tiene un solo espacio de trabajo.</p>
+        </div>
+      </details>
+    </div>
+    <p class="brandmeta">Panel de administración</p>
+
+    <button class="search" type="button" aria-keyshortcuts="Meta+K Control+K">
+      <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/>
+      </svg>
+      <span class="search-label">Buscar en el panel</span>
+      <kbd>⌘K</kbd>
+    </button>
+  </div>
+
+  <div class="strip">
+    <nav class="nav" aria-label="Secciones del panel">
+      <div class="navrow">
+        <a class="navitem" href="/admin">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 4.5h6.5V11H4z"/><path d="M13.5 4.5H20V8.5h-6.5z"/>
+            <path d="M13.5 11H20v8.5h-6.5z"/><path d="M4 13.5h6.5V20H4z"/>
+          </svg>
+          Panel
+        </a>
+      </div>
+      <div class="navrow">
+        <a class="navitem" href="/admin/productos" aria-current="page">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3.2 20.5 7.6v8.8L12 20.8 3.5 16.4V7.6L12 3.2z"/>
+            <path d="M3.5 7.6 12 12l8.5-4.4"/><path d="M12 12v8.8"/>
+          </svg>
+          Productos
+        </a>
+      </div>
+      <ul class="subnav" id="sub-productos">
+        <li><a href="/admin/productos">Todos <span class="subcount">14</span></a></li>
+        <li><a href="/admin/productos/nuevo">Nuevo producto</a></li>
+      </ul>
+      <div class="navrow">
+        <a class="navitem" href="/admin/pedidos">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 3.5h12v17l-3-1.8-3 1.8-3-1.8-3 1.8v-17z"/>
+            <path d="M9 8h6"/><path d="M9 11.5h6"/>
+          </svg>
+          Pedidos
+          <span class="badge" aria-hidden="true">2</span>
+          <span class="sr-only">, 2 pedidos a preparar</span>
+        </a>
+      </div>
+      <div class="navrow">
+        <a class="navitem" href="/admin/ajustes">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 8h5"/><path d="M13 8h7"/><path d="M4 16h7"/><path d="M15 16h5"/>
+            <circle cx="11" cy="8" r="2"/><circle cx="13" cy="16" r="2"/>
+          </svg>
+          Ajustes
+        </a>
+      </div>
+    </nav>
+
+    <div class="side-foot">
+      <nav class="session" aria-label="Sesión">
+        <a class="navitem" href="/catalogo">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M9 6.5 14.5 12 9 17.5"/>
+          </svg>
+          Ver la tienda
+        </a>
+        <a class="navitem" href="/login">
+          <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M15 4.5h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-3"/>
+            <path d="M9.5 12H19"/><path d="M16 8.5 19.5 12 16 15.5"/>
+          </svg>
+          Cerrar sesión
+        </a>
+      </nav>
+
+      <div class="user">
+        <span class="avatar" aria-hidden="true">SR</span>
+        <span class="user-text">
+          <span class="user-name">Sofía Ramos</span>
+          <span class="user-mail">sofia.ramos@example.com</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="admin-main">
+  <div class="page">
+    <div class="page-head enter">
+      <div>
+        <h1>Productos</h1>
+        <p class="deck">El catálogo completo, con las variantes, los precios y el stock de cada producto.</p>
+      </div>
+    </div>
+
+    <div class="toolbar enter" style="--i:1">
+      <div class="search-field">
+        <svg class="ico ico-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/>
+        </svg>
+        <label class="sr-only" for="q">Buscar productos por nombre o SKU</label>
+        <input id="q" type="search" placeholder="Buscar por nombre o SKU">
+      </div>
+
+      <div class="filter">
+        <label for="familia">Familia</label>
+        <select id="familia">
+          <option selected>Todas las familias</option>
+          <option>Mac</option>
+          <option>iPad</option>
+          <option>Watch</option>
+          <option>AirPods</option>
+          <option>Accesorios</option>
+        </select>
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M8 10.5 12 14.5 16 10.5"/>
+        </svg>
+      </div>
+
+      <div class="filter">
+        <label for="estado">Estado</label>
+        <select id="estado">
+          <option selected>Todos</option>
+          <option>Publicados (12)</option>
+          <option>Sin publicar (2)</option>
+          <option>Stock bajo (5)</option>
+        </select>
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M8 10.5 12 14.5 16 10.5"/>
+        </svg>
+      </div>
+
+      <a class="btn" href="/admin/productos/nuevo">Nuevo producto</a>
+    </div>
+
+    <div class="table-wrap enter" style="--i:2">
+      <table class="products">
+        <caption class="sr-only">Los 14 productos del catálogo, con su familia, cantidad de variantes, precio más bajo, stock total, estado de publicación y acciones.</caption>
+        <colgroup>
+          <col>
+          <col style="width:96px">
+          <col style="width:148px">
+          <col style="width:104px">
+          <col style="width:136px">
+          <col style="width:124px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">Producto</th>
+            <th scope="col">Variantes</th>
+            <th scope="col" class="num">Precio desde</th>
+            <th scope="col" class="num">Stock</th>
+            <th scope="col">Estado</th>
+            <th scope="col"><span class="sr-only">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/airpods/airpods-pro-3-1.webp" width="36" height="36" alt="AirPods Pro 3 con su estuche de carga, de frente">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/airpods-pro-3">Airpods Pro 3</a>
+                  <span class="p-meta">AirPods</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 250.000</span></td>
+            <td class="num"><span class="stock">1 u.<span class="stock-note">stock bajo</span></span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/airpods-pro-3">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/airpods-pro-3" aria-label="Ver Airpods Pro 3 en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp" width="36" height="36" alt="Apple iPad 11 pulgadas A16 en azul, de frente">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-ipad-11-a16-chip-wi-fi">Apple iPad 11&quot; A16 Chip WI-FI</a>
+                  <span class="p-meta">iPad</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">3 variantes</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 900.000</span></td>
+            <td class="num"><span class="stock">14 u.<span class="stock-note">stock bajo</span></span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-ipad-11-a16-chip-wi-fi">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-ipad-11-a16-chip-wi-fi" aria-label="Ver Apple iPad 11 pulgadas A16 Chip WI-FI en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/accessory/apple-homepod-mini-2da-generacion-1.webp" width="36" height="36" alt="Apple HomePod mini de segunda generación, de frente">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-homepod-mini-2da-generacion">Apple HomePod Mini (2da Generación)</a>
+                  <span class="p-meta">Accesorios</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 30.000</span></td>
+            <td class="num"><span class="stock">2 u.<span class="stock-note">stock bajo</span></span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-homepod-mini-2da-generacion">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-homepod-mini-2da-generacion" aria-label="Ver Apple HomePod Mini (2da Generación) en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/accessory/apple-tv-4k-2022-1.webp" width="36" height="36" alt="Apple TV 4K de 2022 con su control remoto, de frente">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-tv-4k-2022">Apple TV 4K (2022)</a>
+                  <span class="p-meta">Accesorios</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 30.000</span></td>
+            <td class="num"><span class="stock">1 u.<span class="stock-note">stock bajo</span></span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-tv-4k-2022">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-tv-4k-2022" aria-label="Ver Apple TV 4K (2022) en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/accessory/pencil-pro-1.webp" width="36" height="36" alt="Apple Pencil Pro, foto del catálogo">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/pencil-pro">Apple Pencil Pro</a>
+                  <span class="p-meta">Accesorios</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 30.000</span></td>
+            <td class="num"><span class="stock">2 u.<span class="stock-note">stock bajo</span></span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/pencil-pro">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/pencil-pro" aria-label="Ver Apple Pencil Pro en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/mac/apple-13-macbook-air-chip-m5-1.webp" width="36" height="36" alt="Apple MacBook Air de 13 pulgadas con chip M5, abierta de frente">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-13-macbook-air-chip-m5">Apple 13&quot; MacBook Air - Chip M5</a>
+                  <span class="p-meta">Mac</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 2.000.000</span></td>
+            <td class="num"><span class="stock">6 u.</span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-13-macbook-air-chip-m5">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-13-macbook-air-chip-m5" aria-label="Ver Apple 13 pulgadas MacBook Air Chip M5 en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/mac/apple-15-macbook-air-chip-m5-1.webp" width="36" height="36" alt="Apple MacBook Air de 15 pulgadas con chip M5, abierta de frente">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-15-macbook-air-chip-m5">
+                    <svg class="ico ico-14 p-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3.7 2.55 5.17 5.7.83-4.12 4.02.97 5.68L12 16.72l-5.1 2.68.97-5.68L3.75 9.7l5.7-.83z"/></svg>Apple 15&quot; MacBook Air - Chip M5<span class="sr-only">, destacado</span>
+                  </a>
+                  <span class="p-meta">Mac</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 2.000.000</span></td>
+            <td class="num"><span class="stock">8 u.</span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-15-macbook-air-chip-m5">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-15-macbook-air-chip-m5" aria-label="Ver Apple 15 pulgadas MacBook Air Chip M5 en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/watch/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-1.webp" width="36" height="36" alt="Apple Watch Series 11 con caja de aluminio negro y correa deportiva negra">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra">Apple Watch Series 11 - Caja Aluminio Negro - Correa Deportiva Negra</a>
+                  <span class="p-meta">Watch</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 600.000</span></td>
+            <td class="num"><span class="stock">3 u.</span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra" aria-label="Ver Apple Watch Series 11 Caja Aluminio Negro Correa Deportiva Negra en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/watch/watch-se-3-40mm-1.webp" width="36" height="36" alt="Apple Watch SE 3 de 40 milímetros, de frente">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/watch-se-3-40mm">Apple Watch SE 3 40mm</a>
+                  <span class="p-meta">Watch</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 600.000</span></td>
+            <td class="num"><span class="stock">8 u.</span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/watch-se-3-40mm">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/watch-se-3-40mm" aria-label="Ver Apple Watch SE 3 40mm en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/mac/apple-imac-24-m4-chip-azul-1.webp" width="36" height="36" alt="Apple iMac de 24 pulgadas con chip M4 en azul, foto del catálogo">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-imac-24-m4-chip-azul">
+                    <svg class="ico ico-14 p-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3.7 2.55 5.17 5.7.83-4.12 4.02.97 5.68L12 16.72l-5.1 2.68.97-5.68L3.75 9.7l5.7-.83z"/></svg>Apple iMac 24&quot; M4 Chip Azul<span class="sr-only">, destacado</span>
+                  </a>
+                  <span class="p-meta">Mac</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 2.000.000</span></td>
+            <td class="num"><span class="stock">5 u.</span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-imac-24-m4-chip-azul">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-imac-24-m4-chip-azul" aria-label="Ver Apple iMac 24 pulgadas M4 Chip Azul en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/airpods/apple-airpods-5th-generacion-con-cancelacion-de-ruido-1.webp" width="36" height="36" alt="Apple AirPods de quinta generación con cancelación de ruido, foto del catálogo">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-airpods-5th-generacion-con-cancelacion-de-ruido">Apple Airpods 5th Generación con cancelación de ruido</a>
+                  <span class="p-meta">AirPods</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 250.000</span></td>
+            <td class="num"><span class="stock">8 u.</span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-airpods-5th-generacion-con-cancelacion-de-ruido">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-airpods-5th-generacion-con-cancelacion-de-ruido" aria-label="Ver Apple Airpods 5th Generación con cancelación de ruido en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/mac/apple-mac-mini-chip-m4-pro-1.webp" width="36" height="36" alt="Apple Mac Mini con chip M4 Pro, foto del catálogo">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-mac-mini-chip-m4-pro">Apple Mac Mini Chip M4 Pro</a>
+                  <span class="p-meta">Mac</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 2.000.000</span></td>
+            <td class="num"><span class="stock">8 u.</span></td>
+            <td><span class="chip chip--pub"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 6.6"/></svg>Publicado</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-mac-mini-chip-m4-pro">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-mac-mini-chip-m4-pro" aria-label="Ver Apple Mac Mini Chip M4 Pro en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/ipad/apple-11-ipad-air-m4-space-gray-1.webp" width="36" height="36" alt="Apple iPad Air de 11 pulgadas con chip M4 en gris espacial, foto del catálogo">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-11-ipad-air-m4-space-gray">Apple 11&quot; iPad Air M4 Space Gray</a>
+                  <span class="p-meta">iPad</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 900.000</span></td>
+            <td class="num"><span class="stock">5 u.</span></td>
+            <td><span class="chip chip--off">Sin publicar</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-11-ipad-air-m4-space-gray">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-11-ipad-air-m4-space-gray" aria-label="Ver Apple 11 pulgadas iPad Air M4 Space Gray en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-pad">
+              <span class="product-cell">
+                <img class="thumb" src="../../public/products/watch/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp" width="36" height="36" alt="Apple Watch Ultra 3 de 49 mm con caja de titanio negro, foto del catálogo">
+                <span class="product-text">
+                  <a class="p-name" href="/admin/productos/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black">Apple Watch Ultra 3 - 49mm GPS-CELL - Caja Titanio Black - Correa Ocean Black</a>
+                  <span class="p-meta">Watch</span>
+                </span>
+              </span>
+            </td>
+            <td><span class="variants">1 variante</span></td>
+            <td class="num"><span class="price"><span class="cur">$</span> 600.000</span></td>
+            <td class="num"><span class="stock">5 u.</span></td>
+            <td><span class="chip chip--off">Sin publicar</span></td>
+            <td>
+              <span class="row-actions">
+                <a class="row-action" href="/admin/productos/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black">Editar</a>
+                <a class="row-action row-action--icon" href="/catalogo/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black" aria-label="Ver Apple Watch Ultra 3 49mm GPS-CELL Caja Titanio Black Correa Ocean Black en la tienda">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 14.5 12 9 17.5"/></svg>
+                </a>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="table-foot">
+        <p>Mostrando los 14 productos del catálogo: 16 variantes, 12 publicados y 5 con stock bajo.</p>
+        <p class="legend">La estrella marca los dos productos destacados en la tienda.</p>
+      </div>
+    </div>
+
+    <footer class="page-foot">
+      <span class="foot-rule" aria-hidden="true"></span>
+      <p class="notice">Los datos de este panel son de ejemplo: los 14 productos y las 16 variantes del
+        catálogo de la demo. Los precios son de muestra y no son precios de venta.</p>
+      <p class="routes">/admin/productos · /admin/productos/nuevo · /admin/productos/[slug]</p>
+    </footer>
+  </div>
+</main>
+
+</body>
+</html>

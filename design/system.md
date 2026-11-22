@@ -79,6 +79,12 @@ Neutral ramp only. No hue is spent on decoration; the single blue is interaction
 | `--hairline-dark` | `#262628` | proposed | 1px rules and tile edges on dark |
 | `--link` | `#0066cc` | proposed | Text links on white and `--surface` (5.0:1) |
 | `--accent` | `#0071e3` | proposed | Primary button fill, focus ring, selected control (white text 4.7:1) |
+| `--success` | `#1d7a3f` | proposed | A good state: a published product, a delta that went up, a delivered order (5.4:1 on white, 4.9:1 on `--surface`) |
+| `--success-soft` | `#e8f5ec` | proposed | Ground behind a `--success` label or icon (4.8:1 with `--success`) |
+| `--warning` | `#95650a` | proposed | Attention, not error: low stock, a variant at its last units (5.1:1 on white, 4.7:1 on `--surface`) |
+| `--warning-soft` | `#fdf1dc` | proposed | Ground behind a `--warning` label or icon (4.5:1 with `--warning`, the tightest pair in the system) |
+| `--danger` | `#b3261e` | proposed | Something is wrong or irreversible: a rejected field, a cancelled order, a destructive action (6.5:1 on white) |
+| `--danger-soft` | `#fdecea` | proposed | Ground behind a `--danger` label or icon (5.7:1 with `--danger`) |
 | `--accent-press` | `#0062c4` | proposed | Primary button pressed state |
 
 Product photography in this catalog is white-background webp with no alpha. Light grounds put the
@@ -100,6 +106,20 @@ reserved for fills, focus rings and the selected control — `--accent` on `--ca
 body-size text. Never `--muted` on `--canvas-dark` (use `--muted-dark`, 7.7:1). Body text is always
 `--ink` or `--ink-dark`, never a mid grey. Colour never carries meaning alone: an unavailable family
 also changes wording, not only contrast.
+
+Rules for the semantic layer:
+
+- `--success`, `--warning` and `--danger` describe a **state**, never a decoration. Green means a
+  good state, amber means attention, red means something is wrong or cannot be undone. There is no
+  fourth colour: a neutral fact is `--muted`, and a neutral ground is `--surface`.
+- Red is not a warning. A product about to run out is amber; a product the catalogue no longer sells,
+  a cancelled order and a rejected field are red. If a chip could be both, it is amber until the
+  state is terminal.
+- Colour never carries the meaning alone. Every coloured icon keeps its shape and its word, or a
+  visually hidden one: the delta arrow keeps its sign and its base, the published check keeps
+  "Publicado", the low-stock mark keeps "sin capacidad" or the unit count.
+- The semantic colours belong to the private panel and to form validation. The public catalogue stays
+  monochrome over `--ink` and `--accent`: a shop window does not blink.
 
 ## Typography
 

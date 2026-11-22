@@ -1,6 +1,6 @@
 {
 	"title": "Panel de administración",
-	"brief": "El armazón del espacio privado de iTech Store y el tablero adentro, en tres direcciones que difieren en estructura: tarjeta flotante, riel con columna y panel partido. Los números, los pedidos y las fotos son los del catálogo y los de la demo; la navegación lleva las siete pantallas y adelanta los subdestinos de productos y pedidos.",
+	"brief": "El armazón del espacio privado de iTech Store y el tablero adentro, en tres direcciones que difieren en estructura: tarjeta flotante, riel con columna y panel partido. Los números, los pedidos y las fotos son los del catálogo y los de la demo; la navegación lleva las siete pantallas y adelanta los subdestinos de productos y pedidos. La segunda entrega de este diseño (T3b) suma las seis pantallas que faltan en la misma dirección: el ingreso fuera del armazón, el catálogo con sus catorce productos, el formulario de alta, la edición de un producto, la bandeja de pedidos con su estado editable y el estado vacío, y los ajustes con los canales sin publicar, la regla de envío y la biblioteca de imágenes.",
 	"feature": "odd/tasks/demo-flows.md",
 	"artboards": [
 		{
@@ -24,6 +24,54 @@
 			"title": "Panel partido",
 			"tradeoff": "Lugar para muchas secciones y navegación profunda: un riel de secciones y un panel que guarda los ítems de la sección elegida, con el tablero en un área ancha. Cuesta tres columnas de chrome para siete pantallas, y en el tablero el panel queda medio vacío; abajo de 1100px las dos columnas se pliegan en dos tiras.",
 			"signature": "Las tres columnas: riel de secciones, panel con los ítems de la sección y el tablero ancho, cada uno en su propio tono.",
+			"width": 1440,
+			"height": 1000
+		},
+		{
+			"file": "04-login.html",
+			"title": "Ingreso",
+			"tradeoff": "La tarjeta de la shell sola en el medio de la página: la pantalla privada más angosta y la única que no muestra la navegación. Cuesta el contexto del panel —no hay destinos ni persona al pie— y por eso el aviso de la demo vive en la misma tarjeta, debajo del botón.",
+			"signature": "El ingreso como la tarjeta flotante antes de que exista la navegación: la misma superficie elevada, ahora vacía salvo el formulario.",
+			"width": 1440,
+			"height": 1000
+		},
+		{
+			"file": "05-productos.html",
+			"title": "Productos",
+			"tradeoff": "El catálogo entero en una pantalla: las catorce filas con foto, familia, variantes, precio desde, stock y estado, y los filtros arriba. Cuesta densidad —las filas bajan a 44px para que el pie con los conteos entre en 1000px— y que las acciones por fila se queden en editar cuando la pantalla se angosta.",
+			"signature": "Una fila por producto: la foto de 36px, la familia debajo del nombre, los números alineados a la derecha y la estrella del destacado pegada al nombre.",
+			"width": 1440,
+			"height": 1000
+		},
+		{
+			"file": "06-producto-nuevo.html",
+			"title": "Nuevo producto",
+			"tradeoff": "Un formulario largo con la barra de acciones pegada abajo: los datos y las variantes a la izquierda, las fotos y la publicación a la derecha. Cuesta que el guardado viva fuera del formulario y que, en pantallas bajas, la barra tape la última variante mientras se completa.",
+			"signature": "Los campos que se arman solos: el slug, cada SKU y la portada aparecen como consecuencia del nombre y de la capacidad.",
+			"width": 1440,
+			"height": 1000
+		},
+		{
+			"file": "07-producto-detalle.html",
+			"title": "Producto",
+			"tradeoff": "Editar en el lugar: la tabla de variantes se vuelve formulario en su propia fila, las fotos se ordenan como lista y el borrado abre su confirmación en la ficha. Cuesta densidad —la ficha angosta compite con la tabla— y que la acción destructiva conviva con la edición en la misma pantalla.",
+			"signature": "La fila que se vuelve formulario: la misma tabla, el mismo ancho de columna, los valores reemplazados por campos sin mover una fila.",
+			"width": 1440,
+			"height": 1000
+		},
+		{
+			"file": "08-pedidos.html",
+			"title": "Pedidos",
+			"tradeoff": "La bandeja densa con el estado editable en cada fila y el detalle abierto en el lugar; los conteos viven en los chips para no repetir números. Cuesta jerarquía —seis filtros y una búsqueda comparten una fila— y el pedido abierto empuja la lista, así que el estado vacío sólo entra al final del pliegue.",
+			"signature": "El pedido que se abre adentro de la tabla: cuatro líneas en dos columnas y el total al costado, sin salir de la bandeja.",
+			"width": 1440,
+			"height": 1000
+		},
+		{
+			"file": "09-ajustes.html",
+			"title": "Ajustes",
+			"tradeoff": "Canales y envío arriba, biblioteca abajo: primero las reglas y después las fotos, con el canal abierto mostrando cómo se activa. Cuesta que diez imágenes pidan dos filas —para que la reserva y la subida entren en el mismo vistazo— y que la nota de canales repita en una línea lo que cada canal ya dice.",
+			"signature": "El canal que dice que no: la nota honesta y los pasos para activarlo en el mismo lugar donde faltaría el número.",
 			"width": 1440,
 			"height": 1000
 		}
