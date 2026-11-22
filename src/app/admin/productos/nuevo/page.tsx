@@ -1,12 +1,4 @@
-import type { Metadata } from "next";
-
 import { AdminPlaceholder } from "@/features/admin/ui/placeholder";
-
-export const metadata: Metadata = {
-	title: "Nuevo producto — iTech Store",
-	description: "La ficha para cargar un producto del catálogo de iTech Store.",
-	robots: { index: false, follow: false },
-};
 
 export default function AdminNuevoProductoPage() {
 	return (
