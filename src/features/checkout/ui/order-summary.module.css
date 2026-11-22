@@ -1,0 +1,136 @@
+.aside {
+	padding: var(--s-4);
+	border-radius: var(--r-lg);
+	background: var(--surface);
+}
+
+@media (min-width: 1000px) {
+	.aside {
+		position: sticky;
+		top: calc(var(--s-3) + 64px + var(--s-4));
+		padding: var(--s-5);
+	}
+}
+
+.head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--s-3);
+}
+
+.title {
+	font-size: var(--t-headline);
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: -0.012em;
+}
+
+.count {
+	color: var(--muted);
+	font-size: var(--t-label);
+	letter-spacing: 0.01em;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.lines {
+	margin-top: var(--s-4);
+}
+
+.line {
+	display: grid;
+	grid-template-columns: 48px minmax(0, 1fr) auto;
+	gap: var(--s-3);
+	align-items: start;
+	padding: var(--s-3) 0;
+	border-top: 1px solid var(--hairline);
+}
+
+.line:first-child {
+	border-top: 0;
+}
+
+.media {
+	margin: 0;
+}
+
+.media img {
+	width: 48px;
+	height: 48px;
+	object-fit: contain;
+	mix-blend-mode: multiply;
+}
+
+.name {
+	display: block;
+	color: var(--ink);
+	font-size: var(--t-label);
+	font-weight: 500;
+	line-height: 1.3;
+	letter-spacing: 0.01em;
+}
+
+.context {
+	display: block;
+	margin-top: 2px;
+	color: var(--muted);
+	font-size: var(--t-caption);
+	letter-spacing: 0.015em;
+}
+
+.amount {
+	font-size: var(--t-label);
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.totals {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--s-3);
+	margin-top: var(--s-4);
+	padding-top: var(--s-4);
+	border-top: 1px solid var(--hairline);
+}
+
+.totals dt {
+	color: var(--muted);
+	font-size: var(--t-body-s);
+}
+
+.totals dd {
+	font-size: var(--t-title);
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: -0.022em;
+	font-variant-numeric: tabular-nums;
+}
+
+.edit {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 44px;
+	margin-top: var(--s-2);
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--link);
+	font: inherit;
+	font-size: var(--t-body-s);
+	font-weight: 500;
+	cursor: pointer;
+}
+
+.editIcon {
+	width: 16px;
+	height: 16px;
+	transition: transform var(--dur-2) var(--ease-std);
+}
+
+.edit:hover .editIcon {
+	transform: translateX(2px);
+}
