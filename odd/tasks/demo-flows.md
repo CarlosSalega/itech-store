@@ -26,7 +26,7 @@ S9 — Copy is Argentine Spanish with voseo, quoted verbatim in the specs below 
 
 - T1 — Artboards for the visitor checkout: `design/checkout/`, three directions for the flow datos → pago → confirmación. Specs: S3, S5, S6, S7, S9.
 - T2 — Implement the chosen direction, `design/checkout/02-wizard.html` (`Tres pasos`): the visitor flow with its three steps, fixture orders behind a repository module, and the confirmation receipt. Commits: `eda84a8 feat(checkout): add the fixture-backed three-step checkout` and `017c132 refactor(cart): drop the placeholder summary the checkout replaces` — done. Specs: S2, S3, S6, S7, S8, S9.
-- T3 — Artboards for the administrator: the seven screens and the shell that holds them. Split in two: T3a the shell over the dashboard in three directions (the owner picks), T3b the remaining six screens in the chosen direction. Specs: S4, S5, S7, S9.
+- T3 — Artboards for the administrator: the seven screens and the shell that holds them. Split in two: T3a the shell over the dashboard in three directions (the owner picks), T3b the remaining six screens in the chosen direction — `04-login`, `05-productos`, `06-producto-nuevo`, `07-producto-detalle`, `08-pedidos` and `09-ajustes`. Specs: S4, S5, S7, S9.
 - T4 — Implement the administrator flow on the chosen direction, `design/admin/01-floating-card.html` (`Tarjeta flotante`). Split in two: T4a the shell, `/login`, the dashboard and the five remaining routes as shelled placeholders — commits `84f82be`, `90b285b`, `34ce174`, done; T4b productos, pedidos and ajustes/media — pending. Specs: S2, S4, S7, S8, S9.
 
 ## Verification
