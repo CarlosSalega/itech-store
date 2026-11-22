@@ -1,0 +1,31 @@
+{
+	"title": "Panel de administración",
+	"brief": "El armazón del espacio privado de iTech Store y el tablero adentro, en tres direcciones que difieren en estructura: tarjeta flotante, riel con columna y panel partido. Los números, los pedidos y las fotos son los del catálogo y los de la demo; la navegación lleva las siete pantallas y adelanta los subdestinos de productos y pedidos.",
+	"feature": "odd/tasks/demo-flows.md",
+	"artboards": [
+		{
+			"file": "01-floating-card.html",
+			"title": "Tarjeta flotante",
+			"tradeoff": "La más calma y la más parecida a la tienda: una sola tarjeta flotante con el espacio de trabajo, la búsqueda, las siete pantallas, el badge, el bloque secundario sobre una línea y la persona al pie, con el tablero sobre el blanco. Cuesta ancho —la tarjeta se lleva 268px— y abajo de 960px se pliega a una barra con los destinos en una tira.",
+			"signature": "La tarjeta que flota: la única superficie elevada del sistema, con toda la navegación adentro y el tablero respirando al lado.",
+			"width": 1440,
+			"height": 1000
+		},
+		{
+			"file": "02-rail-and-column.html",
+			"title": "Riel y columna",
+			"tradeoff": "La más densa y la más rápida de escanear: un riel de íconos a toda altura y una columna con ancho propio, barra superior pegada y la tabla y las métricas usando todo el ancho. Cuesta las etiquetas —viven en un globo al pasar el puntero o al enfocar— y el armazón se parece más a una herramienta que a una tienda; abajo de 900px el riel se vuelve una tira con las etiquetas adentro.",
+			"signature": "El globo que explica el riel: cada ícono abre su etiqueta y adelanta sus subdestinos, y también llega con el teclado.",
+			"width": 1440,
+			"height": 1000
+		},
+		{
+			"file": "03-split-panel.html",
+			"title": "Panel partido",
+			"tradeoff": "Lugar para muchas secciones y navegación profunda: un riel de secciones y un panel que guarda los ítems de la sección elegida, con el tablero en un área ancha. Cuesta tres columnas de chrome para siete pantallas, y en el tablero el panel queda medio vacío; abajo de 1100px las dos columnas se pliegan en dos tiras.",
+			"signature": "Las tres columnas: riel de secciones, panel con los ítems de la sección y el tablero ancho, cada uno en su propio tono.",
+			"width": 1440,
+			"height": 1000
+		}
+	]
+}
