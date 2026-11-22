@@ -12,6 +12,8 @@ S3 — What "real data" means: the three stores that hold the demo — cart (`it
 
 S4 — Identity: Better Auth with email and password, plus a role (`CUSTOMER`, `ADMIN`) on the user. `/login` authenticates for real, `/admin` and its children are unreachable without an admin session, and the guard lives on the server (session read in the layout) with `src/proxy.ts` keeping the `X-Robots-Tag` rule. The admin surfaces still declare no metadata.
 
+S4a — A guest can buy (owner's choice by delegation, see L3): no session is required to complete a purchase, `Order.userId` is nullable, and the buyer's email is stored on the order as a snapshot. A session is required only for `/admin`. "Mis pedidos" resolves with the order number plus the buyer's email, never by guessable lookup, and passwordless access (magic link) is deferred to a later phase because the store has no confirmed email channel yet.
+
 S5 — Photography: Cloudinary behind the replicated module, with its `ImageUpload` table recording every key that the app owns. A product holds an ordered gallery (`ProductImage` with `position` and `alt`), not a `String[]`. The seed keeps writing local paths until the upload flow replaces them.
 
 S6 — The seeded catalogue stays the source of the first products. After this work the admin is the writer; the seed remains the way to rebuild a database from scratch.
@@ -77,6 +79,7 @@ Each phase is a branch, a chain of work-unit commits and one PR. The order is a 
 | P5 | Orders | `Order`/`OrderLine`, checkout writes server-side, `/pedido/[codigo]` reads by number, inbox reads and changes status with a permission check | Needs P1's actor and P4's action patterns |
 | P6 | Cart | `CartItem` for signed-in users, guest cart stays local and merges on login | The merge rule is its own decision and its own tests |
 | P7 | Cleanup | The three fixture stores and their tests go; fixtures survive only as seed input; documents updated | Deleting them earlier would leave the demo unwalkable between phases |
+| P8 | Passwordless access | Magic link through a transactional provider, plus "mis pedidos" for a signed-in customer | Needs an email channel the store does not have yet; it must not block P5 |
 
 ## Verification per phase
 
@@ -93,9 +96,10 @@ Each phase is a branch, a chain of work-unit commits and one PR. The order is a 
 1. **Data (item 1 of the risk line).** A cloud database is in play. P0 exists to make every migration rehearsable, but the owner decides when the cloud database is migrated, and with which backup. Nothing in these phases touches it unattended.
 2. **Permissions (item 2).** The admin guard is the whole security boundary of the panel. It is read in the layout on the server, not in the client, and tested with an anonymous and a non-admin session.
 3. **Contracts (item 3).** `Product.images` changes type, the order shape gains server ownership, and the cart gains a server table. Downstream code is ours, but the seed, the public pages, the admin and the checkout all read those shapes.
-4. **Decisions I need from the owner:** Better Auth as the identity provider (it was always the plan) and its version; whether guests can order without an account, or a session is required at checkout; the Cloudinary account and whether uploads are signed through the server (recommended) or unsigned; and whether the demo keeps a "fixtures mode" so the site still runs without a database.
+4. **Decisions taken** (L3): guest checkout, no fixtures mode, signed uploads from the server. **Still needed:** the Cloudinary account and its credentials before P3, and the transactional email provider before P8.
 
 ## Log
 
 - L1 (owner, verbatim): "perfecto, cerremos esta parte de la demo, ahora hagamos una plan en otra rama para modificar el schema y db para utilizar datos reales, luego tambien revisa este path donde esta el modulo de image-upload que vamos a replicar /home/charly06arg/Desktop/Dev/work/car-agency-app"
 - L2 (architect decision): the plan lives on its own branch and ships nothing but this document; the work is split into eight phases because the schema change is the one area where a single PR could not be reviewed or rolled back.
+- L3 (owner decisions, with one delegated to the architect): the demo keeps **no fixtures mode** — one path, and a missing `DATABASE_URL` means the site does not start; image uploads are **signed from the server**; and for checkout the owner asked for a recommendation between magic links and a session. Recommendation adopted: **guest checkout, account optional after the purchase**. Reasons: magic links need a transactional email provider the store does not have (`CONTACT` is still null and no domain is verified), and a mandatory password immediately after the buyer has already typed name, email, phone and address is where a small store loses the sale. The admin keeps email and password behind `role: ADMIN`, verified on the server. Consequences: `Order.userId` is nullable and the buyer email is a required snapshot; the session is required only under `/admin`; the cart merge in P6 applies to signed-in users only; and passwordless access plus "mis pedidos" become P8, once email exists.
