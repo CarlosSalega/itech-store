@@ -1,0 +1,47 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
+
+import { listAdminOrders } from "@/features/admin/server/order-repository";
+import { listAdminProducts } from "@/features/admin/server/product-repository";
+import { AdminNav } from "@/features/admin/ui/admin-nav";
+import { AdminShell } from "@/features/admin/ui/admin-shell";
+import { RouteNav } from "@/features/admin/ui/route-nav";
+import { isOpenOrder } from "@/features/checkout/domain/order";
+
+export const metadata: Metadata = {
+	title: "Panel — iTech Store",
+	description:
+		"El panel de iTech Store: lo vendido este mes, los pedidos a preparar y el stock que falta reponer.",
+	robots: { index: false, follow: false },
+};
+
+export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
+	const [orders, products] = await Promise.all([
+		listAdminOrders(),
+		listAdminProducts(),
+	]);
+	const pendingOrders = orders.filter(isOpenOrder).length;
+
+	return (
+		<AdminShell
+			nav={
+				<Suspense
+					fallback={
+						<AdminNav
+							current={null}
+							pendingOrders={pendingOrders}
+							productCount={products.length}
+						/>
+					}
+				>
+					<RouteNav
+						pendingOrders={pendingOrders}
+						productCount={products.length}
+					/>
+				</Suspense>
+			}
+		>
+			{children}
+		</AdminShell>
+	);
+}

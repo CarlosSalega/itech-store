@@ -55,7 +55,28 @@ export function orderPaymentLabel(payment: OrderPayment): string {
 	return ORDER_PAYMENT_LABEL[payment];
 }
 
-export type OrderStatus = "confirmed";
+export type OrderStatus =
+	| "nuevo"
+	| "en preparación"
+	| "enviado"
+	| "entregado"
+	| "cancelado";
+
+export const ORDER_STATUSES: readonly OrderStatus[] = [
+	"nuevo",
+	"en preparación",
+	"enviado",
+	"entregado",
+	"cancelado",
+];
+
+export const CANCELLED_ORDER_STATUS: OrderStatus = "cancelado";
+
+export const OPEN_ORDER_STATUSES: readonly OrderStatus[] = ["nuevo", "en preparación"];
+
+export function isOpenOrder(order: Order): boolean {
+	return OPEN_ORDER_STATUSES.includes(order.status);
+}
 
 export type OrderDelivery = "coordinated";
 
@@ -126,6 +147,7 @@ type CreateOrderInput = {
 	payment: OrderPayment;
 	number: string;
 	createdAt: string;
+	status?: OrderStatus;
 };
 
 export function createOrder({
@@ -134,6 +156,7 @@ export function createOrder({
 	payment,
 	number,
 	createdAt,
+	status = "nuevo",
 }: CreateOrderInput): Order {
 	if (cartLines.length === 0) {
 		throw new Error("Un pedido necesita al menos un producto.");
@@ -148,7 +171,7 @@ export function createOrder({
 		payment,
 		lines,
 		totals: cartTotals({ lines, lastAddedVariantId: null }),
-		status: "confirmed",
+		status,
 		createdAt,
 	};
 }

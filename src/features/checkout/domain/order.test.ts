@@ -4,6 +4,7 @@ import type { CartLine } from "@/features/cart/domain/cart";
 
 import {
 	createOrder,
+	isOpenOrder,
 	nextOrderNumber,
 	orderPaymentLabel,
 	validateBuyer,
@@ -142,7 +143,7 @@ describe("createOrder", () => {
 
 		expect(order.number).toBe("IT-2026-0001");
 		expect(order.payment).toBe("cash");
-		expect(order.status).toBe("confirmed");
+		expect(order.status).toBe("nuevo");
 		expect(order.delivery).toBe("coordinated");
 		expect(order.createdAt).toBe(createdAt);
 	});
@@ -169,6 +170,20 @@ describe("createOrder", () => {
 				createdAt,
 			}),
 		).toThrow();
+	});
+
+	it("keeps a status the admin flow hands it", () => {
+		const order = createOrder({
+			cartLines: [line()],
+			buyer,
+			payment: "transfer",
+			number: "IT-2026-0005",
+			createdAt,
+			status: "cancelado",
+		});
+
+		expect(order.status).toBe("cancelado");
+		expect(isOpenOrder(order)).toBe(false);
 	});
 
 	it("names the two payment choices in the flow's words", () => {

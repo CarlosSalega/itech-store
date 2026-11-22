@@ -1,0 +1,192 @@
+import type { AdminProduct } from "../domain/product";
+
+export const ADMIN_PRODUCTS: readonly AdminProduct[] = [
+	{
+		slug: "airpods-pro-3",
+		name: "Airpods Pro 3",
+		category: "AIRPODS",
+		image: "/products/airpods/airpods-pro-3-1.webp",
+		published: true,
+		variants: [
+			{ sku: "airpods-pro-3", label: null, priceCents: 25_000_000, stock: 1 },
+		],
+	},
+	{
+		slug: "apple-ipad-11-a16-chip-wi-fi",
+		name: 'Apple iPad 11" A16 Chip WI-FI',
+		category: "IPAD",
+		image: "/products/ipad/apple-ipad-11-a16-chip-wi-fi-1.webp",
+		published: true,
+		variants: [
+			{
+				sku: "apple-ipad-11-a16-chip-wi-fi-128gb",
+				label: "128 GB",
+				priceCents: 90_000_000,
+				stock: 5,
+			},
+			{
+				sku: "apple-ipad-11-a16-chip-wi-fi-256gb",
+				label: "256 GB",
+				priceCents: 103_500_000,
+				stock: 7,
+			},
+			{
+				sku: "apple-ipad-11-a16-chip-wi-fi-512gb",
+				label: "512 GB",
+				priceCents: 121_500_000,
+				stock: 2,
+			},
+		],
+	},
+	{
+		slug: "apple-homepod-mini-2da-generacion",
+		name: "Apple HomePod Mini (2da Generación)",
+		category: "ACCESSORY",
+		image: "/products/accessory/apple-homepod-mini-2da-generacion-1.webp",
+		published: true,
+		variants: [
+			{
+				sku: "apple-homepod-mini-2da-generacion",
+				label: null,
+				priceCents: 3_000_000,
+				stock: 2,
+			},
+		],
+	},
+	{
+		slug: "apple-tv-4k-2022",
+		name: "Apple TV 4K (2022)",
+		category: "ACCESSORY",
+		image: "/products/accessory/apple-tv-4k-2022-1.webp",
+		published: true,
+		variants: [
+			{ sku: "apple-tv-4k-2022-64gb", label: "64 GB", priceCents: 3_000_000, stock: 1 },
+		],
+	},
+	{
+		slug: "pencil-pro",
+		name: "Apple Pencil Pro",
+		category: "ACCESSORY",
+		image: "/products/accessory/pencil-pro-1.webp",
+		published: true,
+		variants: [{ sku: "pencil-pro", label: null, priceCents: 3_000_000, stock: 2 }],
+	},
+	{
+		slug: "apple-13-macbook-air-chip-m5",
+		name: 'Apple 13" MacBook Air - Chip M5',
+		category: "MAC",
+		image: "/products/mac/apple-13-macbook-air-chip-m5-1.webp",
+		published: true,
+		variants: [
+			{
+				sku: "apple-13-macbook-air-chip-m5",
+				label: null,
+				priceCents: 200_000_000,
+				stock: 6,
+			},
+		],
+	},
+	{
+		slug: "apple-15-macbook-air-chip-m5",
+		name: 'Apple 15" MacBook Air - Chip M5',
+		category: "MAC",
+		image: "/products/mac/apple-15-macbook-air-chip-m5-1.webp",
+		published: true,
+		variants: [
+			{
+				sku: "apple-15-macbook-air-chip-m5",
+				label: null,
+				priceCents: 200_000_000,
+				stock: 8,
+			},
+		],
+	},
+	{
+		slug: "apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra",
+		name: "Apple Watch Series 11 - Caja Aluminio Negro - Correa Deportiva Negra",
+		category: "WATCH",
+		image: "/products/watch/apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra-1.webp",
+		published: true,
+		variants: [
+			{
+				sku: "apple-watch-series-11-caja-aluminio-negro-correa-deportiva-negra",
+				label: null,
+				priceCents: 60_000_000,
+				stock: 3,
+			},
+		],
+	},
+	{
+		slug: "watch-se-3-40mm",
+		name: "Apple Watch SE 3 40mm",
+		category: "WATCH",
+		image: "/products/watch/watch-se-3-40mm-1.webp",
+		published: true,
+		variants: [{ sku: "watch-se-3-40mm", label: null, priceCents: 60_000_000, stock: 8 }],
+	},
+	{
+		slug: "apple-imac-24-m4-chip-azul",
+		name: 'Apple iMac 24" M4 Chip Azul',
+		category: "MAC",
+		image: "/products/mac/apple-imac-24-m4-chip-azul-1.webp",
+		published: true,
+		variants: [
+			{ sku: "apple-imac-24-m4-chip-azul", label: null, priceCents: 200_000_000, stock: 5 },
+		],
+	},
+	{
+		slug: "apple-airpods-5th-generacion-con-cancelacion-de-ruido",
+		name: "Apple Airpods 5th Generación con cancelación de ruido",
+		category: "AIRPODS",
+		image: "/products/airpods/apple-airpods-5th-generacion-con-cancelacion-de-ruido-1.webp",
+		published: true,
+		variants: [
+			{
+				sku: "apple-airpods-5th-generacion-con-cancelacion-de-ruido",
+				label: null,
+				priceCents: 25_000_000,
+				stock: 8,
+			},
+		],
+	},
+	{
+		slug: "apple-mac-mini-chip-m4-pro",
+		name: "Apple Mac Mini Chip M4 Pro",
+		category: "MAC",
+		image: "/products/mac/apple-mac-mini-chip-m4-pro-1.webp",
+		published: true,
+		variants: [
+			{ sku: "apple-mac-mini-chip-m4-pro", label: null, priceCents: 200_000_000, stock: 8 },
+		],
+	},
+	{
+		slug: "apple-11-ipad-air-m4-space-gray",
+		name: 'Apple 11" iPad Air M4 Space Gray',
+		category: "IPAD",
+		image: "/products/ipad/apple-11-ipad-air-m4-space-gray-1.webp",
+		published: false,
+		variants: [
+			{
+				sku: "apple-11-ipad-air-m4-space-gray",
+				label: null,
+				priceCents: 90_000_000,
+				stock: 5,
+			},
+		],
+	},
+	{
+		slug: "apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black",
+		name: "Apple Watch Ultra 3 - 49mm GPS-CELL - Caja Titanio Black - Correa Ocean Black",
+		category: "WATCH",
+		image: "/products/watch/apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black-1.webp",
+		published: false,
+		variants: [
+			{
+				sku: "apple-watch-ultra-3-49mm-gps-cell-caja-titanio-black-correa-ocean-black",
+				label: null,
+				priceCents: 60_000_000,
+				stock: 5,
+			},
+		],
+	},
+];
