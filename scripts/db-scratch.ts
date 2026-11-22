@@ -1,8 +1,10 @@
+import "dotenv/config";
+
 import { execFileSync } from "node:child_process";
 
 import { describeScratchTarget, resolveScratchUrl } from "../src/lib/db/scratch";
 
-const COMMANDS = ["deploy", "status", "reset", "dev"] as const;
+const COMMANDS = ["deploy", "status", "reset", "dev", "seed"] as const;
 type Command = (typeof COMMANDS)[number];
 
 function isCommand(value: string | undefined): value is Command {
@@ -26,6 +28,15 @@ if (!target.ok) {
 	process.exit(1);
 }
 
+const extra = process.argv.slice(3);
+
+if (command !== "dev" && extra.length > 0) {
+	console.error(
+		`Refusing to run: ${command} takes no extra arguments, and this script does not drop them silently. Got: ${extra.join(" ")}`,
+	);
+	process.exit(2);
+}
+
 console.log(`Target: ${describeScratchTarget(target)}`);
 
 const args =
@@ -34,8 +45,10 @@ const args =
 		: command === "reset"
 			? ["prisma", "migrate", "reset", "--force", "--skip-seed"]
 			: command === "dev"
-				? ["prisma", "migrate", "dev", ...process.argv.slice(3)]
-				: ["prisma", "migrate", "deploy"];
+				? ["prisma", "migrate", "dev", ...extra]
+				: command === "seed"
+					? ["prisma", "db", "seed"]
+					: ["prisma", "migrate", "deploy"];
 
 try {
 	execFileSync("pnpm", args, {
@@ -43,6 +56,6 @@ try {
 		env: { ...process.env, DATABASE_URL: target.url },
 	});
 } catch {
-	console.error(`prisma migrate ${command} failed against the scratch database.`);
+	console.error(`prisma ${command} failed against the scratch database.`);
 	process.exit(1);
 }

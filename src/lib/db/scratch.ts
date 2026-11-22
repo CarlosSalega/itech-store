@@ -1,6 +1,7 @@
 export type ScratchUrlProblem =
 	| "missing"
 	| "not-postgres"
+	| "app-missing"
 	| "app-url-unreadable"
 	| "same-as-app"
 	| "same-host-and-database";
@@ -65,7 +66,15 @@ export function resolveScratchUrl(
 		};
 	}
 
-	if (app !== undefined && app.trim() !== "") {
+	if (app === undefined || app.trim() === "") {
+		return {
+			ok: false,
+			problem: "app-missing",
+			detail: `${ENV_APP} is not set, so the scratch URL cannot be proven different from it.`,
+		};
+	}
+
+	{
 		const appParsed = parse(app);
 
 		if (appParsed === null) {

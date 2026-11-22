@@ -18,7 +18,10 @@ pnpm db:scratch:dev --name <name>   # authors the migration against the SCRATCH 
 pnpm db:scratch                     # deploys every migration to the scratch database
 pnpm db:scratch:reset               # drops and re-applies from zero, proving the chain
 pnpm db:scratch:status              # what the scratch database believes it has applied
+pnpm db:scratch:seed                # seeds the SCRATCH database
 ```
+
+Every one of those commands loads `.env` itself and runs Prisma with `SCRATCH_DATABASE_URL` in place, so a stray `pnpm exec prisma db seed` is the only way to seed the app database by accident. The wrapper refuses extra arguments on `deploy`, `status`, `reset` and `seed` instead of dropping them, so a mistyped flag fails loudly.
 
 `prisma migrate dev` is never run directly: without a `DATABASE_URL` override it targets the app's database and applies the migration there before any rehearsal. `db:scratch:dev` runs it with the scratch URL in place, which is the only authoring path this project allows.
 
@@ -50,4 +53,4 @@ prisma/migrations/20270101000000_add_order/rollback.sql
 - Additive first: add the new column or table, backfill it, drop the old one in a later migration. One migration never does all three.
 - A `NOT NULL` column arrives with a default or after a backfill, never as a bare constraint on a populated table.
 - Integer cents and `String[]` → relation changes get their own migration and their own backfill script, tested against the seeded catalogue.
-- The seed stays runnable from zero: `pnpm db:scratch:reset` followed by `pnpm exec prisma db seed` must rebuild a working catalogue.
+- The seed stays runnable from zero: `pnpm db:scratch:reset` followed by `pnpm db:scratch:seed` must rebuild a working catalogue. Pointing the seed at the app database is never part of this workflow.

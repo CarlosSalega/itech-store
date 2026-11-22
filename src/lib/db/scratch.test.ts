@@ -135,8 +135,25 @@ describe("the db:scratch script", () => {
 			string
 		>;
 
-		for (const name of ["db:scratch", "db:scratch:dev"]) {
-			expect(scripts[name]).toMatch(/db-scratch\.ts (deploy|dev)$/);
+		for (const name of ["db:scratch", "db:scratch:dev", "db:scratch:seed"]) {
+			expect(scripts[name]).toMatch(/db-scratch\.ts (deploy|dev|seed)$/);
 		}
+	});
+});
+
+describe("resolveScratchUrl, a missing app URL", () => {
+	it("refuses when DATABASE_URL is not set, instead of skipping the comparison", () => {
+		const result = resolveScratchUrl({ SCRATCH_DATABASE_URL: SCRATCH });
+
+		expect(result.ok === false && result.problem).toBe("app-missing");
+	});
+
+	it("refuses when DATABASE_URL is blank", () => {
+		const result = resolveScratchUrl({
+			DATABASE_URL: "  ",
+			SCRATCH_DATABASE_URL: SCRATCH,
+		});
+
+		expect(result.ok === false && result.problem).toBe("app-missing");
 	});
 });
