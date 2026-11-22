@@ -3,13 +3,13 @@
   "chosen": "01-floating-card.html",
   "handoffs": {
     "01-floating-card.html": {
-      "status": "in_progress",
+      "status": "implemented",
       "queued": false,
       "sentAt": "2026-11-22T03:50:05.477Z",
       "startedAt": "2026-11-22T03:50:17.137Z",
-      "implementedAt": null,
+      "implementedAt": "2026-11-22T04:17:16.710Z",
       "feature": "odd/tasks/demo-flows.md",
-      "note": "T4 en curso: shell de tarjeta flotante, login, dashboard y las seis pantallas restantes sobre fixtures."
+      "note": "Shell, /login y /admin implementados en main (PRs #23–#25) con las 277 pruebas verdes. Cinco rutas quedan como placeholders con el shell: productos, producto nuevo, producto detalle, pedidos y ajustes, que es T4b. Falta la pasada en navegador."
     }
   }
 }
