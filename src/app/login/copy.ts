@@ -5,3 +5,7 @@ export const NO_OTHER_ACCOUNTS =
 
 export const NO_PASSWORD_RESET =
 	"No hay recuperación de contraseña: si la perdés, se vuelve a crear el administrador desde el seed.";
+
+export const INVALID_EMAIL = "Ese email no parece válido.";
+
+export const MISSING_PASSWORD = "Escribí tu contraseña.";

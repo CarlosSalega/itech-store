@@ -28,9 +28,10 @@ S9 — No behaviour change beyond validation and its presentation: same routes, 
 - V1 — Login: one schema shared by the form and the action, per-field messages, the error slot reserved. Specs: S3–S9.
 - V2 — Checkout: the schema wraps `validateBuyer`; its public shape and strings unchanged. Specs: S2, S3, S8.
 - V3 — Admin product form: name, family, price, stock, slug; the pesos-to-cents conversion stays outside Zod. Specs: S2, S3, S8.
-- V4 — `design/system.md` records the field-plus-slot rule and the copy length limit; the artboards that show errors gain the reserved slot. Specs: S5, S6.
+- V4 — `design/system.md` records the field-plus-slot rule, the copy length limit and where a **static** note belongs (never inside an error lane, or the lane cannot stay one line); the artboards that show errors gain the reserved slot. Specs: S5, S6.
 
 ## Log
 
 - L1 (owner, verbatim): the S1 string above, plus "Dime que opinas antes de proceder con el plan".
 - L2 (architect decision, approved by the owner): Zod at the boundary only; the mapper owns the copy; reserve the slot instead of animating it; V0 and V1 first so the pattern is reviewed before it spreads to checkout and the admin.
+- L3 (V0 and V1 shipped): `zod` pinned at `4.6.7`, `src/lib/validation/` with the copy module (`MESSAGE_MAX_LENGTH = 44`, `FIELD_FALLBACK_MESSAGE = "Revisá este dato."`) and `messagesFromError`, which reads only single-segment paths, keeps the first issue per field and never lets a library sentence through. The login now validates with one schema on both sides, per-field slots are always present with `min-height: calc(var(--t-caption) * 1.35 + var(--s-1))` and `aria-live="polite"`, focus goes to the first rejected field, and nothing is validated before the first submit. Two consequences worth remembering: `z.email()` is stricter than Better Auth was, so `ADMIN_EMAIL` must be a normal `user@domain.tld` and not `admin@localhost`; and the shipped credential note is 92 characters, so it wraps to three lines at 320px inside the reserved lane — S8 forbids shortening it, so V4 must move it out of the lane instead of growing the reserve.

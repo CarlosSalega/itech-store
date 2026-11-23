@@ -52,6 +52,25 @@
 	gap: var(--s-2);
 }
 
+.control {
+	display: grid;
+	gap: var(--s-2);
+}
+
+.slot {
+	min-height: calc(var(--t-caption) * 1.35 + var(--s-1));
+	padding-top: var(--s-1);
+	color: var(--danger);
+	font-size: var(--t-caption);
+	line-height: 1.35;
+	letter-spacing: 0.015em;
+}
+
+.summary {
+	min-height: calc(var(--t-caption) * 1.35 + var(--s-1));
+	padding-top: var(--s-1);
+}
+
 .label {
 	color: var(--ink);
 	font-size: var(--t-label);
