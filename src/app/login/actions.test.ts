@@ -1,7 +1,7 @@
 import { APIError } from "better-auth";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { INVALID_CREDENTIALS } from "./copy";
+import { INVALID_CREDENTIALS, INVALID_EMAIL, MISSING_PASSWORD } from "./copy";
 import { LOGIN_LIMITS, resetLoginAttempts } from "./attempt-limit";
 import { signIn, type SignInState } from "./actions";
 
@@ -102,6 +102,46 @@ describe("the sign-in action", () => {
 		);
 
 		expect(mocks.redirect).toHaveBeenCalledWith("/admin");
+	});
+});
+
+describe("the payload the sign-in action accepts", () => {
+	it("answers a rejected payload with our field copy instead of the credential sentence", async () => {
+		const answer = await signIn(
+			EMPTY,
+			form({ email: "no-es-un-email", password: "", next: "/admin" }),
+		);
+
+		expect(answer).toEqual({
+			error: null,
+			messages: { email: INVALID_EMAIL, password: MISSING_PASSWORD },
+		});
+		expect(mocks.signInEmail).not.toHaveBeenCalled();
+	});
+
+	it("reads the payload the same way the form does", async () => {
+		mocks.signInEmail.mockResolvedValueOnce({ user: { id: "user_1" } });
+
+		await signIn(
+			EMPTY,
+			form({ email: "  admin@example.com ", password: " a-password ", next: "/admin" }),
+		);
+
+		expect(mocks.signInEmail).toHaveBeenCalledWith({
+			body: { email: "admin@example.com", password: " a-password " },
+			headers: expect.any(Headers),
+		});
+	});
+
+	it("keeps counting a rejected payload against the same window", async () => {
+		const attempt = () => signIn(EMPTY, form({ email: "", password: "", next: "/admin" }));
+
+		for (let index = 0; index < LOGIN_LIMITS.max; index += 1) {
+			await attempt();
+		}
+
+		expect(await attempt()).toEqual({ error: INVALID_CREDENTIALS });
+		expect(mocks.signInEmail).not.toHaveBeenCalled();
 	});
 });
 

@@ -10,5 +10,12 @@ const EMPTY: SignInState = { error: null };
 export function LoginForm({ next }: { next: string }) {
 	const [state, action] = useActionState(signIn, EMPTY);
 
-	return <LoginFields action={action} error={state.error} next={next} />;
+	return (
+		<LoginFields
+			action={action}
+			error={state.error}
+			messages={state.messages}
+			next={next}
+		/>
+	);
 }
