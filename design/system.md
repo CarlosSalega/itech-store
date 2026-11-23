@@ -33,17 +33,28 @@ Two scaffold defects to fix at implementation, not in the artboards: `globals.cs
 
 ## How the system reaches the code
 
-The values on this page reach the product through Tailwind's theme layer, and the rules that use them
-are hand-written CSS Modules. The split is deliberate, and this is the only place that records it.
+The values on this page reach the product as plain CSS custom properties on `:root` in
+`src/app/globals.css`, and the rules that use them are hand-written CSS Modules. The split is
+deliberate, and this is the only place that records it.
 
 | Layer | Owns | Lives in |
 | --- | --- | --- |
-| Tokens | Every value specified on this page | `src/app/globals.css`, inside `@theme static` |
+| Tokens | Every value specified on this page | `src/app/globals.css`, as custom properties on `:root` |
 | Rules | Layout, type, motion, states | one `*.module.css` per component |
 
-`@theme static` rather than plain `@theme` is a requirement, not a preference: the modules read tokens
-through `var()`, so a pruned theme variable would break a module silently. The only Tailwind utility
-used in `src/` is `sr-only`, for text that must be read by a screen reader and not shown.
+Nothing generates the token layer. Each declaration in that `:root` block is the only definition of
+its value, read by the modules through `var()`, so a token on this page is a token in the browser.
+
+The element reset the layout depends on — `box-sizing: border-box`, zeroed margins and borders,
+inherited form typography, `img { display: block }`, `[hidden]` — is vendored: `src/app/preflight.css`
+is `node_modules/tailwindcss/preflight.css` from Tailwind CSS `4.3.3`, imported at the top of
+`globals.css`, MIT licensed, Copyright (c) Tailwind Labs, Inc. One documented deviation from upstream:
+the six `--theme()` declarations the file carries are the compiler's source form, so they are resolved
+to this project's tokens — `var(--font-sans)` and `var(--font-mono)` for the two font stacks, `normal`
+for the four feature and variation settings — because the PostCSS step that used to resolve them is
+gone, and nothing else in the file differs. No Tailwind utility class is used in `src/`, and
+nothing else of Tailwind is installed. The one class that looks like a utility, `sr-only`, is a project
+primitive declared in `globals.css`.
 
 Four primitives stay global in `src/app/globals.css` — `.wrap` (the content column), `.rule` (the
 full-bleed hairline), `.skip` (the skip link) and `.sr-only` — because every surface uses them.

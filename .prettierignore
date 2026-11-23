@@ -40,3 +40,5 @@ skills-lock.json
 *.config.mjs
 *.config.ts
 tsconfig.json
+# Vendored upstream file: keep Tailwind's bytes verbatim
+src/app/preflight.css

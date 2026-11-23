@@ -29,7 +29,6 @@ image host for product photography. Nothing in this repository charges a card.
 | Prisma driver adapter | `@prisma/adapter-pg` `7.10.1` | Prisma 7 requires an adapter; the app connects directly with `DATABASE_URL` |
 | Database | Prisma Postgres | consumed through `DATABASE_URL` (`postgresql` provider) |
 | TypeScript | `5.9.3` | `pnpm typecheck` runs `tsc --noEmit` |
-| Tailwind CSS | `4.3.3` | via `@tailwindcss/postcss` `4.3.3` in `postcss.config.mjs` — no Turbopack loader rule |
 | Vitest | `3.2.7` | unit tests over pure logic (`vitest.config.ts`) |
 | ESLint | `9.39.2` | with `eslint-config-next` `16.4.6` |
 | pnpm | `12.18.0` | `packageManager` field |
@@ -44,22 +43,24 @@ application code, and GitHub only recomputes language statistics on a push to th
 does not work: pnpm 12 ignores `save-exact` there (verified — `pnpm config get save-exact` returns
 `undefined`). `.npmrc` is kept only for npm.
 
-### Styling: tokens in Tailwind, rules in CSS Modules
+### Styling: tokens as custom properties, rules in CSS Modules
 
-Three layers, each doing one job. Worth reading before touching a stylesheet, because Tailwind does
-appear in the table above while **the only Tailwind utility used in `src/` is `sr-only`** — five times,
-for text a screen reader must read and a sighted reader must not see.
+Three layers, each doing one job. Worth reading before touching a stylesheet, because no utility
+framework is involved: **the tokens are plain CSS custom properties on `:root`**, and the only class in
+`src/` that is not a scoped module is `sr-only` — this project's own primitive, 31 uses, for text a
+screen reader must read and a sighted reader must not see.
 
 | Layer | What it owns | Where |
 | --- | --- | --- |
-| Tokens | Colour, type, spacing, radii, elevation and motion, as CSS custom properties | `src/app/globals.css`, inside `@theme static` |
-| Component rules | Every layout and visual decision, one scoped module per component | 11 `*.module.css`, read through `styles.*` |
-| Utilities | One class: `sr-only` | 5 uses in TSX |
+| Tokens | Colour, type, spacing, radii, elevation and motion, as CSS custom properties on `:root` | `src/app/globals.css` |
+| Element reset | `box-sizing`, zeroed margins and borders, inherited form typography, `img { display: block }`, `[hidden]` | `src/app/preflight.css`, Tailwind's preflight `4.3.3` vendored and imported at the top of `globals.css` |
+| Component rules | Every layout and visual decision, one scoped module per component | 30 `*.module.css`, read through `styles.*` |
 
-`@theme static` rather than plain `@theme` is deliberate: the modules read every token through
-`var()`, so a pruned theme variable would quietly break a module that depends on it. Tailwind
-supplies the token layer, the preflight reset and that one accessibility utility, not the styling
-model.
+Nothing generates the token layer, so a token on this page is the same declaration the browser reads:
+each one in the `:root` block is the only definition of its value, and there is no build step between
+the two. The reset is the only third-party CSS in the repository. `sr-only` is not a Tailwind utility
+but a primitive declared in `globals.css`, because 31 components need it and one shared class beats 31
+copies.
 
 The rules are hand-written rather than utility classes because of where the design came from. The
 implemented direction arrived as an artboard, and the design tool's format requires every artboard
