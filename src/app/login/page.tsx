@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { NO_PASSWORD_RESET } from "./copy";
 import { LoginForm } from "./login-form";
+import { LoginNotes } from "./login-notes";
 import { safeNextPath } from "./next-path";
 
 import styles from "./login.module.css";
@@ -35,7 +35,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
 
 				<LoginForm next={next} />
 
-				<p className={styles.note}>{NO_PASSWORD_RESET}</p>
+				<LoginNotes />
 			</div>
 		</main>
 	);

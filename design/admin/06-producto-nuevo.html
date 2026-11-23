@@ -188,11 +188,13 @@
   .select-wrap .ico{position:absolute;right:var(--s-3);top:50%;transform:translateY(-50%);
     width:14px;height:14px;color:var(--muted);pointer-events:none}
   .field .help{font-size:var(--t-caption);line-height:1.4;letter-spacing:.015em;color:var(--muted)}
+  /* the lane under every field: one caption line plus its gap, present before a message arrives */
+  .slot{display:flex;align-items:flex-start;gap:var(--s-2);margin:0;
+    min-height:calc(var(--t-caption) * 1.35 + var(--s-1));padding-top:var(--s-1);
+    font-size:var(--t-caption);line-height:1.35;letter-spacing:.015em;color:var(--danger)}
+  .slot .ico{width:14px;height:14px;margin-top:2px;stroke-width:2}
   /* the error state, one real case: the second variant has no price */
   .field--error .input{box-shadow:inset 0 0 0 2px var(--danger)}
-  .field--error .error{display:flex;gap:var(--s-2);align-items:flex-start;font-size:var(--t-caption);
-    line-height:1.4;letter-spacing:.015em;color:var(--danger)}
-  .field--error .error .ico{width:14px;height:14px;margin-top:2px;stroke-width:2}
 
   /* ---------- the variants repeater ---------- */
   .repeater{margin-top:var(--s-4);border-top:1px solid var(--hairline)}
@@ -482,21 +484,24 @@
               <div class="field">
                 <label for="nombre">Nombre</label>
                 <input class="input" id="nombre" name="nombre" type="text"
-                  value="Apple iPad Pro 11&quot; M5 Space Black" autocomplete="off">
-                <p class="help">El nombre que se ve en el catálogo. No se traduce.</p>
+                  value="Apple iPad Pro 11&quot; M5 Space Black" autocomplete="off"
+                  aria-describedby="nombre-help nombre-message">
+                <p class="help" id="nombre-help">El nombre que se ve en el catálogo. No se traduce.</p>
+                <p class="slot" id="nombre-message" aria-live="polite"></p>
               </div>
 
               <div class="field">
                 <label for="slug">Slug</label>
                 <input class="input input--mono" id="slug" name="slug" type="text" readonly
-                  value="apple-ipad-pro-11-m5-space-black" aria-describedby="slug-help">
+                  value="apple-ipad-pro-11-m5-space-black" aria-describedby="slug-help slug-message">
                 <p class="help" id="slug-help">Se arma con el nombre: cambia solo mientras lo escribís.</p>
+                <p class="slot" id="slug-message" aria-live="polite"></p>
               </div>
 
               <div class="field">
                 <label for="familia">Familia</label>
                 <span class="select-wrap">
-                  <select class="input" id="familia" name="familia">
+                  <select class="input" id="familia" name="familia" aria-describedby="familia-message">
                     <option>Mac</option>
                     <option selected>iPad</option>
                     <option>Watch</option>
@@ -507,6 +512,7 @@
                     <path d="M8 10.5 12 14.5 16 10.5"/>
                   </svg>
                 </span>
+                <p class="slot" id="familia-message" aria-live="polite"></p>
               </div>
 
               <div class="field">
@@ -529,16 +535,20 @@
                 <div class="variant-fields">
                   <div class="field">
                     <label for="cap-1">Capacidad</label>
-                    <input class="input" id="cap-1" name="capacidad-1" type="text" value="128 GB">
+                    <input class="input" id="cap-1" name="capacidad-1" type="text" value="128 GB"
+                      aria-describedby="cap-1-message">
+                    <p class="slot" id="cap-1-message" aria-live="polite"></p>
                   </div>
                   <div class="field field--error">
                     <label for="precio-1">Precio en pesos</label>
                     <span class="money">
                       <span class="cur">$</span>
                       <input class="input" id="precio-1" name="precio-1" type="text" inputmode="numeric"
-                        value="" aria-invalid="true" aria-describedby="precio-error-1">
+                        value="" aria-invalid="true"
+                        aria-describedby="precio-help-1 precio-1-message">
                     </span>
-                    <p class="error" id="precio-error-1">
+                    <p class="help" id="precio-help-1">En pesos, sin centavos.</p>
+                    <p class="slot" id="precio-1-message" aria-live="polite">
                       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <path d="M12 3.8 21 20H3L12 3.8z"/><path d="M12 10v4.6"/><path d="M12 17.4v.4"/>
                       </svg>
@@ -548,7 +558,8 @@
                   <div class="field">
                     <label for="stock-1">Stock</label>
                     <input class="input" id="stock-1" name="stock-1" type="text" inputmode="numeric"
-                      value="6">
+                      value="6" aria-describedby="stock-1-message">
+                    <p class="slot" id="stock-1-message" aria-live="polite"></p>
                   </div>
                   <button class="remove" type="button">
                     <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -565,21 +576,25 @@
                 <div class="variant-fields">
                   <div class="field">
                     <label for="cap-2">Capacidad</label>
-                    <input class="input" id="cap-2" name="capacidad-2" type="text" value="256 GB">
+                    <input class="input" id="cap-2" name="capacidad-2" type="text" value="256 GB"
+                      aria-describedby="cap-2-message">
+                    <p class="slot" id="cap-2-message" aria-live="polite"></p>
                   </div>
                   <div class="field">
                     <label for="precio-2">Precio en pesos</label>
                     <span class="money">
                       <span class="cur">$</span>
                       <input class="input" id="precio-2" name="precio-2" type="text" inputmode="numeric"
-                        value="1.499.000" aria-describedby="precio-help-2">
+                        value="1.499.000" aria-describedby="precio-help-2 precio-2-message">
                     </span>
                     <p class="help" id="precio-help-2">En pesos, sin centavos.</p>
+                    <p class="slot" id="precio-2-message" aria-live="polite"></p>
                   </div>
                   <div class="field">
                     <label for="stock-2">Stock</label>
                     <input class="input" id="stock-2" name="stock-2" type="text" inputmode="numeric"
-                      value="4">
+                      value="4" aria-describedby="stock-2-message">
+                    <p class="slot" id="stock-2-message" aria-live="polite"></p>
                   </div>
                   <button class="remove" type="button">
                     <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

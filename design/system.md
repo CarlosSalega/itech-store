@@ -369,6 +369,39 @@ decorative: the accessible name belongs to the button or link that contains it. 
 since this section was written; it now carries ten glyphs — `search`, `bag`, `menu`, `close`,
 `chevron-left`, `chevron-right`, `check`, `minus`, `plus`, `trash`.
 
+**Field + message slot** — every field a schema can reject is one stack of three parts: the label, the
+control, and a message lane. The lane is **always rendered**, before any message exists, and it is never
+revealed, animated, collapsed or removed: `min-height: calc(var(--t-caption) * 1.35 + var(--s-1))`
+plus `padding-top: var(--s-1)` reserves exactly one `--t-caption` line and the gap above it, so the
+button under it does not move when a message arrives (`src/app/login/login.module.css`,
+`src/features/admin/ui/product-form.module.css`, `src/features/checkout/ui/wizard.module.css`). The
+form-level message owns the same lane in the same place in the form's stack; a standing help note is
+its own line above the lane, never inside it.
+
+The lane is `aria-live="polite"` and its control points at it with `aria-describedby` — the help id
+first, the lane id second, when both exist. `aria-invalid="true"` is present only while the field is
+rejected and is absent otherwise, never `false`: the red ring and the message appear together.
+Validation runs on submit; after the first failed submit it revalidates as the visitor corrects the
+field, and it never runs on the first keystroke of a pristine field. On submit, focus moves to the
+first rejected field. A form-level failure is one line in its lane and carries `role="alert"`: the
+screen reader announces it and the layout does not move.
+
+**One line is the contract, and the ceiling is 44 characters.** `MESSAGE_MAX_LENGTH = 44`, exported by
+`src/lib/validation/copy.ts`, is the longest message the system allows: 44 characters, counted the way
+JavaScript counts a string (`message.length`), not graphemes or bytes. Every shipped message is
+asserted against that same constant (`message.length <= MESSAGE_MAX_LENGTH`) by the schema tests, so
+the document and the code cannot drift apart. On the login at 320px the lane is 288px wide, and the
+longest shipped message — `El email o la contraseña no son correctos.`, 42 characters — renders 231px
+of it in `--t-caption`. A longer sentence grows the lane and brings the shift back, so it is never the
+fix: a message that cannot be said in 44 characters is not a message.
+
+**A static note never lives inside a lane.** A sentence that is always true cannot fit a one-line
+reservation, and placing it there is exactly what turned the login's credential note into three lines
+of a one-line lane at 320px. It belongs in its own place on the page with its own room: the login's
+standing notes are their own block under the form (`src/app/login/login-notes.tsx`), and the admin
+form's help note is its own line above the lane. The lane only ever holds a message that exists
+because a value was rejected.
+
 **Button** — two styles only. Primary: pill, `--accent` fill, white label, min-height 44px,
 `padding: 0 24px`, press `scale(.97)`. Secondary: text link, `--link`, with a `chevron-right` that
 moves 2px on hover. A text button is never styled as a bordered box. An action that cannot be used
@@ -486,3 +519,6 @@ Static checks that must pass before an artboard is handed over:
    state (drawn tick, final count, visible case).
 7. Visible focus on every control, 44px minimum target, 4.5:1 body text, readable at 375px. Icon
    buttons keep the 44px target and their name in text, never only in the drawing.
+8. Every field a schema can reject carries its always-present message lane, with `aria-live="polite"`
+   and `aria-describedby`; every message drawn in a lane is one `--t-caption` line inside the
+   44-character ceiling; and no static note is drawn inside a lane.
