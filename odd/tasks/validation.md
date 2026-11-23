@@ -26,8 +26,8 @@ S9 — No behaviour change beyond validation and its presentation: same routes, 
 
 - V0 — `zod` pinned, `src/lib/validation/` with the issue-to-copy mapper, the copy module and its tests. Specs: S2, S3, S4.
 - V1 — Login: one schema shared by the form and the action, per-field messages, the error slot reserved. Specs: S3–S9.
-- V2 — Checkout: the schema wraps `validateBuyer`; its public shape and strings unchanged. Specs: S2, S3, S8.
-- V3 — Admin product form: name, family, price, stock, slug; the pesos-to-cents conversion stays outside Zod. Specs: S2, S3, S8.
+- V2 — Checkout: the schema wraps `validateBuyer`; its public shape and strings unchanged, and its seven fields gain the reserved slot. Specs: S2, S3, S5, S6, S8.
+- V3 — Admin product form: name, family, price, stock, slug; the pesos-to-cents conversion stays outside Zod, and the form gains the reserved slot. Specs: S2, S3, S5, S6, S8.
 - V4 — `design/system.md` records the field-plus-slot rule, the copy length limit and where a **static** note belongs (never inside an error lane, or the lane cannot stay one line); the artboards that show errors gain the reserved slot. Specs: S5, S6.
 
 ## Log
