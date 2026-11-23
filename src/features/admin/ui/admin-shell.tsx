@@ -2,12 +2,27 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { ChevronRightIcon, SearchIcon } from "@/components/icons";
-import { DEMO_ADMIN } from "../fixtures/session";
+import { adminInitials } from "../domain/session";
 import { LogoutIcon, ChevronDownIcon } from "./icons";
 
 import styles from "./admin-shell.module.css";
 
-export function AdminShell({ nav, children }: { nav: ReactNode; children: ReactNode }) {
+type AdminIdentity = {
+	name: string;
+	email: string;
+};
+
+export function AdminShell({
+	admin,
+	nav,
+	signOut,
+	children,
+}: {
+	admin: AdminIdentity;
+	nav: ReactNode;
+	signOut: () => Promise<void>;
+	children: ReactNode;
+}) {
 	return (
 		<>
 			<a className="skip" href="#admin-main">
@@ -66,19 +81,24 @@ export function AdminShell({ nav, children }: { nav: ReactNode; children: ReactN
 								<ChevronRightIcon className={styles.icon} />
 								Ver la tienda
 							</Link>
-							<Link className={styles.item} href="/login">
-								<LogoutIcon className={styles.icon} />
-								Cerrar sesión
-							</Link>
+							<form action={signOut}>
+								<button
+									className={`${styles.item} ${styles.signOut}`}
+									type="submit"
+								>
+									<LogoutIcon className={styles.icon} />
+									Cerrar sesión
+								</button>
+							</form>
 						</nav>
 
 						<div className={styles.user}>
 							<span aria-hidden="true" className={styles.avatar}>
-								{DEMO_ADMIN.initials}
+								{adminInitials(admin.name, admin.email)}
 							</span>
 							<span className={styles.userText}>
-								<span className={styles.userName}>{DEMO_ADMIN.name}</span>
-								<span className={styles.userMail}>{DEMO_ADMIN.email}</span>
+								<span className={styles.userName}>{admin.name}</span>
+								<span className={styles.userMail}>{admin.email}</span>
 							</span>
 						</div>
 					</div>
