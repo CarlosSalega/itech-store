@@ -3,8 +3,10 @@ import "dotenv/config";
 import path from "node:path";
 
 import { PrismaPg } from "@prisma/adapter-pg";
+import { APIError } from "better-auth";
 
 import { Category, PrismaClient } from "../src/generated/prisma/client";
+import { getAuth } from "../src/lib/auth";
 import { buildSeedCatalog, resolveImages, type SeedProduct, type SeedVariant } from "../src/features/catalog/seed/catalog";
 
 const SEED_DIR = path.join(process.cwd(), "prisma", "seed");
@@ -52,6 +54,41 @@ function formatArs(cents: number): string {
 		currency: "ARS",
 		maximumFractionDigits: 2,
 	}).format(cents / 100);
+}
+
+const ADMIN_NAME = "Administrador";
+
+function existingUser(error: unknown): boolean {
+	return error instanceof APIError && error.body?.code === "USER_ALREADY_EXISTS";
+}
+
+async function ensureAdmin(prisma: PrismaClient): Promise<void> {
+	const email = process.env["ADMIN_EMAIL"]?.trim();
+	const password = process.env["ADMIN_PASSWORD"];
+
+	if (!email || !password) {
+		const missing = [
+			email ? null : "ADMIN_EMAIL",
+			password ? null : "ADMIN_PASSWORD",
+		].filter((name) => name !== null);
+
+		console.log(
+			`Admin user skipped: ${missing.join(" and ")} ${missing.length === 1 ? "is" : "are"} not set.`,
+		);
+		return;
+	}
+
+	try {
+		await getAuth().api.signUpEmail({
+			body: { email, password, name: ADMIN_NAME },
+		});
+	} catch (error) {
+		if (!existingUser(error)) throw error;
+	}
+
+	await prisma.user.update({ where: { email }, data: { role: "ADMIN" } });
+
+	console.log(`Admin user ready: ${email} (role ADMIN)`);
 }
 
 async function main() {
@@ -123,6 +160,8 @@ async function main() {
 			prisma.product.count(),
 			prisma.variant.count(),
 		]);
+
+		await ensureAdmin(prisma);
 
 		console.log("Seed summary (sample prices and stock, not real data)");
 		console.log(`Products upserted: ${productsUpserted}`);
