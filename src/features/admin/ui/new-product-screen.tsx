@@ -29,6 +29,7 @@ import {
 	getProductsSnapshot,
 	subscribeProducts,
 } from "../storage/product-store";
+import { FormField } from "./form-field";
 import { AlertIcon, ChevronDownIcon } from "./icons";
 import { AdminScreen, ScreenFoot } from "./screen";
 import { Toggle } from "./toggle";
@@ -58,6 +59,8 @@ export function NewProductScreen() {
 	const note = saveNote(errors, draft);
 	const slug = productSlug(draft.name);
 	const loaded = draft.variants.length === 1 ? "1 cargada" : `${draft.variants.length} cargadas`;
+	const nameError = touched.has("name") ? errors.name : undefined;
+	const categoryError = touched.has("category") ? errors.category : undefined;
 
 	const touch = (key: string) => {
 		setTouched((current) => (current.has(key) ? current : new Set(current).add(key)));
@@ -137,100 +140,75 @@ export function NewProductScreen() {
 							</div>
 
 							<div className={styles.fields}>
-								<div className={styles.field}>
-									<label htmlFor="nombre">Nombre</label>
-									<input
-										aria-describedby={
-											errors.name !== undefined && touched.has("name")
-												? "nombre-error"
-												: "nombre-help"
-										}
-										aria-invalid={
-											errors.name !== undefined && touched.has("name")
-												? true
-												: undefined
-										}
-										className={styles.input}
-										id="nombre"
-										onBlur={() => touch("name")}
-										onChange={(event) => change({ name: event.target.value })}
-										type="text"
-										value={draft.name}
-									/>
-									{errors.name !== undefined && touched.has("name") ? (
-										<p className={styles.error} id="nombre-error" role="alert">
-											<AlertIcon className={styles.errorIcon} />
-											{errors.name}
-										</p>
-									) : (
-										<p className={styles.help} id="nombre-help">
-											El nombre que se ve en el catálogo. No se traduce.
-										</p>
-									)}
-								</div>
-
-								<div className={styles.field}>
-									<label htmlFor="slug">Slug</label>
-									<input
-										aria-describedby={errors.slug === undefined ? "slug-help" : "slug-error"}
-										aria-invalid={errors.slug === undefined ? undefined : true}
-										className={`${styles.input} ${styles.inputMono}`}
-										id="slug"
-										readOnly
-										value={slug}
-									/>
-									{errors.slug === undefined ? (
-										<p className={styles.help} id="slug-help">
-											Se arma con el nombre: cambia solo mientras lo escribís.
-										</p>
-									) : (
-										<p className={styles.error} id="slug-error" role="alert">
-											<AlertIcon className={styles.errorIcon} />
-											{errors.slug}
-										</p>
-									)}
-								</div>
-
-								<div className={styles.field}>
-									<label htmlFor="familia">Familia</label>
-									<span className={styles.selectWrap}>
-										<select
-											aria-describedby={
-												errors.category !== undefined && touched.has("category")
-													? "familia-error"
-													: undefined
-											}
-											aria-invalid={
-												errors.category !== undefined && touched.has("category")
-													? true
-													: undefined
-											}
+								<FormField
+									help="El nombre que se ve en el catálogo. No se traduce."
+									htmlFor="nombre"
+									label="Nombre"
+									message={nameError}
+								>
+									{(aria) => (
+										<input
+											aria-describedby={aria.describedBy}
+											aria-invalid={aria.invalid}
 											className={styles.input}
-											id="familia"
-											onBlur={() => touch("category")}
-											onChange={(event) =>
-												change({
-													category: event.target.value as AdminProduct["category"],
-												})
-											}
-											value={draft.category}
-										>
-											<option value="">Elegí una familia</option>
-											{NAV_FAMILIES.map((family) => (
-												<option key={family} value={family}>
-													{FAMILY_LABEL[family]}
-												</option>
-											))}
-										</select>
-										<ChevronDownIcon className={styles.selectChevron} />
-									</span>
-									{errors.category !== undefined && touched.has("category") ? (
-										<p className={styles.error} id="familia-error" role="alert">
-											<AlertIcon className={styles.errorIcon} />
-											{errors.category}
-										</p>
-									) : null}
-								</div>
+											id="nombre"
+											onBlur={() => touch("name")}
+											onChange={(event) => change({ name: event.target.value })}
+											type="text"
+											value={draft.name}
+										/>
+									)}
+								</FormField>
+
+								<FormField
+									help="Se arma con el nombre: cambia solo mientras lo escribís."
+									htmlFor="slug"
+									label="Slug"
+									message={errors.slug}
+								>
+									{(aria) => (
+										<input
+											aria-describedby={aria.describedBy}
+											aria-invalid={aria.invalid}
+											className={`${styles.input} ${styles.inputMono}`}
+											id="slug"
+											readOnly
+											value={slug}
+										/>
+									)}
+								</FormField>
+
+								<FormField
+									htmlFor="familia"
+									label="Familia"
+									message={categoryError}
+								>
+									{(aria) => (
+										<span className={styles.selectWrap}>
+											<select
+												aria-describedby={aria.describedBy}
+												aria-invalid={aria.invalid}
+												className={styles.input}
+												id="familia"
+												onBlur={() => touch("category")}
+												onChange={(event) =>
+													change({
+														category: event.target.value as AdminProduct["category"],
+													})
+												}
+												value={draft.category}
+											>
+												<option value="">Elegí una familia</option>
+												{NAV_FAMILIES.map((family) => (
+													<option key={family} value={family}>
+														{FAMILY_LABEL[family]}
+													</option>
+												))}
+											</select>
+											<ChevronDownIcon className={styles.selectChevron} />
+										</span>
+									)}
+								</FormField>
 
 								<div className={styles.field}>
 									<label htmlFor="descripcion">
@@ -268,86 +246,72 @@ export function NewProductScreen() {
 									return (
 										<div className={styles.variant} key={index}>
 											<div className={styles.variantFields}>
-												<div className={styles.field}>
-													<label htmlFor={`cap-${index}`}>Capacidad</label>
-													<input
-														aria-describedby={
-															labelError === undefined ? undefined : `cap-error-${index}`
-														}
-														aria-invalid={labelError === undefined ? undefined : true}
-														className={styles.input}
-														id={`cap-${index}`}
-														onBlur={() => touch(variantKey(index, "label"))}
-														onChange={(event) => changeVariant(index, { label: event.target.value })}
-														type="text"
-														value={variant.label}
-													/>
-													{labelError === undefined ? null : (
-														<p className={styles.error} id={`cap-error-${index}`} role="alert">
-															<AlertIcon className={styles.errorIcon} />
-															{labelError}
-														</p>
-													)}
-												</div>
-
-												<div className={styles.field}>
-													<label htmlFor={`precio-${index}`}>Precio en pesos</label>
-													<span className={styles.money}>
-														<span className={styles.moneyCurrency}>$</span>
+												<FormField
+													htmlFor={`cap-${index}`}
+													label="Capacidad"
+													message={labelError}
+												>
+													{(aria) => (
 														<input
-															aria-describedby={
-																priceError === undefined
-																	? `precio-help-${index}`
-																	: `precio-error-${index}`
-															}
-															aria-invalid={priceError === undefined ? undefined : true}
+															aria-describedby={aria.describedBy}
+															aria-invalid={aria.invalid}
 															className={styles.input}
-															id={`precio-${index}`}
+															id={`cap-${index}`}
+															onBlur={() => touch(variantKey(index, "label"))}
+															onChange={(event) => changeVariant(index, { label: event.target.value })}
+															type="text"
+															value={variant.label}
+														/>
+													)}
+												</FormField>
+
+												<FormField
+													help="En pesos, sin centavos."
+													htmlFor={`precio-${index}`}
+													label="Precio en pesos"
+													message={priceError}
+												>
+													{(aria) => (
+														<span className={styles.money}>
+															<span className={styles.moneyCurrency}>$</span>
+															<input
+																aria-describedby={aria.describedBy}
+																aria-invalid={aria.invalid}
+																className={styles.input}
+																id={`precio-${index}`}
+																inputMode="numeric"
+																onBlur={() => touch(variantKey(index, "price"))}
+																onChange={(event) =>
+																	changeVariant(index, { price: event.target.value })
+																}
+																type="text"
+																value={variant.price}
+															/>
+														</span>
+													)}
+												</FormField>
+
+												<FormField
+													htmlFor={`stock-${index}`}
+													label="Stock"
+													message={stockError}
+												>
+													{(aria) => (
+														<input
+															aria-describedby={aria.describedBy}
+															aria-invalid={aria.invalid}
+															className={styles.input}
+															id={`stock-${index}`}
 															inputMode="numeric"
-															onBlur={() => touch(variantKey(index, "price"))}
+															onBlur={() => touch(variantKey(index, "stock"))}
 															onChange={(event) =>
-																changeVariant(index, { price: event.target.value })
+																changeVariant(index, { stock: event.target.value })
 															}
 															type="text"
-															value={variant.price}
+															value={variant.stock}
 														/>
-													</span>
-													{priceError === undefined ? (
-														<p className={styles.help} id={`precio-help-${index}`}>
-															En pesos, sin centavos.
-														</p>
-													) : (
-														<p className={styles.error} id={`precio-error-${index}`} role="alert">
-															<AlertIcon className={styles.errorIcon} />
-															{priceError}
-														</p>
 													)}
-												</div>
-
-												<div className={styles.field}>
-													<label htmlFor={`stock-${index}`}>Stock</label>
-													<input
-														aria-describedby={
-															stockError === undefined ? undefined : `stock-error-${index}`
-														}
-														aria-invalid={stockError === undefined ? undefined : true}
-														className={styles.input}
-														id={`stock-${index}`}
-														inputMode="numeric"
-														onBlur={() => touch(variantKey(index, "stock"))}
-														onChange={(event) =>
-															changeVariant(index, { stock: event.target.value })
-														}
-														type="text"
-														value={variant.stock}
-													/>
-													{stockError === undefined ? null : (
-														<p className={styles.error} id={`stock-error-${index}`} role="alert">
-															<AlertIcon className={styles.errorIcon} />
-															{stockError}
-														</p>
-													)}
-												</div>
+												</FormField>
 
 												<button
 													className={styles.remove}

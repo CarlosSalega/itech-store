@@ -62,6 +62,16 @@ describe("validateBuyer", () => {
 		});
 	});
 
+	it("reports the email shape alongside another missing field, in field order", () => {
+		const found = validateBuyer({ ...buyer, name: "  ", email: "sofia.ramos@example" });
+
+		expect(found).toEqual({
+			name: "Escribí tu nombre y apellido.",
+			email: "Ese email no parece válido.",
+		});
+		expect(Object.keys(found)).toEqual(["name", "email"]);
+	});
+
 	it("reports every missing field at once, in field order", () => {
 		const empty: OrderBuyer = {
 			name: "",
