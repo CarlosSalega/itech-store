@@ -26,9 +26,20 @@ describe("the sign-in form", () => {
 		const markup = fields(INVALID_CREDENTIALS);
 
 		expect(markup).toContain(INVALID_CREDENTIALS);
-		expect(markup).toContain(NO_OTHER_ACCOUNTS);
+		expect(markup).not.toContain(NO_OTHER_ACCOUNTS);
 		expect(markup.match(/aria-invalid="true"/g)).toHaveLength(2);
 		expect(markup).toContain('role="alert"');
+	});
+
+	it("keeps the summary lane for the refusal alone, in one caption line", () => {
+		const markup = fields(INVALID_CREDENTIALS);
+		const alert = /<p[^>]*role="alert"[^>]*>([^<]*)<\/p>/.exec(markup);
+		const css = readFileSync(new URL("./login.module.css", import.meta.url), "utf8");
+
+		expect(alert?.[1]).toBe(INVALID_CREDENTIALS);
+		expect(css).toMatch(/\.error\s*\{[^}]*font-size:\s*var\(--t-caption\)/);
+		expect(css).toMatch(/\.error\s*\{[^}]*line-height:\s*1\.35/);
+		expect(css).not.toMatch(/\.failureNote/);
 	});
 
 	it("paints the failure with the danger token, not a neutral one", () => {
@@ -47,6 +58,7 @@ describe("the room the login reserves for its messages", () => {
 		const markup = fields(null);
 
 		expect(markup.match(/aria-live="polite"/g)).toHaveLength(2);
+		expect(markup).not.toContain(NO_OTHER_ACCOUNTS);
 		expect(markup).toContain('aria-describedby="login-email-message"');
 		expect(markup).toContain('aria-describedby="login-password-message"');
 		expect(markup).toContain('id="login-email-message"');

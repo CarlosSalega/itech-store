@@ -7,7 +7,6 @@ import {
 	type FormEvent,
 } from "react";
 
-import { NO_OTHER_ACCOUNTS } from "./copy";
 import {
 	EMPTY_LOGIN,
 	LOGIN_FIELDS,
@@ -154,10 +153,9 @@ export function LoginFields({
 
 			<div className={styles.summary}>
 				{error === null ? null : (
-					<div className={styles.failure} role="alert">
-						<p className={styles.error}>{error}</p>
-						<p className={styles.failureNote}>{NO_OTHER_ACCOUNTS}</p>
-					</div>
+					<p className={styles.error} role="alert">
+						{error}
+					</p>
 				)}
 			</div>
 
