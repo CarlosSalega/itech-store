@@ -16,13 +16,14 @@ import {
 	nextOrderNumber,
 	validateBuyer,
 	type BuyerErrors,
-	type BuyerField,
+	type BuyerField as BuyerFieldName,
 	type Order,
 	type OrderBuyer,
 	type OrderPayment,
 } from "../domain/order";
 import { commitOrders, getOrdersSnapshot } from "../storage/order-store";
-import { AlertIcon, ClockIcon, TruckIcon } from "./icons";
+import { BuyerField } from "./buyer-field";
+import { ClockIcon, TruckIcon } from "./icons";
 import { OrderSummary } from "./order-summary";
 import { CheckoutScreen } from "./screen";
 import { type CheckoutStep } from "./stepper";
@@ -31,36 +32,9 @@ import { useHydrated } from "./use-hydrated";
 import screenStyles from "./screen.module.css";
 import styles from "./wizard.module.css";
 
-type FieldSpec = {
-	label: string;
-	autoComplete: string;
-	type: "text" | "email" | "tel";
-	inputMode?: "tel" | "numeric";
-	help?: string;
-};
-
-const FIELD_SPECS: Record<BuyerField, FieldSpec> = {
-	name: { label: "Nombre y apellido", autoComplete: "name", type: "text" },
-	email: {
-		label: "Email",
-		autoComplete: "email",
-		type: "email",
-		help: "Al email te escribimos para coordinar el envío y el pago.",
-	},
-	phone: { label: "Teléfono", autoComplete: "tel", type: "tel", inputMode: "tel" },
-	address: { label: "Dirección", autoComplete: "street-address", type: "text" },
-	city: { label: "Ciudad", autoComplete: "address-level2", type: "text" },
-	postalCode: {
-		label: "Código postal",
-		autoComplete: "postal-code",
-		type: "text",
-		inputMode: "numeric",
-	},
-};
-
 const BUYER_GROUPS: readonly {
 	title: string;
-	rows: readonly (readonly BuyerField[])[];
+	rows: readonly (readonly BuyerFieldName[])[];
 }[] = [
 	{ title: "Tus datos", rows: [["name"], ["email", "phone"]] },
 	{ title: "Dónde lo llevamos", rows: [["address"], ["city", "postalCode"]] },
@@ -122,7 +96,7 @@ function CheckoutFlow() {
 	const [attempted, setAttempted] = useState(false);
 	const [placed, setPlaced] = useState<Order | null>(null);
 	const headingRef = useRef<HTMLHeadingElement | null>(null);
-	const fieldRefs = useRef<Partial<Record<BuyerField, HTMLInputElement | null>>>({});
+	const fieldRefs = useRef<Partial<Record<BuyerFieldName, HTMLInputElement | null>>>({});
 	const wantsHeadingFocus = useRef(false);
 
 	const errors: BuyerErrors = attempted ? validateBuyer(buyer) : {};
@@ -147,7 +121,7 @@ function CheckoutFlow() {
 		setStep(next);
 	}
 
-	function updateBuyer(field: BuyerField, value: string) {
+	function updateBuyer(field: BuyerFieldName, value: string) {
 		setBuyer((current) => ({ ...current, [field]: value }));
 	}
 
@@ -207,58 +181,20 @@ function CheckoutFlow() {
 										className={row.length === 1 ? undefined : styles.row}
 										key={row.join("-")}
 									>
-										{row.map((field) => {
-											const spec = FIELD_SPECS[field];
-											const id = `buyer-${field}`;
-											const error = errors[field];
-											const helpId = spec.help === undefined ? null : `${id}-help`;
-											const errorId = error === undefined ? null : `${id}-error`;
-											const describedBy = [helpId, errorId]
-												.filter((value) => value !== null)
-												.join(" ");
-
-											return (
-												<div key={field}>
-													<label className={styles.label} htmlFor={id}>
-														{spec.label}
-													</label>
-													<input
-														aria-describedby={
-															describedBy === "" ? undefined : describedBy
-														}
-														aria-invalid={error === undefined ? undefined : true}
-														autoComplete={spec.autoComplete}
-														className={
-															error === undefined
-																? styles.input
-																: `${styles.input} ${styles.invalid}`
-														}
-														id={id}
-														inputMode={spec.inputMode}
-														name={field}
-														onChange={(event) =>
-															updateBuyer(field, event.target.value)
-														}
-														ref={(node) => {
-															fieldRefs.current[field] = node;
-														}}
-														type={spec.type}
-														value={buyer[field]}
-													/>
-													{helpId === null ? null : (
-														<p className={styles.help} id={helpId}>
-															{spec.help}
-														</p>
-													)}
-													{errorId === null || error === undefined ? null : (
-														<p className={styles.error} id={errorId} role="alert">
-															<AlertIcon className={styles.errorIcon} />
-															{error}
-														</p>
-													)}
-												</div>
-											);
-										})}
+										{row.map((field) => (
+											<BuyerField
+												field={field}
+												inputRef={(node) => {
+													fieldRefs.current[field] = node;
+												}}
+												key={field}
+												message={errors[field]}
+												onChange={(event) =>
+													updateBuyer(field, event.target.value)
+												}
+												value={buyer[field]}
+											/>
+										))}
 									</div>
 								))}
 							</div>

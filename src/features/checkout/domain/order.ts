@@ -1,4 +1,12 @@
 import { cartTotals, type CartLine, type CartTotals } from "@/features/cart/domain/cart";
+import { messagesFromError } from "@/lib/validation/messages";
+
+import {
+	BUYER_EMAIL_MESSAGES,
+	BUYER_EMAIL_SCHEMA,
+	BUYER_REQUIRED_MESSAGES,
+	BUYER_REQUIRED_SCHEMA,
+} from "./buyer-schema";
 
 export const ORDER_NUMBER_PATTERN = /^IT-(\d{4})-(\d{4,})$/;
 
@@ -32,17 +40,6 @@ export const EMPTY_BUYER: OrderBuyer = {
 	city: "",
 	postalCode: "",
 };
-
-const BLANK_MESSAGE: Record<BuyerField, string> = {
-	name: "Escribí tu nombre y apellido.",
-	email: "Escribí tu email.",
-	phone: "Escribí un teléfono.",
-	address: "Escribí la dirección de entrega.",
-	city: "Escribí la ciudad.",
-	postalCode: "Falta el código postal.",
-};
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export type OrderPayment = "transfer" | "cash";
 
@@ -106,16 +103,22 @@ export function normalizeBuyer(buyer: OrderBuyer): OrderBuyer {
 
 export function validateBuyer(buyer: OrderBuyer): BuyerErrors {
 	const trimmed = normalizeBuyer(buyer);
+	const required = BUYER_REQUIRED_SCHEMA.safeParse(trimmed);
+	const email = BUYER_EMAIL_SCHEMA.safeParse(trimmed);
+	const found: BuyerErrors = {
+		...(email.success ? {} : messagesFromError(email.error, BUYER_EMAIL_MESSAGES)),
+		...(required.success
+			? {}
+			: messagesFromError(required.error, BUYER_REQUIRED_MESSAGES)),
+	};
 	const errors: BuyerErrors = {};
 
 	for (const field of BUYER_FIELDS) {
-		if (trimmed[field] === "") {
-			errors[field] = BLANK_MESSAGE[field];
-		}
-	}
+		const message = found[field];
 
-	if (errors.email === undefined && !EMAIL_PATTERN.test(trimmed.email)) {
-		errors.email = "Ese email no parece válido.";
+		if (message !== undefined) {
+			errors[field] = message;
+		}
 	}
 
 	return errors;

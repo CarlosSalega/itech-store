@@ -1,4 +1,5 @@
 import type { Category } from "@/generated/prisma/enums";
+import { messagesFromError } from "@/lib/validation/messages";
 
 import {
 	createProduct,
@@ -6,6 +7,14 @@ import {
 	productSlug,
 	type AdminProduct,
 } from "./product";
+import {
+	PRODUCT_DRAFT_MESSAGES,
+	PRODUCT_DRAFT_SCHEMA,
+	VARIANT_REQUIRED_MESSAGES,
+	VARIANT_REQUIRED_SCHEMA,
+	VARIANT_SHAPE_MESSAGES,
+	VARIANT_SHAPE_SCHEMA,
+} from "./product-form-schema";
 
 export type VariantDraft = {
 	label: string;
@@ -61,10 +70,32 @@ function variantErrors(variants: readonly VariantDraft[]): (VariantDraftErrors |
 	return variants.map((variant) => {
 		const row: VariantDraftErrors = {};
 		const label = variant.label.trim();
+		const required = VARIANT_REQUIRED_SCHEMA.safeParse(variant);
+		const shape = VARIANT_SHAPE_SCHEMA.safeParse({
+			priceCents: parsePricePesos(variant.price),
+			stock: WHOLE_UNITS.test(variant.stock.trim())
+				? Number(variant.stock.trim())
+				: null,
+		});
 
-		if (label === "") {
-			row.label = "Poné la capacidad de esta variante.";
-		} else {
+		if (!required.success) {
+			const messages = messagesFromError(required.error, VARIANT_REQUIRED_MESSAGES);
+
+			if (messages.label !== undefined) row.label = messages.label;
+			if (messages.price !== undefined) row.price = messages.price;
+		}
+
+		if (!shape.success) {
+			const messages = messagesFromError(shape.error, VARIANT_SHAPE_MESSAGES);
+
+			if (row.price === undefined && messages.priceCents !== undefined) {
+				row.price = messages.priceCents;
+			}
+
+			if (messages.stock !== undefined) row.stock = messages.stock;
+		}
+
+		if (label !== "") {
 			const key = label.toLowerCase();
 
 			if (firstSeen.has(key)) {
@@ -72,16 +103,6 @@ function variantErrors(variants: readonly VariantDraft[]): (VariantDraftErrors |
 			} else {
 				firstSeen.set(key, 0);
 			}
-		}
-
-		if (variant.price.trim() === "") {
-			row.price = "Poné el precio de esta variante.";
-		} else if (parsePricePesos(variant.price) === null) {
-			row.price = "Ese precio no es un número.";
-		}
-
-		if (!WHOLE_UNITS.test(variant.stock.trim())) {
-			row.stock = "Poné el stock en unidades enteras.";
 		}
 
 		return Object.keys(row).length === 0 ? null : row;
@@ -92,21 +113,17 @@ export function validateProductDraft(
 	draft: ProductDraft,
 	existingSlugs: readonly string[],
 ): ProductDraftErrors {
-	const errors: ProductDraftErrors = {};
+	const result = PRODUCT_DRAFT_SCHEMA.safeParse(draft);
+	const errors: ProductDraftErrors = result.success
+		? {}
+		: messagesFromError(result.error, PRODUCT_DRAFT_MESSAGES);
 	const name = draft.name.trim();
 
-	if (name === "") {
-		errors.name = "Poné el nombre del producto.";
-	} else if (existingSlugs.includes(productSlug(name))) {
+	if (errors.name === undefined && existingSlugs.includes(productSlug(name))) {
 		errors.slug = "Ya hay un producto con ese slug.";
 	}
 
-	if (draft.category === "") {
-		errors.category = "Elegí una familia.";
-	}
-
 	if (draft.variants.length === 0) {
-		errors.variants = "Cargá al menos una variante.";
 		return errors;
 	}
 
