@@ -5,12 +5,18 @@ import type { AdminDestinationId } from "../domain/navigation";
 import { AdminNav } from "./admin-nav";
 import { AdminShell } from "./admin-shell";
 
+const ADMIN = { name: "Sofía Ramos", email: "sofia.ramos@example.com" };
+
+const signOut = async () => undefined;
+
 const mark = (
 	current: AdminDestinationId | null,
 	currentProductHref: string | null = null,
 ) =>
 	renderToStaticMarkup(
 		<AdminShell
+			admin={ADMIN}
+			signOut={signOut}
 			nav={
 				<AdminNav
 					current={current}
@@ -73,13 +79,30 @@ describe("the admin shell", () => {
 		expect(markup).not.toContain("<input");
 	});
 
-	it("keeps the products sub-navigation inline and the person at the foot", () => {
+	it("keeps the products sub-navigation inline", () => {
 		const markup = mark("panel");
 
 		expect(markup).toContain('href="/admin/productos/nuevo"');
-		expect(markup).toContain("sofia.ramos@example.com");
-		expect(markup).toContain("Cerrar sesión");
 		expect(markup).toContain('href="/catalogo"');
+	});
+
+	it("shows the admin who signed in, not a demo identity", () => {
+		const markup = mark("panel");
+
+		expect(markup).toContain("Sofía Ramos");
+		expect(markup).toContain("sofia.ramos@example.com");
+		expect(markup).toContain(">SR<");
+	});
+
+	it("posts the sign-out form instead of linking to the login screen", () => {
+		const markup = mark("panel");
+		const forms = markup.match(/<form[\s\S]*?<\/form>/g) ?? [];
+		const signOutForm = forms.find((form) => form.includes("Cerrar sesión"));
+
+		expect(signOutForm).toBeDefined();
+		expect(signOutForm).toContain("<button");
+		expect(signOutForm).toContain('type="submit"');
+		expect(markup).not.toContain('href="/login"');
 	});
 
 	it.each([

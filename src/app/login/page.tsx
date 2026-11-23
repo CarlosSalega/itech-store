@@ -1,10 +1,18 @@
 import Link from "next/link";
 
-import { enterAdminDemo } from "./actions";
+import { NO_PASSWORD_RESET } from "./copy";
+import { LoginForm } from "./login-form";
+import { safeNextPath } from "./next-path";
 
 import styles from "./login.module.css";
 
-export default function LoginPage() {
+export const instant = false;
+
+export default async function LoginPage({ searchParams }: PageProps<"/login">) {
+	const params = await searchParams;
+	const requested = params.next;
+	const next = safeNextPath(typeof requested === "string" ? requested : null);
+
 	return (
 		<main className={styles.page} id="main">
 			<div className={styles.card}>
@@ -25,38 +33,9 @@ export default function LoginPage() {
 					Los pedidos, los productos y el stock de la tienda, en un solo lugar.
 				</p>
 
-				<form action={enterAdminDemo} className={styles.form}>
-					<label className={styles.field}>
-						<span className={styles.label}>Email</span>
-						<input
-							autoComplete="email"
-							className={styles.input}
-							name="email"
-							placeholder="sofia.ramos@example.com"
-							type="email"
-						/>
-					</label>
+				<LoginForm next={next} />
 
-					<label className={styles.field}>
-						<span className={styles.label}>Contraseña</span>
-						<input
-							autoComplete="off"
-							className={styles.input}
-							name="password"
-							placeholder="Cualquier contraseña"
-							type="password"
-						/>
-					</label>
-
-					<button className={styles.primary} type="submit">
-						Entrar
-					</button>
-				</form>
-
-				<p className={styles.note}>
-					Esta demo no tiene sesión real: no se revisa ninguna contraseña y no se
-					guarda lo que escribís acá.
-				</p>
+				<p className={styles.note}>{NO_PASSWORD_RESET}</p>
 			</div>
 		</main>
 	);

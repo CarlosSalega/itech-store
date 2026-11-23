@@ -213,6 +213,12 @@
 	background: var(--surface);
 }
 
+.signOut {
+	width: 100%;
+	cursor: pointer;
+	text-align: start;
+}
+
 .icon {
 	width: 18px;
 	height: 18px;
