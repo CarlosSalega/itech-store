@@ -1,6 +1,6 @@
-@import "tailwindcss";
+@import "./preflight.css";
 
-@theme static {
+:root {
 	--white: #ffffff;
 	--ink: #171717;
 	--muted: #6e6e73;
