@@ -17,6 +17,7 @@ type FormFieldProps = {
 	htmlFor: string;
 	label: ReactNode;
 	message: string | undefined;
+	slot?: { id: string; own: false };
 };
 
 export function FormField({
@@ -25,9 +26,10 @@ export function FormField({
 	htmlFor,
 	label,
 	message,
+	slot,
 }: FormFieldProps) {
 	const helpId = help === undefined ? null : `${htmlFor}-help`;
-	const slotId = `${htmlFor}-message`;
+	const slotId = slot?.id ?? `${htmlFor}-message`;
 	const describedBy = helpId === null ? slotId : `${helpId} ${slotId}`;
 
 	return (
@@ -42,14 +44,16 @@ export function FormField({
 					{help}
 				</p>
 			)}
-			<span aria-live="polite" className={styles.slot} id={slotId}>
-				{message === undefined ? null : (
-					<>
-						<AlertIcon className={styles.errorIcon} />
-						{message}
-					</>
-				)}
-			</span>
+			{slot?.own === false ? null : (
+				<span aria-live="polite" className={styles.slot} id={slotId}>
+					{message === undefined ? null : (
+						<>
+							<AlertIcon className={styles.errorIcon} />
+							{message}
+						</>
+					)}
+				</span>
+			)}
 		</div>
 	);
 }

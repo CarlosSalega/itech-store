@@ -16,14 +16,7 @@ vi.mock("../storage/product-store", () => ({
 
 const markup = renderToStaticMarkup(<NewProductScreen />);
 
-const SLOT_IDS = [
-	"nombre-message",
-	"slug-message",
-	"familia-message",
-	"cap-0-message",
-	"precio-0-message",
-	"stock-0-message",
-];
+const SLOT_IDS = ["nombre-message", "slug-message", "familia-message"];
 
 function slotText(id: string): string {
 	const match = new RegExp(`id="${id}"[^>]*>([\\s\\S]*?)</span>`).exec(markup);
@@ -32,10 +25,13 @@ function slotText(id: string): string {
 }
 
 describe("the room the product form reserves for its messages", () => {
-	it("keeps one announced slot per validated field of the first variant", () => {
-		expect(markup.match(/aria-live="polite"/g)).toHaveLength(SLOT_IDS.length);
+	it("keeps one lane per top-level field and one per variant row", () => {
+		const lanes = markup.match(/id="var-\d+-message"/g) ?? [];
 
-		for (const id of SLOT_IDS) {
+		expect(lanes).toHaveLength(1);
+		expect(markup.match(/aria-live="polite"/g)).toHaveLength(3 + lanes.length);
+
+		for (const id of SLOT_IDS.slice(0, 3)) {
 			expect(markup).toContain(`id="${id}"`);
 		}
 	});
@@ -44,9 +40,8 @@ describe("the room the product form reserves for its messages", () => {
 		expect(markup).toMatch(/aria-describedby="nombre-help nombre-message"/);
 		expect(markup).toMatch(/aria-describedby="slug-help slug-message"/);
 		expect(markup).toMatch(/aria-describedby="familia-message"/);
-		expect(markup).toMatch(/aria-describedby="cap-0-message"/);
-		expect(markup).toMatch(/aria-describedby="precio-0-help precio-0-message"/);
-		expect(markup).toMatch(/aria-describedby="stock-0-message"/);
+		expect(markup.match(/aria-describedby="var-0-message"/g)).toHaveLength(2);
+		expect(markup).toMatch(/aria-describedby="precio-0-help var-0-message"/);
 	});
 
 	it("marks nothing invalid and writes nothing while the draft is pristine", () => {

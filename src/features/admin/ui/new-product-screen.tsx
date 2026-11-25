@@ -242,6 +242,8 @@ export function NewProductScreen() {
 									const priceError = rowError(index, "price");
 									const stockError = rowError(index, "stock");
 									const labelError = rowError(index, "label");
+									const variantMessage =
+										labelError ?? priceError ?? stockError ?? undefined;
 
 									return (
 										<div className={styles.variant} key={index}>
@@ -250,6 +252,7 @@ export function NewProductScreen() {
 													htmlFor={`cap-${index}`}
 													label="Capacidad"
 													message={labelError}
+													slot={{ id: `var-${index}-message`, own: false }}
 												>
 													{(aria) => (
 														<input
@@ -270,6 +273,7 @@ export function NewProductScreen() {
 													htmlFor={`precio-${index}`}
 													label="Precio en pesos"
 													message={priceError}
+													slot={{ id: `var-${index}-message`, own: false }}
 												>
 													{(aria) => (
 														<span className={styles.money}>
@@ -295,6 +299,7 @@ export function NewProductScreen() {
 													htmlFor={`stock-${index}`}
 													label="Stock"
 													message={stockError}
+													slot={{ id: `var-${index}-message`, own: false }}
 												>
 													{(aria) => (
 														<input
@@ -312,6 +317,19 @@ export function NewProductScreen() {
 														/>
 													)}
 												</FormField>
+
+												<span
+													aria-live="polite"
+													className={styles.variantSlot}
+													id={`var-${index}-message`}
+												>
+													{variantMessage === undefined ? null : (
+														<>
+															<AlertIcon className={styles.errorIcon} />
+															{variantMessage}
+														</>
+													)}
+												</span>
 
 												<button
 													className={styles.remove}
