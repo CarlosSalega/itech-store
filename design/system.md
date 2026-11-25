@@ -406,6 +406,8 @@ longest shipped message — `El email o la contraseña no son correctos.`, 42 ch
 of it in `--t-caption`. A longer sentence grows the lane and brings the shift back, so it is never the
 fix: a message that cannot be said in 44 characters is not a message.
 
+**A compact repeater row is the one exception to one lane per field.** When a row is a grid of narrow columns — the product variant repeater is 120px, a wider price and 96px — three lanes cannot each hold one line, so the row owns **one** lane, spanning every column, that announces the first message of that row. The three controls are all described by it. Everywhere else, one field keeps its own lane.
+
 **A static note never lives inside a lane.** A sentence that is always true cannot fit a one-line
 reservation, and placing it there is exactly what turned the login's credential note into three lines
 of a one-line lane at 320px. It belongs in its own place on the page with its own room: the login's
