@@ -12,7 +12,12 @@ import {
 import { ChevronLeftIcon, PlusIcon, TrashIcon } from "@/components/icons";
 import { FAMILY_LABEL, NAV_FAMILIES } from "@/features/catalog/domain/catalog";
 
-import { productSlug, variantSku, type AdminProduct } from "../domain/product";
+import {
+	productSlug,
+	variantSku,
+	type AdminProduct,
+	type AdminProductImage,
+} from "../domain/product";
 import {
 	EMPTY_VARIANT_DRAFT,
 	blankDraft,
@@ -23,6 +28,7 @@ import {
 	type VariantDraft,
 	type VariantDraftErrors,
 } from "../domain/product-form";
+import { appendGalleryImage } from "../domain/product-gallery";
 import {
 	commitProducts,
 	getProductsServerSnapshot,
@@ -31,6 +37,7 @@ import {
 } from "../storage/product-store";
 import { FormField } from "./form-field";
 import { AlertIcon, ChevronDownIcon } from "./icons";
+import { ProductGallery } from "./product-gallery";
 import { AdminScreen, ScreenFoot } from "./screen";
 import { Toggle } from "./toggle";
 
@@ -90,6 +97,17 @@ export function NewProductScreen() {
 		setDraft((current) => ({
 			...current,
 			variants: current.variants.filter((_, position) => position !== index),
+		}));
+	};
+
+	const changeGallery = (gallery: readonly AdminProductImage[]) => {
+		setDraft((current) => ({ ...current, gallery }));
+	};
+
+	const addPhoto = (photo: { readonly alt: string; readonly url: string }) => {
+		setDraft((current) => ({
+			...current,
+			gallery: appendGalleryImage(current.gallery, photo),
 		}));
 	};
 
@@ -364,6 +382,16 @@ export function NewProductScreen() {
 								</p>
 							)}
 						</section>
+
+						<ProductGallery
+							error={errors.gallery}
+							images={draft.gallery}
+							name={draft.name}
+							onAdd={addPhoto}
+							onChange={changeGallery}
+							productId={null}
+							scope={slug}
+						/>
 					</div>
 
 					<aside className={styles.colSide}>
@@ -388,11 +416,6 @@ export function NewProductScreen() {
 								note="Se muestra con la estrella del catálogo."
 								onChange={(destacado) => change({ destacado })}
 							/>
-
-							<p className={styles.sideNote}>
-								Las fotos se eligen en la ficha del producto: acá se carga el dato y
-								el catálogo usa la imagen de muestra hasta que haya una propia.
-							</p>
 						</section>
 					</aside>
 				</div>
@@ -425,7 +448,7 @@ export function NewProductScreen() {
 			</form>
 
 			<ScreenFoot
-				notice="Los datos de este panel son de ejemplo: el producto se guarda en este navegador, no en la base, y las fotos son las del catálogo de la demo. Los precios son de muestra y no son precios de venta."
+				notice="Los datos de este panel son de ejemplo: el producto se guarda en este navegador, no en la base. Las fotos que subís se guardan en la nube y el catálogo de la demo conserva las suyas. Los precios son de muestra y no son precios de venta."
 				routes="/admin/productos/nuevo"
 			/>
 		</AdminScreen>

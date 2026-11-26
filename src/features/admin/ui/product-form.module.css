@@ -343,9 +343,156 @@ select.input {
 	font-variant-numeric: tabular-nums;
 }
 
-.sideNote {
+.photoEmpty {
+	margin-top: var(--s-4);
+	max-width: 52ch;
+	color: var(--muted);
+	font-size: var(--t-caption);
+	line-height: 1.4;
+	letter-spacing: 0.015em;
+}
+
+.gallery {
+	margin-top: var(--s-4);
+	border-top: 1px solid var(--hairline);
+}
+
+.photoRow {
+	display: grid;
+	grid-template-columns: 20px 56px minmax(0, 1fr) auto;
+	align-items: center;
+	gap: var(--s-3);
+	padding: var(--s-3) 0;
+	border-bottom: 1px solid var(--hairline);
+}
+
+.photoIndex {
+	color: var(--muted);
+	font-size: var(--t-caption);
+	font-variant-numeric: tabular-nums;
+	text-align: end;
+}
+
+.photoThumb {
+	width: 56px;
+	height: 56px;
+	padding: 4px;
+	border-radius: var(--r-sm);
+	background: var(--surface);
+	object-fit: contain;
+	mix-blend-mode: multiply;
+}
+
+.photoFields {
+	display: grid;
+	gap: 4px;
+	min-width: 0;
+}
+
+.photoLabel {
+	color: var(--muted);
+	font-size: var(--t-caption);
+	line-height: 1.3;
+	letter-spacing: 0.015em;
+}
+
+.photoActions {
+	display: flex;
+	align-items: center;
+	gap: var(--s-1);
+}
+
+.move {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0 var(--s-2);
+	border: 0;
+	border-radius: var(--r-sm);
+	background: none;
+	color: var(--muted);
+	font-family: var(--font-sans);
+	font-size: var(--t-caption);
+	cursor: pointer;
+	transition:
+		background var(--dur-1) linear,
+		color var(--dur-1) linear;
+}
+
+.move:hover {
+	background: var(--surface);
+	color: var(--ink);
+}
+
+.move:focus-visible {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.move:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.move:disabled:hover {
+	background: none;
+	color: var(--muted);
+}
+
+.moveIcon {
+	flex: none;
+	width: 14px;
+	height: 14px;
+}
+
+.uploadRow {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--s-2) var(--s-4);
 	margin-top: var(--s-3);
-	max-width: 36ch;
+}
+
+.uploadPick {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-height: 44px;
+	padding: 0 var(--s-4);
+	border-radius: var(--r-pill);
+	background: var(--surface);
+	box-shadow: var(--e-hairline);
+	color: var(--ink);
+	font-size: var(--t-body-s);
+	font-weight: 500;
+	cursor: pointer;
+	transition: background var(--dur-1) linear;
+}
+
+.uploadPick:hover {
+	background: var(--white);
+}
+
+.uploadPick:focus-within {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.uploadPick:has(input:disabled) {
+	color: var(--muted);
+	cursor: not-allowed;
+}
+
+.uploadIcon {
+	width: 16px;
+	height: 16px;
+}
+
+.uploadNote {
 	color: var(--muted);
 	font-size: var(--t-caption);
 	line-height: 1.4;
@@ -496,6 +643,15 @@ select.input {
 	.remove {
 		grid-area: 2 / 3;
 		justify-self: end;
+	}
+
+	.photoRow {
+		grid-template-columns: 20px 56px minmax(0, 1fr);
+	}
+
+	.photoActions {
+		grid-column: 1 / -1;
+		justify-content: flex-end;
 	}
 
 	.actionActions {
