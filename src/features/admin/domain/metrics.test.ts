@@ -63,7 +63,13 @@ const productsWithStock = (stocks: number[], published = true) => [
 		name: "Apple TV 4K (2022)",
 		description: null,
 		category: "ACCESSORY" as const,
-		image: "/products/accessory/apple-tv-4k-2022-1.webp",
+		gallery: [
+			{
+				position: 0,
+				alt: "Apple TV 4K (2022) — foto principal",
+				url: "/products/accessory/apple-tv-4k-2022-1.webp",
+			},
+		],
 		published,
 		destacado: false,
 		createdAt: "2026-11-08T12:00:00.000Z",

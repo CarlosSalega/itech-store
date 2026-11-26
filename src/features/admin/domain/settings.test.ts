@@ -91,11 +91,41 @@ describe("the media library", () => {
 	it("counts the products without a photograph on the reserve image", () => {
 		const library = mediaLibrary([
 			...ADMIN_PRODUCTS,
-			{ ...ADMIN_PRODUCTS[0], slug: "sin-foto", image: null },
+			{ ...ADMIN_PRODUCTS[0], slug: "sin-foto", gallery: [] },
 		]);
 
 		expect(library.reserve).toEqual({ src: PLACEHOLDER_IMAGE, products: 1 });
 		expect(library.summary).toBe("14 imágenes · 1 de reserva");
+	});
+
+	it("lists every photograph of a gallery, counting the product once", () => {
+		const library = mediaLibrary([
+			{
+				...ADMIN_PRODUCTS[0],
+				gallery: [
+					...ADMIN_PRODUCTS[0].gallery,
+					{
+						position: 1,
+						alt: "Airpods Pro 3 — foto 2",
+						url: "/products/airpods/airpods-pro-3-2.webp",
+					},
+				],
+			},
+		]);
+
+		expect(library.images).toEqual([
+			{
+				src: "/products/airpods/airpods-pro-3-1.webp",
+				name: "Airpods Pro 3",
+				products: 1,
+			},
+			{
+				src: "/products/airpods/airpods-pro-3-2.webp",
+				name: "Airpods Pro 3",
+				products: 1,
+			},
+		]);
+		expect(library.summary).toBe("2 imágenes · 1 de reserva");
 	});
 
 	it("writes the usage of a tile with its number and its role", () => {

@@ -108,28 +108,33 @@ export function mediaSummary(images: number): string {
 }
 
 export function mediaLibrary(products: readonly AdminProduct[]): MediaLibrary {
-	const grouped = new Map<string, AdminProduct[]>();
+	const grouped = new Map<string, { name: string; products: Set<string> }>();
 	let reserveProducts = 0;
 
 	for (const product of products) {
-		if (product.image === null) {
+		if (product.gallery.length === 0) {
 			reserveProducts += 1;
 			continue;
 		}
 
-		const group = grouped.get(product.image);
+		for (const image of product.gallery) {
+			const group = grouped.get(image.url);
 
-		if (group === undefined) {
-			grouped.set(product.image, [product]);
-		} else {
-			group.push(product);
+			if (group === undefined) {
+				grouped.set(image.url, {
+					name: product.name,
+					products: new Set([product.slug]),
+				});
+			} else {
+				group.products.add(product.slug);
+			}
 		}
 	}
 
 	const images = [...grouped].map(([src, group]) => ({
 		src,
-		name: group[0].name,
-		products: group.length,
+		name: group.name,
+		products: group.products.size,
 	}));
 
 	return {

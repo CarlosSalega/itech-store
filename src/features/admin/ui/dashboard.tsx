@@ -14,6 +14,7 @@ import {
 	type DashboardDelta,
 	type DashboardMetrics,
 } from "../domain/metrics";
+import { productCoverImage } from "../domain/product";
 import { ArrowDownIcon, ArrowUpIcon } from "./icons";
 
 import styles from "./dashboard.module.css";
@@ -219,7 +220,7 @@ export function AdminDashboard({ metrics }: { metrics: DashboardMetrics }) {
 									alt=""
 									className={styles.photo}
 									height={52}
-									src={product.image ?? PLACEHOLDER_IMAGE}
+									src={productCoverImage(product)?.url ?? PLACEHOLDER_IMAGE}
 									width={52}
 								/>
 								<span>

@@ -6,8 +6,10 @@ import {
 	deleteProduct,
 	isLowOnStock,
 	lowestStockVariant,
+	orderedGallery,
 	parsePricePesos,
 	pesosInputValue,
+	productCoverImage,
 	productDateLabel,
 	productPriceFrom,
 	productSlug,
@@ -17,6 +19,7 @@ import {
 	variantSku,
 	LOW_STOCK_THRESHOLD,
 	type AdminProduct,
+	type AdminProductImage,
 } from "./product";
 
 const product = (stocks: number[], prices = stocks.map(() => 3_000_000)): AdminProduct => ({
@@ -24,7 +27,13 @@ const product = (stocks: number[], prices = stocks.map(() => 3_000_000)): AdminP
 	name: "Apple TV 4K (2022)",
 	description: null,
 	category: "ACCESSORY",
-	image: "/products/accessory/apple-tv-4k-2022-1.webp",
+	gallery: [
+		{
+			position: 0,
+			alt: "Apple TV 4K (2022) — foto principal",
+			url: "/products/accessory/apple-tv-4k-2022-1.webp",
+		},
+	],
 	published: true,
 	destacado: false,
 	createdAt: "2026-11-08T12:00:00.000Z",
@@ -34,6 +43,58 @@ const product = (stocks: number[], prices = stocks.map(() => 3_000_000)): AdminP
 		priceCents: prices[index] ?? 0,
 		stock,
 	})),
+});
+
+function photo(position: number, slug: string): AdminProductImage {
+	return {
+		position,
+		alt: `${slug} — foto ${position + 1}`,
+		url: `/products/${slug}-${position + 1}.webp`,
+	};
+}
+
+describe("the gallery a product carries", () => {
+	const products = [product([5, 7, 2])];
+
+	it("orders the photographs by their position, not by the order they arrive", () => {
+		expect(orderedGallery([photo(1, "apple-tv-4k-2022"), photo(0, "apple-tv-4k-2022")])).toEqual([
+			photo(0, "apple-tv-4k-2022"),
+			photo(1, "apple-tv-4k-2022"),
+		]);
+	});
+
+	it("keeps the photographs it was given intact", () => {
+		const given = [photo(1, "apple-tv-4k-2022"), photo(0, "apple-tv-4k-2022")];
+		const before = structuredClone(given);
+
+		orderedGallery(given);
+
+		expect(given).toEqual(before);
+	});
+
+	it("takes the photograph in the first position as the cover", () => {
+		expect(
+			productCoverImage({
+				...product([1]),
+				gallery: [photo(1, "apple-tv-4k-2022"), photo(0, "apple-tv-4k-2022")],
+			}),
+		).toEqual(photo(0, "apple-tv-4k-2022"));
+	});
+
+	it("has no cover when the product carries no photographs", () => {
+		expect(productCoverImage({ ...product([1]), gallery: [] })).toBeNull();
+	});
+
+	it("replaces the gallery when a patch carries one", () => {
+		const next = updateProduct(products, "apple-tv-4k-2022", {
+			gallery: [photo(1, "apple-tv-4k-2022"), photo(0, "apple-tv-4k-2022")],
+		});
+
+		expect(next[0]?.gallery).toEqual([
+			photo(0, "apple-tv-4k-2022"),
+			photo(1, "apple-tv-4k-2022"),
+		]);
+	});
 });
 
 describe("the low-stock rule", () => {
@@ -179,7 +240,19 @@ describe("creating a product", () => {
 		expect(created.published).toBe(false);
 		expect(created.category).toBe("IPAD");
 		expect(created.description).toBe("iPad Pro de 11 pulgadas con chip M5.");
-		expect(created.image).toBeNull();
+		expect(created.gallery).toEqual([]);
+	});
+
+	it("keeps the gallery the form carried, in position order", () => {
+		const created = createProduct({
+			...input,
+			gallery: [photo(1, "apple-ipad-pro-11-m5-space-black"), photo(0, "apple-ipad-pro-11-m5-space-black")],
+		});
+
+		expect(created.gallery).toEqual([
+			photo(0, "apple-ipad-pro-11-m5-space-black"),
+			photo(1, "apple-ipad-pro-11-m5-space-black"),
+		]);
 	});
 
 	it("trims the name and keeps the catalogue's own spelling", () => {
@@ -323,6 +396,15 @@ describe("the fixture set the boards draw", () => {
 	it("keeps twelve published and two featured", () => {
 		expect(ADMIN_PRODUCTS.filter((entry) => entry.published)).toHaveLength(12);
 		expect(ADMIN_PRODUCTS.filter((entry) => entry.destacado)).toHaveLength(2);
+	});
+
+	it("gives every product the catalogue photograph in the first position, named in its alt", () => {
+		for (const entry of ADMIN_PRODUCTS) {
+			expect(entry.gallery).toHaveLength(1);
+			expect(entry.gallery[0]?.position).toBe(0);
+			expect(entry.gallery[0]?.url.startsWith("/products/")).toBe(true);
+			expect(entry.gallery[0]?.alt).toContain(entry.name);
+		}
 	});
 
 	it("dates every product inside November 2026", () => {

@@ -1,6 +1,7 @@
 import type { Category } from "@/generated/prisma/enums";
 
-import type { AdminProduct, AdminVariant } from "../domain/product";
+import type { AdminProduct, AdminProductImage, AdminVariant } from "../domain/product";
+import { orderedGallery } from "../domain/product";
 import { ADMIN_PRODUCTS } from "../fixtures/products";
 
 export const ADMIN_PRODUCT_STORAGE_KEY = "itech-store.admin-products.v1";
@@ -88,6 +89,42 @@ function readVariants(value: unknown): AdminVariant[] | null {
 	return variants;
 }
 
+function readImage(value: unknown): AdminProductImage | null {
+	if (!isRecord(value)) {
+		return null;
+	}
+
+	const position = readWholeNumber(value.position);
+	const url = readString(value.url);
+	const alt = readString(value.alt);
+
+	if (position === null || url === null || alt === null) {
+		return null;
+	}
+
+	return { position, url, alt };
+}
+
+function readGallery(value: unknown): AdminProductImage[] | null {
+	if (!Array.isArray(value)) {
+		return null;
+	}
+
+	const images: AdminProductImage[] = [];
+
+	for (const candidate of value) {
+		const image = readImage(candidate);
+
+		if (image === null) {
+			return null;
+		}
+
+		images.push(image);
+	}
+
+	return orderedGallery(images);
+}
+
 function parseProduct(value: unknown): AdminProduct | null {
 	if (!isRecord(value)) {
 		return null;
@@ -99,6 +136,7 @@ function parseProduct(value: unknown): AdminProduct | null {
 	const createdAt = readDate(value.createdAt);
 	const published = readFlag(value.published);
 	const destacado = readFlag(value.destacado);
+	const gallery = readGallery(value.gallery);
 	const variants = readVariants(value.variants);
 
 	if (
@@ -108,6 +146,7 @@ function parseProduct(value: unknown): AdminProduct | null {
 		createdAt === null ||
 		published === null ||
 		destacado === null ||
+		gallery === null ||
 		variants === null
 	) {
 		return null;
@@ -117,16 +156,12 @@ function parseProduct(value: unknown): AdminProduct | null {
 		return null;
 	}
 
-	if (value.image !== null && typeof value.image !== "string") {
-		return null;
-	}
-
 	return {
 		slug,
 		name,
 		description: value.description === null ? null : value.description,
 		category,
-		image: value.image === null ? null : value.image,
+		gallery,
 		published,
 		destacado,
 		createdAt,

@@ -117,7 +117,7 @@ function ProductDetail({
 	const price = productPriceFrom(product);
 	const units = productStockTotal(product);
 	const scarcest = lowestStockVariant(product);
-	const photos = product.image === null ? [] : [product.image];
+	const photos = product.gallery;
 	const editingProduct = product;
 
 	const editPrice = editing === null ? null : parsePricePesos(editing.price);
@@ -455,7 +455,7 @@ function ProductDetail({
 						) : (
 							<ol className={styles.photos}>
 								{photos.map((photo, index) => (
-									<li className={styles.photo} key={photo}>
+									<li className={styles.photo} key={photo.url}>
 										<span aria-hidden="true" className={styles.photoIndex}>
 											{index + 1}
 										</span>
@@ -464,7 +464,7 @@ function ProductDetail({
 											alt={`${product.name}, foto ${index + 1}`}
 											className={styles.photoThumb}
 											height={56}
-											src={photo}
+											src={photo.url}
 											width={56}
 										/>
 										<span className={styles.photoText}>

@@ -8,6 +8,7 @@ import {
 
 import {
 	isLowOnStock,
+	productCoverImage,
 	productPriceFrom,
 	productStockTotal,
 	type AdminProduct,
@@ -96,7 +97,7 @@ export function ProductsTable({
 											alt=""
 											className={styles.thumb}
 											height={36}
-											src={product.image ?? PLACEHOLDER_IMAGE}
+											src={productCoverImage(product)?.url ?? PLACEHOLDER_IMAGE}
 											width={36}
 										/>
 										<span className={styles.productText}>

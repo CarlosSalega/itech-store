@@ -53,6 +53,22 @@ describe("the products table", () => {
 		expect(featured).toHaveLength(2);
 	});
 
+	it("draws the photograph in the first position of the gallery in the row", () => {
+		const [product] = ADMIN_PRODUCTS;
+		const photographed = {
+			...(product ?? ADMIN_PRODUCTS[1]),
+			gallery: [
+				{ position: 0, alt: " portada", url: "/products/airpods/portada.webp" },
+				{ position: 1, alt: " segunda", url: "/products/airpods/segunda.webp" },
+			],
+		};
+
+		const markup = render([photographed]);
+
+		expect(markup).toContain('src="/products/airpods/portada.webp"');
+		expect(markup).not.toContain('src="/products/airpods/segunda.webp"');
+	});
+
 	it("keeps every column associated with its header", () => {
 		const markup = render();
 
