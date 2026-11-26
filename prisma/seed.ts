@@ -118,7 +118,6 @@ async function main() {
 				name: product.name,
 				description: product.description,
 				category: product.category,
-				images,
 			};
 
 			const record = await prisma.product.upsert({

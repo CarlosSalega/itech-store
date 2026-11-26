@@ -160,7 +160,7 @@ Product photography lives in `public/products`, one folder per family (`iphone`,
 `watch`, `airpods`, `accessory`), which is **gitignored**: the files exist only on the machine that
 ran the extraction and are never committed. Every reference points at the family folder that holds
 it, `/products/<family>/<file>`, and the seed keeps only the references whose file is present on the
-current machine, so a fresh clone seeds the database with **no image references at all** and every
+current machine, so a fresh clone seeds the database with **no image references at all** — no gallery rows either — and every
 product renders `/placeholder.webp`. That is intended, not a bug.
 
 To regenerate the catalog data and photos:

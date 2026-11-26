@@ -30,7 +30,6 @@ model Product {
   name        String
   description String
   category    Category
-  images      String[]
   specs       Json?
   /// Editorial flag for the landing: no admin panel exists yet to toggle it.
   featured    Boolean   @default(false)

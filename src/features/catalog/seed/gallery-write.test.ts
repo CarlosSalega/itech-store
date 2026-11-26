@@ -1,8 +1,23 @@
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { resolveImages } from "./catalog";
+
+type Upsert<K extends string> = {
+	where: Record<K, string>;
+	create: Record<string, unknown>;
+	update: Record<string, unknown>;
+};
+
+const SEED_DIR = path.join(process.cwd(), "prisma", "seed");
+const SEED_FILES = ["products.json", "products-iphone.json", "products-apple.json"];
 
 const db = vi.hoisted(() => ({
 	products: new Map<string, Record<string, unknown>>(),
 	gallery: new Map<string, Record<string, unknown>>(),
+	productUpserts: [] as Upsert<"slug">[],
 	disconnects: 0,
 	nextId: 1,
 }));
@@ -10,11 +25,8 @@ const db = vi.hoisted(() => ({
 vi.mock("../../../generated/prisma/client", () => {
 	class PrismaClient {
 		product = {
-			upsert: async (args: {
-				where: { slug: string };
-				create: Record<string, unknown>;
-				update: Record<string, unknown>;
-			}) => {
+			upsert: async (args: Upsert<"slug">) => {
+				db.productUpserts.push(args);
 				const hit = db.products.get(args.where.slug);
 				if (hit) {
 					Object.assign(hit, args.update);
@@ -90,6 +102,7 @@ vi.mock("./catalog", async (importOriginal) => {
 async function runSeed(): Promise<void> {
 	vi.resetModules();
 	db.disconnects = 0;
+	db.productUpserts.length = 0;
 	const log = vi.spyOn(console, "log").mockImplementation(() => {});
 	const error = vi.spyOn(console, "error").mockImplementation(() => {});
 	try {
@@ -114,8 +127,20 @@ function galleryOf(productId: string): Stored[] {
 		.sort((a, b) => (a.position as number) - (b.position as number));
 }
 
-function productsWithImages(): Stored[] {
-	return [...db.products.values()].filter((row) => (row.images as string[]).length > 0);
+function seededPaths(): Map<string, string[]> {
+	const rows = SEED_FILES.filter((file) => existsSync(path.join(SEED_DIR, file))).flatMap(
+		(file) =>
+			JSON.parse(readFileSync(path.join(SEED_DIR, file), "utf8")) as Array<{
+				slug: string;
+				images: string[];
+			}>,
+	);
+
+	return new Map(rows.map((row) => [row.slug, resolveImages(row.images)]));
+}
+
+function productNamed(): Stored[] {
+	return [...db.products.values()];
 }
 
 beforeEach(() => {
@@ -126,32 +151,63 @@ beforeEach(() => {
 });
 
 describe("seed gallery", () => {
-	it("writes one row per path, numbered from zero in the order the paths are written", async () => {
+	it("writes one row per path from the seed source, numbered from zero in order", async () => {
 		await runSeed();
 
-		const products = productsWithImages();
+		const expected = seededPaths();
 
-		expect(products.length).toBeGreaterThan(0);
+		expect(expected.size).toBeGreaterThan(0);
 
-		for (const product of products) {
-			const rows = galleryOf(product.id as string);
+		for (const [slug, paths] of expected) {
+			const product = db.products.get(slug);
 
-			expect(rows.map((row) => row.position)).toEqual(rows.map((_, index) => index));
-			expect(rows.map((row) => row.url)).toEqual(product.images);
-			expect(product.images).toEqual(rows.map((row) => row.url));
+			expect(product).toBeDefined();
+
+			const rows = galleryOf(product!.id as string);
+
+			expect(rows.map((row) => row.url)).toEqual(paths);
+			expect(rows.map((row) => row.position)).toEqual(paths.map((_, index) => index));
 		}
+	});
+
+	it("never sends the images array to the product write, only the gallery carries them", async () => {
+		await runSeed();
+
+		expect(db.productUpserts.length).toBeGreaterThan(0);
+
+		for (const upsert of db.productUpserts) {
+			expect(upsert.create).not.toHaveProperty("images");
+			expect(upsert.update).not.toHaveProperty("images");
+		}
+
+		expect(db.gallery.size).toBeGreaterThan(0);
 	});
 
 	it("gives every row an alt built from the product name and its index", async () => {
 		await runSeed();
 
-		const product = productsWithImages().find((row) => (row.images as string[]).length > 1);
+		const product = productNamed().find((row) => galleryOf(row.id as string).length > 1);
 		const rows = galleryOf(product!.id as string);
 
 		expect(rows[0]?.alt).toBe(`${product!.name} — foto principal`);
 		expect(rows[1]?.alt).toBe(`${product!.name} — foto 2`);
 		expect(rows[rows.length - 1]?.alt).toBe(`${product!.name} — foto ${rows.length}`);
 		expect(rows.every((row) => typeof row.alt === "string" && row.alt.length > 0)).toBe(true);
+	});
+
+	it("writes no row at all for a product whose photos resolve to nothing", async () => {
+		await runSeed();
+
+		const empty = [...seededPaths()].filter(([, paths]) => paths.length === 0);
+
+		expect(empty.length).toBeGreaterThan(0);
+
+		for (const [slug] of empty) {
+			const product = db.products.get(slug);
+
+			expect(product).toBeDefined();
+			expect(galleryOf(product!.id as string)).toEqual([]);
+		}
 	});
 
 	it("a second run leaves the same rows", async () => {
@@ -167,7 +223,7 @@ describe("seed gallery", () => {
 
 	it("a second run drops a row left past the end of the paths", async () => {
 		await runSeed();
-		const product = productsWithImages()[0]!;
+		const product = productNamed().find((row) => galleryOf(row.id as string).length > 0)!;
 		const before = galleryOf(product.id as string);
 		db.gallery.set(`${product.id}:99`, {
 			id: "stale",
