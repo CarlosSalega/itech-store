@@ -63,7 +63,7 @@ describe("the auth instance", () => {
 		const auth = await instance();
 		const plugins = (auth.options.plugins ?? []).map((plugin) => plugin.id);
 
-		expect(plugins).toEqual(["next-cookies"]);
+		expect(plugins).toEqual(["next-cookies", "magic-link"]);
 	});
 
 	it("names the missing secret instead of signing sessions with something invented", async () => {
