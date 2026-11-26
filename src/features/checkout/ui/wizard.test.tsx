@@ -12,6 +12,10 @@ vi.mock("./use-hydrated", () => ({
 	useHydrated: () => true,
 }));
 
+vi.mock("../server/actions", () => ({
+	placeOrderAction: async () => ({ ok: true, id: "cm_order", number: "IT-2026-0001" }),
+}));
+
 vi.mock("@/features/cart/ui/provider", () => ({
 	useCart: () => ({
 		cart: {

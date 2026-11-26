@@ -1,8 +1,8 @@
 "use server";
 
-import { FAMILY_LABEL, formatStorage, variantLabel } from "@/features/catalog/domain/catalog";
 import { prisma } from "@/lib/prisma";
 
+import { CATALOGUE_VARIANT_SELECT, toCatalogueVariant } from "./catalogue-variant";
 import type { CatalogVariant, RevalidationResult } from "./revalidation";
 
 const MAX_VARIANTS = 50;
@@ -28,41 +28,11 @@ export async function revalidateCart(variantIds: string[]): Promise<Revalidation
 
 	try {
 		const rows = await prisma.variant.findMany({
-			select: {
-				id: true,
-				sku: true,
-				storage: true,
-				color: true,
-				price: true,
-				stock: true,
-				product: {
-					select: {
-						slug: true,
-						name: true,
-						category: true,
-						gallery: {
-							orderBy: { position: "asc" },
-							take: 1,
-							select: { url: true },
-						},
-					},
-				},
-			},
+			select: CATALOGUE_VARIANT_SELECT,
 			where: { id: { in: ids } },
 		});
 
-		const variants: CatalogVariant[] = rows.map((row) => ({
-			variantId: row.id,
-			sku: row.sku,
-			productSlug: row.product.slug,
-			productName: row.product.name,
-			familyLabel: FAMILY_LABEL[row.product.category],
-			variantLabel: formatStorage(row.storage),
-			imageUrl: row.product.gallery[0]?.url ?? null,
-			imageAlt: `${row.product.name}, ${variantLabel(row.storage, row.color)}`,
-			unitPriceCents: row.price,
-			stock: row.stock,
-		}));
+		const variants: CatalogVariant[] = rows.map(toCatalogueVariant);
 
 		return { ok: true, variants, requested: ids };
 	} catch {

@@ -12,16 +12,14 @@ import { useCart } from "@/features/cart/ui/provider";
 import {
 	BUYER_FIELDS,
 	EMPTY_BUYER,
-	createOrder,
-	nextOrderNumber,
 	validateBuyer,
 	type BuyerErrors,
 	type BuyerField as BuyerFieldName,
-	type Order,
 	type OrderBuyer,
 	type OrderPayment,
 } from "../domain/order";
-import { commitOrders, getOrdersSnapshot } from "../storage/order-store";
+import { placeOrderAction } from "../server/actions";
+import type { PlaceOrderRefused } from "../server/place-order";
 import { BuyerField } from "./buyer-field";
 import { ClockIcon, TruckIcon } from "./icons";
 import { OrderSummary } from "./order-summary";
@@ -94,14 +92,15 @@ function CheckoutFlow() {
 	const [buyer, setBuyer] = useState<OrderBuyer>(EMPTY_BUYER);
 	const [payment, setPayment] = useState<OrderPayment>("transfer");
 	const [attempted, setAttempted] = useState(false);
-	const [placed, setPlaced] = useState<Order | null>(null);
+	const [placing, setPlacing] = useState(false);
+	const [failure, setFailure] = useState<PlaceOrderRefused | null>(null);
 	const headingRef = useRef<HTMLHeadingElement | null>(null);
 	const fieldRefs = useRef<Partial<Record<BuyerFieldName, HTMLInputElement | null>>>({});
 	const wantsHeadingFocus = useRef(false);
 
 	const errors: BuyerErrors = attempted ? validateBuyer(buyer) : {};
-	const lines = placed === null ? cart.lines : placed.lines;
-	const shownTotals = placed === null ? totals : placed.totals;
+	const lines = cart.lines;
+	const shownTotals = totals;
 
 	useEffect(() => {
 		if (!wantsHeadingFocus.current) {
@@ -141,25 +140,28 @@ function CheckoutFlow() {
 		goTo("pago");
 	}
 
-	function submitPayment(event: FormEvent<HTMLFormElement>) {
+	async function submitPayment(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
+		setFailure(null);
+		setPlacing(true);
 
-		const orders = getOrdersSnapshot();
-		const order = createOrder({
-			cartLines: cart.lines,
-			buyer,
-			payment,
-			number: nextOrderNumber(
-				orders.map((entry) => entry.number),
-				new Date().getFullYear(),
-			),
-			createdAt: new Date().toISOString(),
-		});
+		const result = await placeOrderAction({ lines: cart.lines, buyer, payment });
 
-		setPlaced(order);
-		commitOrders([order, ...orders]);
+		setPlacing(false);
+
+		if (!result.ok) {
+			setFailure(result);
+
+			if (result.code === "DATOS_INVALIDOS") {
+				setAttempted(true);
+				goTo("datos");
+			}
+
+			return;
+		}
+
 		commitCart(EMPTY_CART);
-		router.push(`/pedido/${order.number}`);
+		router.push(`/pedido/${result.number}`);
 	}
 
 	const summary = <OrderSummary lines={lines} onEdit={openCart} totals={shownTotals} />;
@@ -205,6 +207,8 @@ function CheckoutFlow() {
 						<TruckIcon className={styles.shipIcon} />
 						El envío se coordina al finalizar.
 					</p>
+
+					<CheckoutFailure failure={failure} />
 
 					<div className={screenStyles.actions}>
 						<button className={screenStyles.primary} type="submit">
@@ -266,9 +270,11 @@ function CheckoutFlow() {
 					))}
 				</fieldset>
 
+				<CheckoutFailure failure={failure} />
+
 				<div className={screenStyles.actions}>
-					<button className={screenStyles.primary} type="submit">
-						Confirmar el pedido
+					<button className={screenStyles.primary} disabled={placing} type="submit">
+						{placing ? "Confirmando el pedido…" : "Confirmar el pedido"}
 					</button>
 					<button
 						className={screenStyles.back}
@@ -281,6 +287,14 @@ function CheckoutFlow() {
 				</div>
 			</form>
 		</CheckoutScreen>
+	);
+}
+
+function CheckoutFailure({ failure }: { failure: PlaceOrderRefused | null }) {
+	return (
+		<p className={styles.failure} role="alert">
+			{failure === null ? "" : failure.message}
+		</p>
 	);
 }
 

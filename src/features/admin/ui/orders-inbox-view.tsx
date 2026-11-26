@@ -25,6 +25,7 @@ type OrdersInboxViewProps = {
 	visible: readonly Order[];
 	filters: OrderFilters;
 	expanded: string | null;
+	message: string | null;
 	counts: Record<OrderStatusFilter, number>;
 	onQueryChange: (query: string) => void;
 	onStatusFilter: (status: OrderStatusFilter) => void;
@@ -71,6 +72,7 @@ export function OrdersInboxView({
 	visible,
 	filters,
 	expanded,
+	message,
 	counts,
 	onQueryChange,
 	onStatusFilter,
@@ -84,7 +86,7 @@ export function OrdersInboxView({
 				<div>
 					<h1 className={styles.title}>Pedidos</h1>
 					<p className={styles.deck}>
-						{`${orders.length} pedidos de la demo, del más nuevo al más viejo.`}
+						{`${orders.length} pedidos de la tienda, del más nuevo al más viejo.`}
 					</p>
 				</div>
 			</div>
@@ -128,37 +130,54 @@ export function OrdersInboxView({
 					orders={visible}
 				/>
 
-				{visible.length === 0 ? <EmptyInbox onClear={onClear} /> : null}
+				{visible.length === 0 ? (
+					<EmptyInbox filtered={orders.length > 0} onClear={onClear} />
+				) : null}
+
+				<p aria-live="polite" className={styles.tableFoot} id="pedidos-message">
+					{message}
+				</p>
 
 				<p className={styles.tableFoot}>{inboxSummary(orders, visible.length)}</p>
 			</div>
 
 			<ScreenFoot
-				notice={`Los datos de este panel son de ejemplo: ${orderCount(
+				notice={`Los pedidos salen de la base de datos: ${orderCount(
 					orders.length,
-				)} de la demo, con sus compradores, sus totales y sus estados. Los cambios de estado se guardan en este navegador. Los precios son de muestra y no son precios de venta.`}
+				)} con sus compradores, sus totales y sus estados. Los cambios de estado se guardan en la base de datos y el comprador los ve en el seguimiento de su pedido. Los precios son los precios de venta.`}
 				routes="/admin/pedidos · /pedido/[codigo]"
 			/>
 		</AdminScreen>
 	);
 }
 
-function EmptyInbox({ onClear }: { onClear: () => void }) {
+function EmptyInbox({
+	filtered,
+	onClear,
+}: {
+	filtered: boolean;
+	onClear: () => void;
+}) {
 	return (
 		<div className={styles.empty}>
 			<span aria-hidden="true" className={styles.emptyIcon}>
 				<SearchIcon className={styles.emptyGlyph} />
 			</span>
 			<span className={styles.emptyText}>
-				<span className={styles.emptyTitle}>Ningún pedido coincide.</span>
+				<span className={styles.emptyTitle}>
+					{filtered ? "Ningún pedido coincide." : "Todavía no hay pedidos."}
+				</span>
 				<span className={styles.emptyNote}>
-					No hay pedidos con ese número ni con ese comprador. Probá con otro texto o
-					volvé a todos los estados.
+					{filtered
+						? "No hay pedidos con ese número ni con ese comprador. Probá con otro texto o volvé a todos los estados."
+						: "Cuando alguien compre en la tienda, su pedido aparece acá con su comprador, su total y su estado."}
 				</span>
 			</span>
-			<button className={styles.clear} onClick={onClear} type="button">
-				Limpiar los filtros
-			</button>
+			{filtered ? (
+				<button className={styles.clear} onClick={onClear} type="button">
+					Limpiar los filtros
+				</button>
+			) : null}
 		</div>
 	);
 }

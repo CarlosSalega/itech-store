@@ -60,6 +60,15 @@
 	transform: scale(0.97);
 }
 
+.primary:disabled {
+	background: var(--muted);
+	cursor: progress;
+}
+
+.primary:disabled:active {
+	transform: none;
+}
+
 .back {
 	display: inline-flex;
 	align-items: center;
