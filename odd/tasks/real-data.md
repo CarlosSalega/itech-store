@@ -104,6 +104,13 @@ Branch `feat/image-uploads`. The module is replicated from `/home/charly06arg/De
 - T5 — The transport: the upload handler and the delete path as Web standards only, with no `next/server` import inside the module; every accepted upload records its `ImageUpload` row and its `ProductImage` row with `position` and `alt`.
 - T6 — The client gallery in the admin product form: move up/down and remove as buttons rather than `@dnd-kit`, inline messages rather than `sonner`, this project's tokens rather than `lucide-react`. Copy stays Spanish and inside the message lanes.
 - T7 — Documents, the phase gate and the PR: `docs/database.md` if the table changes the workflow, a short `docs/image-uploads.md` for the wiring, this file's Log, `pnpm test`, `lint`, `tsc`, `build`.
+## Tasks — P4, admin products on Postgres
+
+Branch `feat/admin-on-postgres`. No schema change: `published`, `ProductImage` and `ImageUpload` already exist. Two units with disjoint surfaces, then the gate.
+
+- T1 — The server side: `src/features/admin/server/product-repository.ts` reads through Prisma (`listAdminProducts`, `findAdminProduct`), `toAdminProduct` gets its production caller, and `src/features/admin/server/actions.ts` replaces `storage/product-store.ts` with server actions for create, update, publish and delete. Every action re-reads the session and refuses a non-admin, revalidates the panel and the public catalogue, and saves the gallery as `ProductImage` rows in `position` order — creating, updating and deleting rows so the table matches the form. Specs: S2, S3, S4a, S10. Risk: item 1 (the first real writer), item 2 (the panel's authority).
+- T2 — The screens: the three product screens call the actions instead of the browser store, with the same copy, the same lanes and the same behaviours (create, edit, publish, delete). `storage/product-store.ts` and `product-storage.ts` go with their tests; fixtures stop being the panel's data and survive only as seed input. The upload's record call finally carries the real `productId`. Specs: S3, S10.
+- T3 — The gate and the PR: `pnpm test`, `lint`, `tsc`, `build`, one real create-edit-delete against the database, the Log entry, and the PR.
 
 ## Verification per phase
 
