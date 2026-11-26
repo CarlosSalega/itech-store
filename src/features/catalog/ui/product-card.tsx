@@ -33,7 +33,7 @@ export function ProductCard({ product, monument = false }: ProductCardProps) {
 					// eslint-disable-next-line @next/next/no-img-element
 					<img
 						src={image ?? PLACEHOLDER_IMAGE}
-						alt={product.name}
+						alt={product.imageAlt ?? product.name}
 						width={640}
 						height={640}
 						loading="lazy"

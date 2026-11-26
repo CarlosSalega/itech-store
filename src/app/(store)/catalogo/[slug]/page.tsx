@@ -56,9 +56,8 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 	const related = await listRelatedProducts(product.category, product.slug, 4);
 
 	const familySlug = catalogHref({ family: product.category });
-	const imageCount = product.images.length;
-	const hasImages = imageCount > 0;
-	const photoCount = hasImages ? imageCount : 0;
+	const [primaryImage] = product.gallery;
+	const imageCount = product.gallery.length;
 	const capacities = product.variants
 		.map((variant) => formatStorage(variant.storage))
 		.filter((label): label is string => label !== null);
@@ -68,7 +67,7 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 			? null
 			: Math.min(...product.variants.map((variant) => variant.price));
 	const variantMeta = [
-		`${photoCount} ${photoCount === 1 ? "foto" : "fotos"}`,
+		`${imageCount} ${imageCount === 1 ? "foto" : "fotos"}`,
 		product.variants.length === 1
 			? "1 presentación"
 			: `${product.variants.length} presentaciones`,
@@ -119,17 +118,7 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 						<div className={styles.grid}>
 							<div>
 								<figure className={styles.media}>
-									{hasImages ? (
-										// eslint-disable-next-line @next/next/no-img-element
-										<img
-											alt={product.name}
-											decoding="async"
-											height={640}
-											loading="lazy"
-											src={product.images[0]}
-											width={640}
-										/>
-									) : (
+									{primaryImage === undefined ? (
 										<div className={styles.empty}>
 											{/* eslint-disable-next-line @next/next/no-img-element */}
 											<img
@@ -144,6 +133,16 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 												Imagen no disponible
 											</span>
 										</div>
+									) : (
+										// eslint-disable-next-line @next/next/no-img-element
+										<img
+											alt={primaryImage.alt}
+											decoding="async"
+											height={640}
+											loading="lazy"
+											src={primaryImage.url}
+											width={640}
+										/>
 									)}
 
 									<figcaption className={styles.label}>
@@ -158,15 +157,15 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 
 								{imageCount > 1 ? (
 									<ul className={styles.thumbs}>
-										{product.images.map((image, index) => (
-											<li className={styles.thumb} key={image}>
+										{product.gallery.map((image, index) => (
+											<li className={styles.thumb} key={image.url}>
 												{/* eslint-disable-next-line @next/next/no-img-element */}
 												<img
 													alt={`Foto ${index + 1} de ${imageCount}: ${product.name}`}
 													decoding="async"
 													height={640}
 													loading="lazy"
-													src={image}
+													src={image.url}
 													width={640}
 												/>
 												<span className={styles.thumbNumber}>
@@ -186,7 +185,7 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 										slug: product.slug,
 										name: product.name,
 										familyLabel: FAMILY_LABEL[product.category],
-										imageUrl: product.images[0] ?? null,
+										imageUrl: primaryImage?.url ?? null,
 									}}
 									variants={selectorVariants}
 								/>
@@ -232,7 +231,7 @@ export default async function ProductoPage({ params }: ProductPageProps) {
 							</div>
 							<div className={styles.row}>
 								<dt>Fotos del producto</dt>
-								<dd>{photoCount}</dd>
+								<dd>{imageCount}</dd>
 							</div>
 							<div className={styles.row}>
 								<dt>Precio más bajo</dt>
