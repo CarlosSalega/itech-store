@@ -15,8 +15,10 @@ import {
 	readServerCart,
 	toCartLine,
 	writeCartLines,
+	mergeGuestCartForUser,
 	type ServerCart,
 } from "./cart-items";
+import { parseCart } from "../storage/local-storage";
 import type { CatalogVariant, RevalidationResult } from "./revalidation";
 
 const MAX_VARIANTS = 50;
@@ -166,6 +168,30 @@ export async function removeCartLine(variantId: string): Promise<ServerCartResul
 
 	try {
 		await prisma.cartItem.deleteMany({ where: { userId, variantId } });
+
+		return serverCartResult(userId);
+	} catch {
+		return { ok: false };
+	}
+}
+
+const MAX_GUEST_CART_CHARS = 100_000;
+
+export async function mergeMyGuestCart(raw: string): Promise<ServerCartResult> {
+	const userId = await requireUserId();
+
+	if (userId === null) {
+		return { ok: false };
+	}
+
+	const guestCart = parseCart(typeof raw === "string" ? raw.slice(0, MAX_GUEST_CART_CHARS) : "");
+
+	if (guestCart.lines.length === 0) {
+		return serverCartResult(userId);
+	}
+
+	try {
+		await mergeGuestCartForUser(userId, guestCart.lines);
 
 		return serverCartResult(userId);
 	} catch {

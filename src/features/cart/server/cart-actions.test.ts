@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { addCartLine, readCart, removeCartLine, updateCartLine } from "./actions";
+import {
+	addCartLine,
+	mergeMyGuestCart,
+	readCart,
+	removeCartLine,
+	updateCartLine,
+} from "./actions";
 
 const mocks = vi.hoisted(() => ({
 	getSession: vi.fn(),
@@ -37,6 +43,8 @@ vi.mock("@/lib/prisma", () => ({
 		variant: {
 			findUnique: async ({ where }: { where: { id: string } }) =>
 				db.variants.find((variant) => variant.id === where.id) ?? null,
+			findMany: async ({ where }: { where: { id: { in: string[] } } }) =>
+				db.variants.filter((variant) => where.id.in.includes(variant.id)),
 		},
 		cartItem: {
 			findMany: async ({ where }: { where: { userId: string } }) =>
@@ -172,5 +180,60 @@ describe("the signed-in cart actions", () => {
 		await removeCartLine("v-ipad-256");
 
 		expect(db.cartItems).toEqual([]);
+	});
+});
+
+describe("mergeMyGuestCart", () => {
+	function guestCart(): string {
+		return JSON.stringify({
+			version: 1,
+			lines: [
+				{
+					variantId: "v-ipad-256",
+					sku: "IPAD-A16-256",
+					productSlug: "apple-ipad-11",
+					productName: "Apple iPad 11",
+					familyLabel: "iPad",
+					variantLabel: null,
+					imageUrl: null,
+					imageAlt: "iPad",
+					unitPriceCents: 1_000,
+					quantity: 3,
+					available: true,
+				},
+			],
+			lastAddedVariantId: null,
+		});
+	}
+
+	it("merges the guest lines into the signed-in account once", async () => {
+		mocks.getSession.mockResolvedValue({ user: { id: "u-1" } });
+
+		const result = await mergeMyGuestCart(guestCart());
+
+		expect(result.ok).toBe(true);
+
+		if (result.ok) {
+			const line = result.lines.find((entry) => entry.variantId === "v-ipad-256");
+
+			expect(line?.quantity).toBe(5);
+		}
+	});
+
+	it("answers the account cart when the guest cart is empty", async () => {
+		mocks.getSession.mockResolvedValue({ user: { id: "u-1" } });
+
+		const result = await mergeMyGuestCart("{}");
+
+		expect(result.ok).toBe(true);
+	});
+
+	it("answers ok false without a session", async () => {
+		mocks.getSession.mockResolvedValueOnce(null);
+
+		expect(await mergeMyGuestCart(guestCart())).toEqual({ ok: false });
+		expect(db.cartItems).toEqual([
+			{ id: "ci-1", userId: "u-1", variantId: "v-ipad-256", quantity: 2 },
+		]);
 	});
 });

@@ -48,6 +48,7 @@ type CartContextValue = {
 	isOpen: boolean;
 	verification: PriceVerification;
 	hydrateSession: (cart: ServerCart) => void;
+	applyServerCart: (result: ServerCartResult) => void;
 	cappedVariantIds: string[];
 	addLine: (line: CartLine) => void;
 	setQuantity: (variantId: string, quantity: number) => void;
@@ -185,6 +186,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 			isOpen,
 			verification,
 			hydrateSession,
+			applyServerCart,
 			cappedVariantIds,
 			addLine,
 			setQuantity,
@@ -197,6 +199,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 			isOpen,
 			verification,
 			hydrateSession,
+			applyServerCart,
 			cappedVariantIds,
 			addLine,
 			setQuantity,
