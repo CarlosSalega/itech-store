@@ -1,0 +1,60 @@
+.card {
+	border: 1px solid var(--line, #e5e7eb);
+	border-radius: 12px;
+	padding: var(--s-4);
+}
+
+.form {
+	display: grid;
+	gap: var(--s-2);
+}
+
+.label {
+	font-size: var(--t-caption);
+	color: var(--muted);
+}
+
+.input {
+	border: 1px solid var(--line, #d1d5db);
+	border-radius: 8px;
+	font: inherit;
+	padding: var(--s-2) var(--s-3);
+}
+
+.input:focus-visible {
+	outline: 2px solid var(--accent, #111);
+	outline-offset: 1px;
+}
+
+.input[aria-invalid="true"] {
+	border-color: var(--danger, #dc2626);
+}
+
+.fieldError {
+	color: var(--danger, #dc2626);
+	font-size: var(--t-caption);
+	margin: 0;
+}
+
+.submit {
+	border-radius: 8px;
+	background: var(--accent, #111);
+	color: var(--accent-contrast, #fff);
+	border: none;
+	cursor: pointer;
+	font: inherit;
+	font-weight: 600;
+	padding: var(--s-2) var(--s-3);
+}
+
+.notice {
+	color: var(--muted);
+	font-size: var(--t-caption);
+	margin: 0;
+}
+
+.sendError {
+	color: var(--danger, #dc2626);
+	font-size: var(--t-caption);
+	margin: 0;
+}

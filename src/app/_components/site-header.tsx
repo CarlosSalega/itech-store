@@ -43,6 +43,10 @@ export function SiteHeader() {
 					<Link className={styles.navLink} href="/contacto">
 						Contacto
 					</Link>
+
+					<Link className={styles.navLink} href="/mis-pedidos">
+						Mis pedidos
+					</Link>
 				</nav>
 
 				<div className={styles.tools}>
@@ -74,6 +78,10 @@ export function SiteHeader() {
 							</Link>
 							<Link className={styles.menuLink} href="/contacto">
 								Contacto
+							</Link>
+
+							<Link className={styles.menuLink} href="/mis-pedidos">
+								Mis pedidos
 							</Link>
 						</nav>
 					</details>
