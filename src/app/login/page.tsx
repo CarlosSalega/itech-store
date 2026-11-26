@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { LoginForm } from "./login-form";
-import { LoginNotes } from "./login-notes";
 import { safeNextPath } from "./next-path";
 
 import styles from "./login.module.css";
@@ -34,8 +33,6 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
 				</p>
 
 				<LoginForm next={next} />
-
-				<LoginNotes />
 			</div>
 		</main>
 	);

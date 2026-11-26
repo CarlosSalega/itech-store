@@ -30,7 +30,7 @@
 		{
 			"file": "04-login.html",
 			"title": "Ingreso",
-			"tradeoff": "La tarjeta de la shell sola en el medio de la página: la pantalla privada más angosta y la única que no muestra la navegación. Cuesta el contexto del panel —no hay destinos ni persona al pie— y por eso las dos notas del acceso real viven en la misma tarjeta, debajo del botón.",
+			"tradeoff": "La tarjeta de la shell sola en el medio de la página: la pantalla privada más angosta y la única que no muestra la navegación. Cuesta el contexto del panel —no hay destinos ni persona al pie— y la tarjeta queda solo con el formulario: los dos hechos del acceso viven en `docs/auth.md`, no en la pantalla.",
 			"signature": "El ingreso como la tarjeta flotante antes de que exista la navegación: la misma superficie elevada, ahora vacía salvo el formulario.",
 			"width": 1440,
 			"height": 1000

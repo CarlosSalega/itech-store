@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { INVALID_CREDENTIALS, INVALID_EMAIL, NO_OTHER_ACCOUNTS } from "./copy";
+import { INVALID_CREDENTIALS, INVALID_EMAIL } from "./copy";
 import { LoginFields } from "./login-fields";
 
 const signIn = () => undefined;
@@ -19,14 +19,14 @@ describe("the sign-in form", () => {
 
 		expect(markup).not.toContain('role="alert"');
 		expect(markup).not.toContain("aria-invalid");
-		expect(markup).not.toContain(NO_OTHER_ACCOUNTS);
+		expect(markup).not.toContain("seed");
 	});
 
 	it("marks both fields invalid and explains the failure", () => {
 		const markup = fields(INVALID_CREDENTIALS);
 
 		expect(markup).toContain(INVALID_CREDENTIALS);
-		expect(markup).not.toContain(NO_OTHER_ACCOUNTS);
+		expect(markup).not.toContain("seed");
 		expect(markup.match(/aria-invalid="true"/g)).toHaveLength(2);
 		expect(markup).toContain('role="alert"');
 	});
@@ -58,7 +58,7 @@ describe("the room the login reserves for its messages", () => {
 		const markup = fields(null);
 
 		expect(markup.match(/aria-live="polite"/g)).toHaveLength(2);
-		expect(markup).not.toContain(NO_OTHER_ACCOUNTS);
+		expect(markup).not.toContain("seed");
 		expect(markup).toContain('aria-describedby="login-email-message"');
 		expect(markup).toContain('aria-describedby="login-password-message"');
 		expect(markup).toContain('id="login-email-message"');

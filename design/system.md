@@ -410,10 +410,10 @@ fix: a message that cannot be said in 44 characters is not a message.
 
 **A static note never lives inside a lane.** A sentence that is always true cannot fit a one-line
 reservation, and placing it there is exactly what turned the login's credential note into three lines
-of a one-line lane at 320px. It belongs in its own place on the page with its own room: the login's
-standing notes are their own block under the form (`src/app/login/login-notes.tsx`), and the admin
-form's help note is its own line above the lane. The lane only ever holds a message that exists
-because a value was rejected.
+of a one-line lane at 320px. When a screen needs one, it belongs in its own place with its own room:
+the admin form's help note is its own line above the lane. The login carries none any more — its two
+standing facts (one account, no password reset) live in `docs/auth.md` instead of on the screen. The
+lane only ever holds a message that exists because a value was rejected.
 
 **Button** — two styles only. Primary: pill, `--accent` fill, white label, min-height 44px,
 `padding: 0 24px`, press `scale(.97)`. Secondary: text link, `--link`, with a `chevron-right` that

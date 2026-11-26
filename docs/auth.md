@@ -136,3 +136,10 @@ The statements were produced with `prisma migrate diff` between the previous dat
 **Rehearsed on 2026-11-26, end to end.** `pnpm exec prisma migrate reset --force` applied all three migrations from zero, `prisma db seed` rebuilt the catalogue (90 products, 100 variants, 194 images), `rollback.sql` — run with `pnpm exec prisma db execute --file prisma/migrations/20261112100000_add_auth/rollback.sql` — dropped the four tables, the enum and the migration row and sent `migrate status` back to "not yet applied", `migrate deploy` re-applied it, and a second seed read back the same 90 products and 100 variants, proving the rollback touched nothing outside auth. `migrate status` ends at "Database schema is up to date".
 
 The migration is verified; the account is not. The seed prints `Admin user skipped: ADMIN_EMAIL and ADMIN_PASSWORD are not set.`, so `/admin` has no user to sign in as until both variables exist in `.env` and the seed runs again. Everything that needs a request — the session row, `nextCookies()` writing its headers onto a real response — still needs the app running, which the owner does.
+
+## Two facts the screen no longer states
+
+They are documented here instead of under the form, because neither is something the person signing in can act on:
+
+- **One account.** `disabledPaths: ["/sign-up/email"]` closes registration, and the seed is the only thing that creates a user, so the panel has exactly the administrator. Customer accounts are P8's decision and would reopen it.
+- **No password reset.** There is no reset route and no email channel yet. The remedy is the seed again: with `ADMIN_EMAIL` and `ADMIN_PASSWORD` set, `pnpm exec prisma db seed` creates the account, or finds it and sets its role back to `ADMIN` — it does not overwrite an existing password.
