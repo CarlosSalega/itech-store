@@ -27,7 +27,15 @@ pnpm exec prisma migrate reset --force   # drops the schema, re-applies every mi
 pnpm exec prisma db seed                 # rebuilds the catalogue and the admin account
 ```
 
-`reset` destroys everything in the database, and that is acceptable only because `prisma db seed` rebuilds it: `prisma/seed.ts` loads every file in `prisma/seed`, and the catalogue pipeline is deterministic. Run both after any migration that changes existing rows. It is the only proof that a fresh install works, and the only place a `rollback.sql` gets exercised.
+`reset` destroys everything in the database, and that is acceptable only because `prisma db seed` rebuilds it: `prisma/seed.ts` loads every file in `prisma/seed`, and the catalogue pipeline is deterministic. Run both after any migration that changes existing rows — in this setup `reset` re-applies the migrations and does **not** run the seed, so the second command is not optional. It is the only proof that a fresh install works, and the only place a `rollback.sql` gets exercised.
+
+A `rollback.sql` is run by hand, and `db execute` in Prisma 7 takes the config file rather than a schema path:
+
+```bash
+pnpm exec prisma db execute --file prisma/migrations/<name>/rollback.sql
+```
+
+It executes, but it does not update `_prisma_migrations` on its own — that is what the `DELETE` at the end of each `rollback.sql` is for. The proof that it worked is `pnpm exec prisma migrate status` reporting the migration as not yet applied again, and `pnpm exec prisma migrate deploy` putting it back.
 
 ## Applying it
 
