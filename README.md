@@ -149,10 +149,23 @@ and `pnpm build` is not meant to need the database. That matters here because th
 has been intermittently unreachable (Prisma `P1001`), and a build failure caused by network
 weather would be indistinguishable from a code failure.
 
-### Reserved private routes (not implemented)
+### Private routes
 
-`/login`, `/admin` and `/dashboard` are planned — authentication with email + password, then an
-admin panel — and **do not exist in this repository**. Requesting them returns 404.
+`/login` guards the admin panel behind a real Better Auth session (email + password, role
+`ADMIN`). Requesting `/admin` without a session redirects to `/login`. A guest still buys
+without an account.
+
+### Demo data in the panel (not real)
+
+The dashboard's comparison deltas (sold last month, orders to fulfil yesterday, published
+last month, low stock last week) are measured against `DASHBOARD_BASELINE` in
+`src/features/admin/fixtures/baseline.ts`, which is **mocked data kept for the demo** —
+the database stores no history to compare against, so those deltas are not real numbers.
+The metric values themselves (sold, orders, published, low stock) are read from the
+database and are real.
+
+`src/features/admin/fixtures/products.ts` and `src/features/checkout/fixtures/orders.ts`
+are test data only: no route reads them, every screen reads Postgres.
 
 ## Product images
 
