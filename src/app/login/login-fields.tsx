@@ -48,7 +48,7 @@ const CONTROL: Record<
 	email: {
 		autoComplete: "email",
 		label: "Email",
-		placeholder: "sofia.ramos@example.com",
+		placeholder: "ejemplo@itechstore.com",
 		type: "email",
 	},
 	password: {

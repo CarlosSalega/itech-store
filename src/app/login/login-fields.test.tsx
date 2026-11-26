@@ -22,6 +22,12 @@ describe("the sign-in form", () => {
 		expect(markup).not.toContain("seed");
 	});
 
+	it("points the email field at the store's own address, not an invented person", () => {
+		const markup = fields(null);
+
+		expect(markup).toContain('placeholder="ejemplo@itechstore.com"');
+	});
+
 	it("marks both fields invalid and explains the failure", () => {
 		const markup = fields(INVALID_CREDENTIALS);
 
