@@ -71,3 +71,17 @@ export function commitCart(cart: Cart): void {
 	cachedCart = cart;
 	emit();
 }
+
+export function hydrateRemoteCart(cart: Cart): void {
+	storageAuthoritative = false;
+	cachedRaw = null;
+	cachedCart = cart;
+	emit();
+}
+
+export function commitRemoteCart(cart: Cart): void {
+	storageAuthoritative = false;
+	cachedRaw = serializeCart(cart);
+	cachedCart = cart;
+	emit();
+}

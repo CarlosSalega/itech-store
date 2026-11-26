@@ -31,7 +31,7 @@ const FOCUSABLE =
 	'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function CartDrawer() {
-	const { cart, totals, lastAdded, isOpen, verification, closeCart } = useCart();
+	const { cart, totals, lastAdded, isOpen, verification, cappedVariantIds, closeCart } = useCart();
 	const panelRef = useRef<HTMLElement | null>(null);
 	const openerRef = useRef<HTMLElement | null>(null);
 
@@ -191,6 +191,9 @@ export function CartDrawer() {
 												Ya no está disponible. Quitalo para seguir con la compra.
 											</p>
 										)}
+										{cappedVariantIds.includes(line.variantId) ? (
+											<p className={styles.lineCap}>Cantidad máxima disponible.</p>
+										) : null}
 										<LineControls line={line} />
 									</div>
 								</li>

@@ -4,7 +4,10 @@ import { APIError } from "better-auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { mergeGuestCartForUser } from "@/features/cart/server/cart-items";
+import { parseCart } from "@/features/cart/storage/local-storage";
 import { getAuth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 import { INVALID_CREDENTIALS } from "./copy";
 import { allowLoginAttempt, clearLoginAttempts, loginAttemptKey } from "./attempt-limit";
@@ -54,6 +57,18 @@ export async function signIn(
 	}
 
 	clearLoginAttempts(key);
+
+	const guestCart = parseCart(field(formData, "guestCart"));
+
+	if (guestCart.lines.length > 0) {
+		const user = await prisma.user
+			.findUnique({ where: { email: payload.email }, select: { id: true } })
+			.catch(() => null);
+
+		if (user !== null) {
+			await mergeGuestCartForUser(user.id, guestCart.lines).catch(() => undefined);
+		}
+	}
 
 	redirect(next);
 }
