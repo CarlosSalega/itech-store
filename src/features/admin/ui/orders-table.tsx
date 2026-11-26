@@ -49,7 +49,7 @@ export function OrdersTable({
 	return (
 		<table className={styles.orders} role="table">
 			<caption className="sr-only">
-				Los pedidos de la demo, del más nuevo al más viejo, con su comprador, su
+				Los pedidos de la tienda, del más nuevo al más viejo, con su comprador, su
 				fecha, su total, su estado editable y el detalle de sus líneas.
 			</caption>
 			<thead role="rowgroup">

@@ -9,6 +9,10 @@ import { prisma } from "@/lib/prisma";
 import type { AdminProductPatch } from "../domain/product";
 import type { SessionUser } from "../domain/session";
 import {
+	createAdminOrderActions,
+	type AdminOrderActionResult,
+} from "./order-actions";
+import {
 	createAdminProductActions,
 	type AdminActionResult,
 	type AdminProductInput,
@@ -68,4 +72,17 @@ export async function unpublishProductAction(slug: string): Promise<AdminActionR
 
 export async function deleteProductAction(slug: string): Promise<AdminActionResult> {
 	return actions.remove(slug);
+}
+
+const orderActions = createAdminOrderActions({
+	readSession,
+	client: { order: prisma.order },
+	revalidate,
+});
+
+export async function updateOrderStatusAction(
+	number: string,
+	status: string,
+): Promise<AdminOrderActionResult> {
+	return orderActions.changeStatus(number, status);
 }

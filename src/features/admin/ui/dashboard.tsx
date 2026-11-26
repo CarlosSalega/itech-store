@@ -247,9 +247,8 @@ export function AdminDashboard({ metrics }: { metrics: DashboardMetrics }) {
 			<footer className={styles.foot}>
 				<span aria-hidden="true" className={styles.footRule} />
 				<p className={styles.notice}>
-					Los {metrics.productCount} productos salen de la base de datos y los{" "}
-					{metrics.orders.count} pedidos son los de la demo. Los precios son los precios
-					de venta.
+					Los {metrics.productCount} productos y los {metrics.orders.count} pedidos salen
+					de la base de datos. Los precios son los precios de venta.
 				</p>
 			</footer>
 		</div>

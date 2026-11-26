@@ -24,6 +24,21 @@ enum Role {
   ADMIN
 }
 
+/// The checkout vocabulary verbatim: the stored value is the domain string, so
+/// no lookup table stands between a row and the screen.
+enum OrderPayment {
+  transfer
+  cash
+}
+
+enum OrderStatus {
+  nuevo
+  en_preparacion @map("en preparación")
+  enviado
+  entregado
+  cancelado
+}
+
 model Product {
   id          String    @id @default(cuid())
   slug        String    @unique
@@ -82,6 +97,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   imageUploads  ImageUpload[]
+  orders        Order[]
 }
 
 /// Every asset the app owns, recorded by the image-upload module so an
@@ -95,6 +111,47 @@ model ImageUpload {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  number          String      @unique
+  status          OrderStatus @default(nuevo)
+  payment         OrderPayment
+  buyerName       String
+  buyerEmail      String
+  buyerPhone      String
+  buyerAddress    String
+  buyerCity       String
+  buyerPostalCode String
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  /// Total in integer cents (ARS), recomputed from the lines.
+  totalCents      Int
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  lines           OrderLine[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderLine {
+  id             String  @id @default(cuid())
+  orderId        String
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productName    String
+  productSlug    String
+  familyLabel    String
+  variantSku     String
+  variantLabel   String?
+  quantity       Int
+  /// Unit price in integer cents (ARS), snapshotted at purchase time.
+  unitPriceCents Int
+  imageUrl       String?
+  imageAlt       String
+
+  @@index([orderId])
 }
 
 model Session {
