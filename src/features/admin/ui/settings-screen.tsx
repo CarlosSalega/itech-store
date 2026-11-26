@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 
 import { PlusIcon } from "@/components/icons";
 
@@ -15,7 +15,6 @@ import {
 	type AdminChannel,
 } from "../domain/settings";
 import type { AdminProduct } from "../domain/product";
-import { getProductsSnapshot, subscribeProducts } from "../storage/product-store";
 import { AlertIcon, ChevronDownIcon } from "./icons";
 import { AdminScreen, ScreenFoot } from "./screen";
 
@@ -26,15 +25,10 @@ function delay(index: number) {
 }
 
 export function SettingsScreen({
-	initialProducts,
+	products,
 }: {
-	initialProducts: readonly AdminProduct[];
+	products: readonly AdminProduct[];
 }) {
-	const products = useSyncExternalStore(
-		subscribeProducts,
-		getProductsSnapshot,
-		() => initialProducts,
-	);
 	const library = mediaLibrary(products);
 
 	return (
@@ -163,7 +157,7 @@ export function SettingsScreen({
 			</section>
 
 			<ScreenFoot
-				notice="Los datos de este panel son de ejemplo: los canales y el envío son las reglas de la tienda y esta demo no tiene integraciones ni tarifas. Las fotos son las del catálogo de ejemplo y los precios no son precios de venta."
+				notice="Los canales y el envío son las reglas de la tienda y esta demo no tiene integraciones ni tarifas. Las fotos salen del catálogo y los precios son los precios de venta."
 				routes="/admin/ajustes"
 			/>
 		</AdminScreen>

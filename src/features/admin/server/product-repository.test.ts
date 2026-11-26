@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import type {
 	AdminProductClient,
+	AdminProductIdClient,
 	AdminProductRow,
 } from "./product-repository";
 import {
 	findAdminProduct,
+	findAdminProductId,
 	listAdminProducts,
 	toAdminProduct,
 } from "./product-repository";
@@ -149,5 +151,20 @@ describe("the catalogue the panel reads from the client", () => {
 		const { client } = stubClient([row]);
 
 		expect(await findAdminProduct("no-existe", client)).toBeNull();
+	});
+});
+
+function idSource(id: string | null): AdminProductIdClient {
+	return {
+		product: {
+			findUnique: async () => (id === null ? null : { id }),
+		},
+	};
+}
+
+describe("findAdminProductId", () => {
+	it("answers the row id, and null for a product the catalogue does not have", async () => {
+		expect(await findAdminProductId("ipad-pro", idSource("prod-1"))).toBe("prod-1");
+		expect(await findAdminProductId("nope", idSource(null))).toBeNull();
 	});
 });

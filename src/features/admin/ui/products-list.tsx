@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useSyncExternalStore, type CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 
 import { SearchIcon } from "@/components/icons";
 import { FAMILY_LABEL, NAV_FAMILIES } from "@/features/catalog/domain/catalog";
@@ -18,7 +18,6 @@ import {
 	type ProductFilters,
 	type ProductStatusFilter,
 } from "../domain/product-filters";
-import { getProductsSnapshot, subscribeProducts } from "../storage/product-store";
 import { ChevronDownIcon } from "./icons";
 import { ProductsTable } from "./products-table";
 import { AdminScreen, ScreenFoot } from "./screen";
@@ -26,17 +25,12 @@ import { AdminScreen, ScreenFoot } from "./screen";
 import styles from "./products.module.css";
 
 export function ProductsList({
-	initialProducts,
+	products,
 }: {
-	initialProducts: readonly AdminProduct[];
+	products: readonly AdminProduct[];
 }) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const products = useSyncExternalStore(
-		subscribeProducts,
-		getProductsSnapshot,
-		() => initialProducts,
-	);
 	const urlFilters = productFiltersFromParams(
 		Object.fromEntries(searchParams.entries()),
 	);
@@ -146,7 +140,7 @@ export function ProductsList({
 			</div>
 
 			<ScreenFoot
-				notice={`Los datos de este panel son de ejemplo: los ${products.length} productos y las ${variants} variantes del catálogo de la demo. Los precios son de muestra y no son precios de venta.`}
+				notice={`El catálogo del panel sale de la base de datos: los ${products.length} productos y las ${variants} variantes de la tienda. Los precios son los precios de venta.`}
 				routes="/admin/productos · /admin/productos/nuevo · /admin/productos/[slug]"
 			/>
 		</AdminScreen>

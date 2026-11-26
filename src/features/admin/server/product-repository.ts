@@ -115,3 +115,25 @@ export async function findAdminProduct(
 
 	return row === null ? null : toAdminProduct(row);
 }
+
+export type AdminProductIdClient = {
+	product: {
+		findUnique: (args: {
+			where: { slug: string };
+			select: { id: true };
+		}) => Promise<{ id: string } | null>;
+	};
+};
+
+export async function findAdminProductId(
+	slug: string,
+	source?: AdminProductIdClient,
+): Promise<string | null> {
+	const rows = source ?? ((await client()) as unknown as AdminProductIdClient);
+	const row = await rows.product.findUnique({
+		where: { slug },
+		select: { id: true },
+	});
+
+	return row?.id ?? null;
+}

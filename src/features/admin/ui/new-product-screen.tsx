@@ -2,12 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-	useState,
-	useSyncExternalStore,
-	type CSSProperties,
-	type FormEvent,
-} from "react";
+import { useState, type CSSProperties, type FormEvent } from "react";
 
 import { ChevronLeftIcon, PlusIcon, TrashIcon } from "@/components/icons";
 import { FAMILY_LABEL, NAV_FAMILIES } from "@/features/catalog/domain/catalog";
@@ -29,16 +24,19 @@ import {
 	type VariantDraftErrors,
 } from "../domain/product-form";
 import { appendGalleryImage } from "../domain/product-gallery";
-import {
-	commitProducts,
-	getProductsServerSnapshot,
-	getProductsSnapshot,
-	subscribeProducts,
-} from "../storage/product-store";
+import type { AdminProductInput } from "../server/product-actions";
 import { FormField } from "./form-field";
 import { AlertIcon, ChevronDownIcon } from "./icons";
 import { ProductGallery } from "./product-gallery";
 import { AdminScreen, ScreenFoot } from "./screen";
+import {
+	IDLE_FEEDBACK,
+	PENDING_FEEDBACK,
+	feedbackOf,
+	runAction,
+	type ActionFeedback,
+	type ProductCreateAction,
+} from "./screen-actions";
 import { Toggle } from "./toggle";
 
 import styles from "./product-form.module.css";
@@ -49,21 +47,43 @@ function variantKey(index: number, field: VariantField): string {
 	return `variant-${index}-${field}`;
 }
 
-export function NewProductScreen() {
+function productInput(product: AdminProduct): AdminProductInput {
+	return {
+		name: product.name,
+		description: product.description,
+		category: product.category,
+		gallery: product.gallery,
+		published: product.published,
+		destacado: product.destacado,
+		variants: product.variants.map((variant) => ({
+			label: variant.label,
+			priceCents: variant.priceCents,
+			stock: variant.stock,
+		})),
+	};
+}
+
+export function NewProductScreen({
+	products,
+	create,
+	initialFeedback = IDLE_FEEDBACK,
+}: {
+	products: readonly AdminProduct[];
+	create: ProductCreateAction;
+	initialFeedback?: ActionFeedback;
+}) {
 	const router = useRouter();
-	const products = useSyncExternalStore(
-		subscribeProducts,
-		getProductsSnapshot,
-		getProductsServerSnapshot,
-	);
 	const [draft, setDraft] = useState<ProductDraft>(blankDraft);
 	const [touched, setTouched] = useState<ReadonlySet<string>>(new Set());
+	const [feedback, setFeedback] = useState<ActionFeedback>(initialFeedback);
 
 	const errors = validateProductDraft(
 		draft,
 		products.map((product) => product.slug),
 	);
 	const note = saveNote(errors, draft);
+	const message = feedback.message ?? note;
+	const blocked = note !== null || feedback.pending;
 	const slug = productSlug(draft.name);
 	const loaded = draft.variants.length === 1 ? "1 cargada" : `${draft.variants.length} cargadas`;
 	const nameError = touched.has("name") ? errors.name : undefined;
@@ -114,14 +134,24 @@ export function NewProductScreen() {
 	const submit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
-		if (note !== null) {
+		if (blocked) {
 			return;
 		}
 
 		const product = draftToProduct(draft, new Date().toISOString());
 
-		commitProducts([...products, product]);
-		router.push(`/admin/productos/${product.slug}`);
+		setFeedback(PENDING_FEEDBACK);
+
+		void (async () => {
+			const result = await runAction(() => create(productInput(product)));
+
+			if (result.ok) {
+				router.push(`/admin/productos/${result.slug}`);
+				return;
+			}
+
+			setFeedback(feedbackOf(result));
+		})();
 	};
 
 	const rowError = (index: number, field: VariantField): string | undefined => {
@@ -422,12 +452,14 @@ export function NewProductScreen() {
 
 				<div className={styles.actionBar}>
 					<p className={styles.actionNote} id="save-note">
-						{note === null ? (
+						{feedback.pending ? (
+							"Guardando el producto…"
+						) : message === null ? (
 							"Todo listo para guardar el producto."
 						) : (
 							<>
 								<AlertIcon className={styles.actionNoteIcon} />
-								{note}
+								{message}
 							</>
 						)}
 					</p>
@@ -438,17 +470,17 @@ export function NewProductScreen() {
 						<button
 							aria-describedby="save-note"
 							className={styles.primary}
-							disabled={note !== null}
+							disabled={blocked}
 							type="submit"
 						>
-							Guardar producto
+							{feedback.pending ? "Guardando…" : "Guardar producto"}
 						</button>
 					</div>
 				</div>
 			</form>
 
 			<ScreenFoot
-				notice="Los datos de este panel son de ejemplo: el producto se guarda en este navegador, no en la base. Las fotos que subís se guardan en la nube y el catálogo de la demo conserva las suyas. Los precios son de muestra y no son precios de venta."
+				notice="El producto se guarda en la base de datos. Las fotos que subís se guardan en la nube y el catálogo conserva las suyas. Los precios son los precios de venta."
 				routes="/admin/productos/nuevo"
 			/>
 		</AdminScreen>

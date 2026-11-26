@@ -2,11 +2,24 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import { createProduct, type AdminProduct } from "../domain/product";
-import { ProductDetailScreen } from "./product-detail-screen";
+import { ADMIN_ACTION_MESSAGES, type AdminActionResult } from "../server/product-actions";
+import {
+	ProductDetailScreen,
+} from "./product-detail-screen";
+import type { ActionFeedback, ProductDetailActions } from "./screen-actions";
 
 vi.mock("next/navigation", () => ({
 	useRouter: () => ({ push: () => undefined }),
 }));
+
+const success: AdminActionResult = { ok: true, slug: "apple-ipad-pro-11-m5-space-black" };
+
+const actions: ProductDetailActions = {
+	update: async () => success,
+	publish: async () => success,
+	unpublish: async () => success,
+	remove: async () => success,
+};
 
 const base = {
 	name: 'Apple iPad Pro 11" M5 Space Black',
@@ -28,12 +41,21 @@ const photographed: AdminProduct = createProduct({
 
 const bare: AdminProduct = createProduct(base);
 
-const render = (product: AdminProduct) =>
+const render = (
+	product: AdminProduct,
+	feedback?: ActionFeedback,
+	productId: string | null = "product-1",
+) =>
 	renderToStaticMarkup(
-		<ProductDetailScreen initialProduct={product} slug={product.slug} />,
+		<ProductDetailScreen
+			actions={actions}
+			initialFeedback={feedback}
+			initialProduct={product}
+			productId={productId}
+		/>,
 	);
 
-describe("the gallery the product ficha shows", () => {
+describe("the gallery the product ficha edits", () => {
 	it("shows every photograph of the gallery, in the order of the catalogue", () => {
 		const markup = render(photographed);
 		const first = markup.indexOf('src="/products/ipad/pro-1.webp"');
@@ -42,14 +64,16 @@ describe("the gallery the product ficha shows", () => {
 		expect(first).toBeGreaterThan(-1);
 		expect(second).toBeGreaterThan(first);
 		expect(markup).toContain("2 fotos · la primera es la portada");
-		expect(markup).toContain('alt="Apple iPad Pro 11&quot; M5 Space Black, foto 1"');
-		expect(markup).toContain('alt="Apple iPad Pro 11&quot; M5 Space Black, foto 2"');
+		expect(markup).toContain('value="portada"');
+		expect(markup).toContain('value="segunda"');
 	});
 
-	it("marks only the first photograph of the gallery as the cover", () => {
+	it("offers the controls and the save the database write needs", () => {
 		const markup = render(photographed);
 
-		expect(markup.match(/>Portada</g) ?? []).toHaveLength(1);
+		expect(markup).toContain("Elegir una foto");
+		expect(markup).toContain("Guardar fotos");
+		expect(markup).toContain("Texto alternativo");
 	});
 
 	it("says the catalogue uses the sample image when the gallery is empty", () => {
@@ -57,12 +81,44 @@ describe("the gallery the product ficha shows", () => {
 
 		expect(markup).toContain("0 fotos · la primera es la portada");
 		expect(markup).toContain(
-			"Este producto no tiene fotos cargadas: el catálogo usa la imagen de muestra.",
+			"Todavía no hay fotos: el catálogo usa la imagen de muestra hasta que subas una.",
 		);
 	});
 
 	it("keeps the published state the row carries on the screen", () => {
 		expect(render(photographed)).toContain("Publicado");
 		expect(render({ ...bare, published: false })).toContain("Sin publicar");
+	});
+});
+
+describe("the lane the detail screen reserves for its actions", () => {
+	it("says it is saving while an action is in flight", () => {
+		const pending = render(photographed, { pending: true, message: null });
+
+		expect(pending).toContain("Guardando los cambios…");
+		expect(pending).toContain('id="accion-message"');
+	});
+
+	for (const [code, message] of Object.entries(ADMIN_ACTION_MESSAGES)) {
+		it(`shows the action's message for ${code}`, () => {
+			const refused = render(photographed, { pending: false, message });
+
+			expect(refused).toContain(`id="accion-message"`);
+			expect(refused).toContain(message);
+		});
+	}
+
+	it("stops saying the product is from a demo and deleted in this browser", () => {
+		const markup = renderToStaticMarkup(
+			<ProductDetailScreen
+				actions={actions}
+				initialProduct={null}
+				productId={null}
+			/>,
+		);
+
+		expect(markup).not.toContain("catálogo de la demo");
+		expect(markup).not.toContain("en este navegador");
+		expect(render(photographed)).not.toContain("se guardan en este navegador");
 	});
 });

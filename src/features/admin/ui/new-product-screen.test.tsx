@@ -1,25 +1,33 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
+import { ADMIN_ACTION_MESSAGES, type AdminActionResult } from "../server/product-actions";
+import { ADMIN_PRODUCTS } from "../fixtures/products";
+import type { ActionFeedback } from "./screen-actions";
 import { NewProductScreen } from "./new-product-screen";
 
 vi.mock("next/navigation", () => ({
 	useRouter: () => ({ push: () => undefined }),
 }));
 
-vi.mock("../storage/product-store", () => ({
-	commitProducts: () => undefined,
-	getProductsServerSnapshot: () => [],
-	getProductsSnapshot: () => [],
-	subscribeProducts: () => () => undefined,
-}));
+const success: AdminActionResult = { ok: true, slug: "apple-ipad-pro" };
 
-const markup = renderToStaticMarkup(<NewProductScreen />);
+function render(feedback?: ActionFeedback): string {
+	return renderToStaticMarkup(
+		<NewProductScreen
+			create={async () => success}
+			initialFeedback={feedback}
+			products={ADMIN_PRODUCTS}
+		/>,
+	);
+}
+
+const markup = render();
 
 const SLOT_IDS = ["nombre-message", "slug-message", "familia-message", "fotos-message"];
 
-function slotText(id: string): string {
-	const match = new RegExp(`id="${id}"[^>]*>([\\s\\S]*?)</span>`).exec(markup);
+function slotText(html: string, id: string): string {
+	const match = new RegExp(`id="${id}"[^>]*>([\\s\\S]*?)</span>`).exec(html);
 
 	return (match?.[1] ?? "").replace(/<[^>]*>/g, "").trim();
 }
@@ -48,9 +56,31 @@ describe("the room the product form reserves for its messages", () => {
 		expect(markup).not.toContain("aria-invalid");
 
 		for (const id of SLOT_IDS) {
-			expect(slotText(id)).toBe("");
+			expect(slotText(markup, id)).toBe("");
 		}
 	});
+});
+
+describe("the save lane while the form is saving", () => {
+	it("says it is saving and disables the button", () => {
+		const pending = render({ pending: true, message: null });
+
+		expect(pending).toContain("Guardando el producto…");
+		expect(pending).toContain("Guardando…");
+		expect(pending).toMatch(/<button[^>]*disabled[^>]*>Guardando…<\/button>/);
+		expect(pending).not.toContain("Todo listo para guardar el producto.");
+	});
+});
+
+describe("the refusals the action writes into the save lane", () => {
+	for (const [code, message] of Object.entries(ADMIN_ACTION_MESSAGES)) {
+		it(`shows the action's message for ${code}`, () => {
+			const refused = render({ pending: false, message });
+
+			expect(refused).toContain(message);
+			expect(refused).not.toContain("Todo listo para guardar el producto.");
+		});
+	}
 });
 
 describe("the photographs the form offers", () => {
@@ -65,9 +95,10 @@ describe("the photographs the form offers", () => {
 		expect(markup).not.toContain("hasta que haya una propia");
 	});
 
-	it("keeps a notice that is still true, and the catalogue's own photos with it", () => {
-		expect(markup).not.toContain("las fotos son las del catálogo de la demo");
+	it("says where the product and its photos are saved", () => {
+		expect(markup).not.toContain("se guarda en este navegador");
+		expect(markup).not.toContain("los datos de este panel son de ejemplo");
+		expect(markup).toContain("El producto se guarda en la base de datos.");
 		expect(markup).toContain("Las fotos que subís se guardan en la nube");
-		expect(markup).toContain("el catálogo de la demo conserva las suyas");
 	});
 });

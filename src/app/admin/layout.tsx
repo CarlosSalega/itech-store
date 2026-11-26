@@ -45,7 +45,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
 						/>
 					}
 				>
-					<RouteNav initialOrders={orders} initialProducts={products} />
+					<RouteNav orders={orders} products={products} />
 				</Suspense>
 			}
 		>
