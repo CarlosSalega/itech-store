@@ -181,4 +181,8 @@ describe("turning the draft into a product", () => {
 		expect(draftToProduct(draft({ description: "   " }), "2026-11-24T10:00:00.000Z").description)
 			.toBeNull();
 	});
+
+	it("carries no photographs, so the catalogue keeps its own until the ficha adds one", () => {
+		expect(draftToProduct(draft(), "2026-11-24T10:00:00.000Z").gallery).toEqual([]);
+	});
 });

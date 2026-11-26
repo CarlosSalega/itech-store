@@ -3,28 +3,38 @@ import { prisma } from "@/lib/prisma";
 
 import { FAMILY_ORDER, type CatalogCard } from "../domain/catalog";
 
+const gallerySelect = {
+	orderBy: { position: "asc" },
+	select: { url: true, alt: true },
+} as const;
+
 const cardSelect = {
 	slug: true,
 	name: true,
 	category: true,
-	images: true,
+	gallery: gallerySelect,
 	variants: { select: { price: true } },
 } as const;
+
+type GalleryRow = { url: string; alt: string };
 
 type CardRow = {
 	slug: string;
 	name: string;
 	category: Category;
-	images: string[];
+	gallery: GalleryRow[];
 	variants: { price: number }[];
 };
 
 export function toCatalogCard(row: CardRow): CatalogCard {
+	const [primary] = row.gallery;
+
 	return {
 		slug: row.slug,
 		name: row.name,
 		category: row.category,
-		image: row.images[0] ?? null,
+		image: primary?.url ?? null,
+		imageAlt: primary?.alt ?? null,
 		priceFrom:
 			row.variants.length === 0
 				? null
@@ -32,12 +42,15 @@ export function toCatalogCard(row: CardRow): CatalogCard {
 	};
 }
 
-function familyFilter(family: Category | null) {
-	return family === null ? {} : { category: family };
+function publishedWhere(family: Category | null): {
+	published: true;
+	category?: Category;
+} {
+	return family === null ? { published: true } : { published: true, category: family };
 }
 
 export async function countProducts(family: Category | null): Promise<number> {
-	return prisma.product.count({ where: familyFilter(family) });
+	return prisma.product.count({ where: publishedWhere(family) });
 }
 
 export async function listProducts(
@@ -46,7 +59,7 @@ export async function listProducts(
 	take: number,
 ): Promise<CatalogCard[]> {
 	const rows = await prisma.product.findMany({
-		where: familyFilter(family),
+		where: publishedWhere(family),
 		select: cardSelect,
 		orderBy: { name: "asc" },
 		skip,
@@ -56,9 +69,20 @@ export async function listProducts(
 	return rows.map(toCatalogCard);
 }
 
+export async function listFeaturedProducts(): Promise<CatalogCard[]> {
+	const rows = await prisma.product.findMany({
+		where: { published: true, featured: true },
+		select: cardSelect,
+		orderBy: { slug: "asc" },
+	});
+
+	return rows.map(toCatalogCard);
+}
+
 export async function countByFamily(): Promise<Record<Category, number>> {
 	const rows = await prisma.product.groupBy({
 		by: ["category"],
+		where: { published: true },
 		_count: { _all: true },
 	});
 
@@ -78,7 +102,7 @@ export type ProductDetail = {
 	name: string;
 	description: string;
 	category: Category;
-	images: string[];
+	gallery: GalleryRow[];
 	variants: {
 		id: string;
 		sku: string;
@@ -92,14 +116,14 @@ export type ProductDetail = {
 export async function findProductBySlug(
 	slug: string,
 ): Promise<ProductDetail | null> {
-	return prisma.product.findUnique({
-		where: { slug },
+	return prisma.product.findFirst({
+		where: { slug, published: true },
 		select: {
 			slug: true,
 			name: true,
 			description: true,
 			category: true,
-			images: true,
+			gallery: gallerySelect,
 			variants: {
 				select: {
 					id: true,
@@ -121,7 +145,11 @@ export async function listRelatedProducts(
 	take: number,
 ): Promise<CatalogCard[]> {
 	const rows = await prisma.product.findMany({
-		where: { category: family, slug: { not: excludeSlug } },
+		where: {
+			category: family,
+			published: true,
+			slug: { not: excludeSlug },
+		},
 		select: cardSelect,
 		orderBy: { name: "asc" },
 		take,

@@ -13,6 +13,7 @@ const db = vi.hoisted(() => ({
 	products: new Map<string, Record<string, unknown>>(),
 	productUpserts: [] as Upsert<"slug">[],
 	variants: new Map<string, Record<string, unknown>>(),
+	gallery: new Map<string, Record<string, unknown>>(),
 	disconnects: 0,
 	nextId: 1,
 }));
@@ -45,6 +46,37 @@ vi.mock("../../../generated/prisma/client", () => {
 				return row;
 			},
 			count: async () => db.variants.size,
+		};
+		productImage = {
+			upsert: async (args: {
+				where: { productId_position: { productId: string; position: number } };
+				create: Record<string, unknown>;
+				update: Record<string, unknown>;
+			}) => {
+				const { productId, position } = args.where.productId_position;
+				const key = `${productId}:${position}`;
+				const hit = db.gallery.get(key);
+				if (hit) {
+					Object.assign(hit, args.update);
+					return hit;
+				}
+				const row = { id: `i${db.nextId++}`, ...args.create };
+				db.gallery.set(key, row);
+				return row;
+			},
+			deleteMany: async (args: {
+				where: { productId: string; position: { gte: number } };
+			}) => {
+				const { productId, position } = args.where;
+				let removed = 0;
+				for (const [key, row] of db.gallery) {
+					if (row.productId === productId && (row.position as number) >= position.gte) {
+						db.gallery.delete(key);
+						removed += 1;
+					}
+				}
+				return { count: removed };
+			},
 		};
 		$disconnect = async () => {
 			db.disconnects += 1;
@@ -111,6 +143,7 @@ beforeEach(() => {
 	process.env.DATABASE_URL = "postgresql://probe@127.0.0.1:1/probe";
 	db.products.clear();
 	db.variants.clear();
+	db.gallery.clear();
 	db.nextId = 1;
 });
 

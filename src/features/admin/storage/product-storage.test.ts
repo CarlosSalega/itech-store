@@ -59,6 +59,12 @@ describe("reading the catalogue the panel saved", () => {
 		expect(parseProducts(envelope([product]))).toBe(ADMIN_PRODUCTS);
 	});
 
+	it("falls back to the fixture set for a catalogue saved before the gallery existed", () => {
+		const before = { ...product, gallery: undefined, image: "/products/ipad/pro-1.webp" };
+
+		expect(parseProducts(stored([before]))).toBe(ADMIN_PRODUCTS);
+	});
+
 	it("keeps an emptied catalogue empty instead of bringing the fixtures back", () => {
 		expect(parseProducts(stored([]))).toEqual([]);
 	});
@@ -88,9 +94,46 @@ describe("reading the catalogue the panel saved", () => {
 	});
 
 	it("keeps a product that carries no photo and no description", () => {
-		expect(parseProducts(stored([product]))[0]?.image).toBeNull();
+		expect(parseProducts(stored([product]))[0]?.gallery).toEqual([]);
 		expect(parseProducts(stored([product]))[0]?.description).toBe(
 			"iPad Pro de 11 pulgadas con chip M5.",
+		);
+	});
+
+	it("round trips a gallery with its positions and its alt text", () => {
+		const photographed = {
+			...product,
+			gallery: [
+				{ position: 1, alt: 'Apple iPad Pro 11" M5 — foto 2', url: "/products/ipad/pro-2.webp" },
+				{ position: 0, alt: 'Apple iPad Pro 11" M5 — foto principal', url: "/products/ipad/pro-1.webp" },
+			],
+		};
+
+		expect(parseProducts(stored([photographed]))[0]?.gallery).toEqual([
+			{ position: 0, alt: 'Apple iPad Pro 11" M5 — foto principal', url: "/products/ipad/pro-1.webp" },
+			{ position: 1, alt: 'Apple iPad Pro 11" M5 — foto 2', url: "/products/ipad/pro-2.webp" },
+		]);
+	});
+
+	it("drops a row whose photograph lost its alt text", () => {
+		const broken = {
+			...product,
+			gallery: [{ position: 0, url: "/products/ipad/pro-1.webp" }],
+		};
+
+		expect(parseProducts(stored([broken, ...ADMIN_PRODUCTS.slice(0, 1)]))).toEqual(
+			ADMIN_PRODUCTS.slice(0, 1),
+		);
+	});
+
+	it("drops a row whose photograph lost its position", () => {
+		const broken = {
+			...product,
+			gallery: [{ alt: "sin posición", url: "/products/ipad/pro-1.webp" }],
+		};
+
+		expect(parseProducts(stored([broken, ...ADMIN_PRODUCTS.slice(0, 1)]))).toEqual(
+			ADMIN_PRODUCTS.slice(0, 1),
 		);
 	});
 

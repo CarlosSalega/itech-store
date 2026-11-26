@@ -4,74 +4,32 @@ import Link from "next/link";
 
 import { SiteFooter } from "@/app/_components/site-footer";
 import { SiteHeader } from "@/app/_components/site-header";
-import {
-	FAMILY_ORDER,
-	type CatalogCard,
-} from "@/features/catalog/domain/catalog";
+import { FAMILY_ORDER } from "@/features/catalog/domain/catalog";
 import { FamilyList } from "@/features/catalog/ui/family-list";
 import { ChevronRightIcon } from "@/components/icons";
 import { ProductCard } from "@/features/catalog/ui/product-card";
-import { prisma } from "@/lib/prisma";
+import {
+	countByFamily,
+	listFeaturedProducts,
+} from "@/features/catalog/server/catalog-queries";
 
 import styles from "./page.module.css";
 
 export const instant = false;
 
-async function getFeaturedProducts(): Promise<CatalogCard[]> {
-	const rows = await prisma.product.findMany({
-		where: { featured: true },
-		select: {
-			slug: true,
-			name: true,
-			category: true,
-			images: true,
-			variants: { select: { price: true } },
-		},
-		orderBy: { slug: "asc" },
-	});
-
-	return rows
-		.map((row) => ({
-			slug: row.slug,
-			name: row.name,
-			category: row.category,
-			image: row.images[0] ?? null,
-			priceFrom:
-				row.variants.length === 0
-					? null
-					: Math.min(...row.variants.map((variant) => variant.price)),
-		}))
-		.sort(
-			(first, second) =>
-				FAMILY_ORDER.indexOf(first.category) -
-				FAMILY_ORDER.indexOf(second.category),
-		);
-}
-
-async function getFamilyCounts() {
-	const rows = await prisma.product.groupBy({
-		by: ["category"],
-		_count: { _all: true },
-	});
-
-	const counts = Object.fromEntries(
-		FAMILY_ORDER.map((category) => [category, 0]),
-	) as Record<(typeof FAMILY_ORDER)[number], number>;
-
-	for (const row of rows) {
-		counts[row.category] = row._count._all;
-	}
-
-	return counts;
-}
-
 export default async function Home() {
 	await connection();
 
-	const [featured, counts] = await Promise.all([
-		getFeaturedProducts(),
-		getFamilyCounts(),
+	const [featuredRows, counts] = await Promise.all([
+		listFeaturedProducts(),
+		countByFamily(),
 	]);
+
+	const featured = [...featuredRows].sort(
+		(first, second) =>
+			FAMILY_ORDER.indexOf(first.category) -
+			FAMILY_ORDER.indexOf(second.category),
+	);
 
 	const families = FAMILY_ORDER.map((category) => ({
 		category,

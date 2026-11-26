@@ -9,12 +9,18 @@ export type AdminVariant = {
 	stock: number;
 };
 
+export type AdminProductImage = {
+	position: number;
+	url: string;
+	alt: string;
+};
+
 export type AdminProduct = {
 	slug: string;
 	name: string;
 	description: string | null;
 	category: Category;
-	image: string | null;
+	gallery: readonly AdminProductImage[];
 	published: boolean;
 	destacado: boolean;
 	createdAt: string;
@@ -31,7 +37,7 @@ export type CreateProductInput = {
 	name: string;
 	description: string | null;
 	category: Category;
-	image?: string | null;
+	gallery?: readonly AdminProductImage[];
 	published: boolean;
 	destacado: boolean;
 	createdAt: string;
@@ -42,7 +48,7 @@ export type AdminProductPatch = {
 	name?: string;
 	description?: string | null;
 	category?: Category;
-	image?: string | null;
+	gallery?: readonly AdminProductImage[];
 	published?: boolean;
 	destacado?: boolean;
 	variants?: readonly AdminVariant[];
@@ -67,6 +73,20 @@ const DATE_FORMAT = new Intl.DateTimeFormat("es-AR", {
 const PESOS_FORMAT = new Intl.NumberFormat("es-AR", {
 	maximumFractionDigits: 0,
 });
+
+export function orderedGallery(
+	images: readonly AdminProductImage[],
+): AdminProductImage[] {
+	return images
+		.map((image) => ({ ...image }))
+		.sort((first, second) => first.position - second.position);
+}
+
+export function productCoverImage(product: AdminProduct): AdminProductImage | null {
+	const [cover] = orderedGallery(product.gallery);
+
+	return cover ?? null;
+}
 
 export function lowestStockVariant(product: AdminProduct): AdminVariant | null {
 	return product.variants.reduce<AdminVariant | null>((scarcest, variant) => {
@@ -206,7 +226,7 @@ export function createProduct(input: CreateProductInput): AdminProduct {
 		name,
 		description: normaliseDescription(input.description),
 		category: input.category,
-		image: input.image ?? null,
+		gallery: orderedGallery(input.gallery ?? []),
 		published: input.published,
 		destacado: input.destacado,
 		createdAt: input.createdAt,
@@ -236,6 +256,10 @@ export function updateProduct(
 				patch.description === undefined
 					? product.description
 					: normaliseDescription(patch.description),
+			gallery:
+				patch.gallery === undefined
+					? product.gallery
+					: orderedGallery(patch.gallery),
 			variants:
 				patch.variants === undefined
 					? product.variants

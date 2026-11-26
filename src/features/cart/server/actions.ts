@@ -36,7 +36,16 @@ export async function revalidateCart(variantIds: string[]): Promise<Revalidation
 				price: true,
 				stock: true,
 				product: {
-					select: { slug: true, name: true, category: true, images: true },
+					select: {
+						slug: true,
+						name: true,
+						category: true,
+						gallery: {
+							orderBy: { position: "asc" },
+							take: 1,
+							select: { url: true },
+						},
+					},
 				},
 			},
 			where: { id: { in: ids } },
@@ -49,7 +58,7 @@ export async function revalidateCart(variantIds: string[]): Promise<Revalidation
 			productName: row.product.name,
 			familyLabel: FAMILY_LABEL[row.product.category],
 			variantLabel: formatStorage(row.storage),
-			imageUrl: row.product.images[0] ?? null,
+			imageUrl: row.product.gallery[0]?.url ?? null,
 			imageAlt: `${row.product.name}, ${variantLabel(row.storage, row.color)}`,
 			unitPriceCents: row.price,
 			stock: row.stock,

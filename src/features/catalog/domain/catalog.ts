@@ -85,5 +85,6 @@ export type CatalogCard = {
 	name: string;
 	category: Category;
 	image: string | null;
+	imageAlt: string | null;
 	priceFrom: number | null;
 };

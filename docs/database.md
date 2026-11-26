@@ -60,6 +60,7 @@ prisma/migrations/20270101000000_add_order/rollback.sql
 
 - Additive first: add the new column or table, backfill it, drop the old one in a later migration. One migration never does all three.
 - A `NOT NULL` column arrives with a default or after a backfill, never as a bare constraint on a populated table.
-- Integer cents and `String[]` → relation changes get their own migration and their own backfill script, tested against the seeded catalogue.
+- Integer cents get their own migration and their own backfill script, tested against the seeded catalogue.
+- When data moves to a new shape and the old column becomes redundant, the migration that drops it first proves it is redundant: `prisma/migrations/20261126170000_drop_product_images/migration.sql` raises an exception unless every product's gallery reproduces its `images` array in order, with a NULL array compared as empty. A drop that cannot state its own precondition in SQL does not ship.
 - The seed stays runnable from zero: `prisma migrate reset --force` followed by `prisma db seed` must rebuild a working catalogue.
 - The moment the database stores something the seed cannot rebuild — a real order, an uploaded image — a rehearsal database stops being a convenience and becomes a requirement again. This workflow assumes nothing like that exists yet.
