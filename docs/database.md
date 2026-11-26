@@ -43,7 +43,7 @@ It executes, but it does not update `_prisma_migrations` on its own — that is 
 pnpm exec prisma migrate deploy
 ```
 
-The owner runs it. Take a backup first when the migration touches rows the seed cannot rebuild — which, while the only stored data is the seeded catalogue and fixtures, is none of them.
+The owner runs it. Take a backup first when the migration touches rows the seed cannot rebuild — today the database also holds real orders, uploaded images, image records and cart items, so any migration that would delete or rewrite those needs one.
 
 ## Rollback
 

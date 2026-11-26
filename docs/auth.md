@@ -1,6 +1,6 @@
 # Authentication
 
-The admin panel is guarded by a real Better Auth session. The rest of the app still runs on fixtures, and a guest still buys without an account.
+The admin panel is guarded by a real Better Auth session. The catalogue, the panel, the orders and the cart of a signed-in user all read and write Postgres; a guest still buys without an account. The dashboard's comparison deltas are measured against a mocked baseline kept for the demo, not real history — see "Demo data in the panel" in the README.
 
 ## Variables
 
