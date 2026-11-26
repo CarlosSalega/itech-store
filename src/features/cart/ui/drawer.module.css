@@ -439,6 +439,13 @@
 	text-align: center;
 }
 
+.lineCap {
+	margin: var(--s-2) 0 0;
+	color: var(--muted);
+	font-size: var(--t-caption);
+	line-height: 1.4;
+}
+
 .unavailable {
 	margin: var(--s-2) 0 0;
 	color: var(--muted);

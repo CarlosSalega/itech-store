@@ -162,7 +162,6 @@ model CartItem {
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   variantId String
   variant   Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
-  /// Clamped by MAX_LINE_QUANTITY and by stock at write time.
   quantity  Int
 
   @@unique([userId, variantId])

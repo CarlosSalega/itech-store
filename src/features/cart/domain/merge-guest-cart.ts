@@ -10,21 +10,10 @@ function clampedQuantity(quantity: number): number {
 
 export type MergedCart = {
 	lines: CartLine[];
-	/// Variants whose merged quantity topped out: the cart says so on screen,
-	/// because a silent clamp is a lie.
 	clampedVariantIds: string[];
-	/// Guest lines whose variant no longer exists, dropped rather than
-	/// blocking the login.
 	droppedVariantIds: string[];
 };
 
-/**
- * Merges a guest cart into an account's cart line by line: the same variant
- * adds its quantities, clamped by stock and by MAX_LINE_QUANTITY; a guest
- * line the account lacks is created; a guest line whose variant is gone is
- * dropped. Pure: the same inputs give the same result, and an already
- * clamped line does not grow if the merge runs again.
- */
 export function mergeGuestCart(
 	accountLines: CartLine[],
 	guestLines: CartLine[],

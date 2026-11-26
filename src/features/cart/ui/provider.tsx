@@ -23,11 +23,20 @@ import {
 } from "../domain/cart";
 import {
 	commitCart,
+	commitRemoteCart,
+	hydrateRemoteCart,
 	getCartServerSnapshot,
 	getCartSnapshot,
 	subscribeCart,
 } from "../storage/store";
-import { revalidateCart } from "../server/actions";
+import {
+	addCartLine,
+	removeCartLine,
+	revalidateCart,
+	updateCartLine,
+	type ServerCartResult,
+} from "../server/actions";
+import type { ServerCart } from "../server/cart-items";
 import { applyRevalidation } from "../server/revalidation";
 
 export type PriceVerification = "idle" | "checking" | "verified" | "failed";
@@ -38,6 +47,8 @@ type CartContextValue = {
 	lastAdded: CartLine | undefined;
 	isOpen: boolean;
 	verification: PriceVerification;
+	hydrateSession: (cart: ServerCart) => void;
+	cappedVariantIds: string[];
 	addLine: (line: CartLine) => void;
 	setQuantity: (variantId: string, quantity: number) => void;
 	removeLine: (variantId: string) => void;
@@ -61,18 +72,78 @@ export function CartProvider({ children }: { children: ReactNode }) {
 	const cart = useSyncExternalStore(subscribeCart, getCartSnapshot, getCartServerSnapshot);
 	const [isOpen, setIsOpen] = useState(false);
 	const [verification, setVerification] = useState<PriceVerification>("idle");
+	const [sessionCart, setSessionCart] = useState<ServerCart | null>(null);
+	const [cappedVariantIds, setCappedVariantIds] = useState<string[]>([]);
+	const signedIn = sessionCart !== null;
 
-	const addLine = useCallback((line: CartLine) => {
-		commitCart(addLineToCart(getCartSnapshot(), line));
+	const hydrateSession = useCallback((next: ServerCart) => {
+		setSessionCart(next);
+		setCappedVariantIds(next.cappedVariantIds);
+		hydrateRemoteCart({ lines: next.lines, lastAddedVariantId: null });
 	}, []);
 
-	const setQuantity = useCallback((variantId: string, quantity: number) => {
-		commitCart(setQuantityInCart(getCartSnapshot(), variantId, quantity));
-	}, []);
+	const commit = useCallback(
+		(next: Cart) => (signedIn ? commitRemoteCart(next) : commitCart(next)),
+		[signedIn],
+	);
 
-	const removeLine = useCallback((variantId: string) => {
-		commitCart(removeLineFromCart(getCartSnapshot(), variantId));
-	}, []);
+	const applyServerCart = useCallback(
+		(result: ServerCartResult) => {
+			if (!result.ok) {
+				setVerification("failed");
+				return;
+			}
+
+			commitRemoteCart({
+				lines: result.lines,
+				lastAddedVariantId: getCartSnapshot().lastAddedVariantId,
+			});
+			setCappedVariantIds(result.cappedVariantIds);
+		},
+		[],
+	);
+
+	const addLine = useCallback(
+		(line: CartLine) => {
+			if (!signedIn) {
+				commitCart(addLineToCart(getCartSnapshot(), line));
+				return;
+			}
+
+			commitRemoteCart(addLineToCart(getCartSnapshot(), line));
+
+			void addCartLine(line.variantId, line.quantity).then(applyServerCart);
+		},
+		[signedIn, applyServerCart],
+	);
+
+	const setQuantity = useCallback(
+		(variantId: string, quantity: number) => {
+			if (!signedIn) {
+				commitCart(setQuantityInCart(getCartSnapshot(), variantId, quantity));
+				return;
+			}
+
+			commitRemoteCart(setQuantityInCart(getCartSnapshot(), variantId, quantity));
+
+			void updateCartLine(variantId, quantity).then(applyServerCart);
+		},
+		[signedIn, applyServerCart],
+	);
+
+	const removeLine = useCallback(
+		(variantId: string) => {
+			if (!signedIn) {
+				commitCart(removeLineFromCart(getCartSnapshot(), variantId));
+				return;
+			}
+
+			commitRemoteCart(removeLineFromCart(getCartSnapshot(), variantId));
+
+			void removeCartLine(variantId).then(applyServerCart);
+		},
+		[signedIn, applyServerCart],
+	);
 
 	const openCart = useCallback(() => {
 		setIsOpen(true);
@@ -93,18 +164,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
 					return;
 				}
 
-				commitCart(applyRevalidation(getCartSnapshot(), result));
+				commit(applyRevalidation(getCartSnapshot(), result));
 				setVerification("verified");
 			})
 			.catch(() => {
 				setVerification("failed");
 			});
-	}, []);
+	}, [commit]);
 
 	const closeCart = useCallback(() => {
 		setIsOpen(false);
-		commitCart(clearLastAdded(getCartSnapshot()));
-	}, []);
+		commit(clearLastAdded(getCartSnapshot()));
+	}, [commit]);
 
 	const value = useMemo<CartContextValue>(
 		() => ({
@@ -113,13 +184,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
 			lastAdded: lastAddedLine(cart),
 			isOpen,
 			verification,
+			hydrateSession,
+			cappedVariantIds,
 			addLine,
 			setQuantity,
 			removeLine,
 			openCart,
 			closeCart,
 		}),
-		[cart, isOpen, verification, addLine, setQuantity, removeLine, openCart, closeCart],
+		[
+			cart,
+			isOpen,
+			verification,
+			hydrateSession,
+			cappedVariantIds,
+			addLine,
+			setQuantity,
+			removeLine,
+			openCart,
+			closeCart,
+		],
 	);
 
 	return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

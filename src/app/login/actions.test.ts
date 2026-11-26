@@ -14,6 +14,19 @@ vi.mock("@/lib/auth", () => ({
 	getAuth: () => ({ api: { signInEmail: mocks.signInEmail } }),
 }));
 
+const cartMocks = vi.hoisted(() => ({
+	findUnique: vi.fn(),
+	mergeGuestCartForUser: vi.fn(),
+}));
+
+vi.mock("@/lib/prisma", () => ({
+	prisma: { user: { findUnique: cartMocks.findUnique } },
+}));
+
+vi.mock("@/features/cart/server/cart-items", () => ({
+	mergeGuestCartForUser: cartMocks.mergeGuestCartForUser,
+}));
+
 vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
 
 vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
@@ -215,3 +228,82 @@ describe("the attempt limit on the sign-in action", () => {
 		expect(mocks.signInEmail).toHaveBeenCalledTimes(LOGIN_LIMITS.max);
 	});
 });
+
+describe("the guest cart merge on sign-in", () => {
+	beforeEach(() => {
+		mocks.redirect.mockReset();
+		mocks.signInEmail.mockReset();
+		mocks.signInEmail.mockResolvedValue({ user: { id: "user_1" } });
+		cartMocks.findUnique.mockReset();
+		cartMocks.mergeGuestCartForUser.mockReset();
+		resetLoginAttempts();
+	});
+
+	it("runs the merge once when the form carries a guest cart", async () => {
+		cartMocks.findUnique.mockResolvedValue({ id: "user_1" });
+		cartMocks.mergeGuestCartForUser.mockResolvedValue(undefined);
+
+		await signIn(
+			EMPTY,
+			formWithCart({ email: "admin@example.com", password: "a-password", next: "/" }),
+		);
+
+		expect(cartMocks.findUnique).toHaveBeenCalledWith({
+			where: { email: "admin@example.com" },
+			select: { id: true },
+		});
+		expect(cartMocks.mergeGuestCartForUser).toHaveBeenCalledTimes(1);
+		expect(mocks.redirect).toHaveBeenCalledTimes(1);
+	});
+
+	it("does not merge when the form carries no guest cart", async () => {
+		await signIn(EMPTY, form({ email: "admin@example.com", password: "a-password", next: "/" }));
+
+		expect(cartMocks.mergeGuestCartForUser).not.toHaveBeenCalled();
+		expect(mocks.redirect).toHaveBeenCalledTimes(1);
+	});
+
+	it("redirects even when the merge fails", async () => {
+		cartMocks.findUnique.mockResolvedValue({ id: "user_1" });
+		cartMocks.mergeGuestCartForUser.mockRejectedValue(new Error("database down"));
+
+		await signIn(
+			EMPTY,
+			formWithCart({
+				email: "admin@example.com",
+				password: "a-password",
+				next: "/",
+			}),
+		);
+
+		expect(mocks.redirect).toHaveBeenCalledTimes(1);
+	});
+});
+
+function formWithCart(fields: Record<string, string>): FormData {
+	const data = form(fields);
+	data.set(
+		"guestCart",
+		JSON.stringify({
+			version: 1,
+			lines: [
+				{
+					variantId: "v-ipad-256",
+					sku: "IPAD-A16-256",
+					productSlug: "apple-ipad-11-a16-chip-wi-fi",
+					productName: "Apple iPad",
+					familyLabel: "iPad",
+					variantLabel: null,
+					imageUrl: null,
+					imageAlt: "iPad",
+					unitPriceCents: 1_000,
+					quantity: 2,
+					available: true,
+				},
+			],
+			lastAddedVariantId: null,
+		}),
+	);
+
+	return data;
+}
