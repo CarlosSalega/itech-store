@@ -75,10 +75,10 @@ describe("the dashboard", () => {
 		);
 	});
 
-	it("says the products come from the database and the orders from the demo", () => {
+	it("says the products and the orders come from the database", () => {
 		expect(markup).not.toContain("Los datos de este panel son de ejemplo");
 		expect(markup).toContain(
-			"Los 14 productos salen de la base de datos y los 5 pedidos son los de la demo.",
+			"Los 14 productos y los 5 pedidos salen de la base de datos.",
 		);
 	});
 });

@@ -1,14 +1,9 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 
 import type { Order, OrderStatus } from "@/features/checkout/domain/order";
-import {
-	commitOrders,
-	getOrdersSnapshot,
-	subscribeOrders,
-} from "@/features/checkout/storage/order-store";
 
 import {
 	DEFAULT_ORDER_FILTERS,
@@ -19,22 +14,43 @@ import {
 	updateOrderStatus,
 	type OrderFilters,
 } from "../domain/order-inbox";
+import type { AdminOrderActionResult } from "../server/order-actions";
 import { OrdersInboxView } from "./orders-inbox-view";
+import { UNREACHABLE_MESSAGE } from "./screen-actions";
 
-export function OrdersInbox({ initialOrders }: { initialOrders: readonly Order[] }) {
+export type OrderStatusAction = (
+	number: string,
+	status: string,
+) => Promise<AdminOrderActionResult>;
+
+export function inboxMessage(result: AdminOrderActionResult): string | null {
+	return result.ok ? null : result.message;
+}
+
+export function OrdersInbox({
+	initialOrders,
+	changeStatus,
+}: {
+	initialOrders: readonly Order[];
+	changeStatus: OrderStatusAction;
+}) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const orders = useSyncExternalStore(
-		subscribeOrders,
-		getOrdersSnapshot,
-		() => initialOrders,
-	);
+	const [orders, setOrders] = useState(initialOrders);
+	const [synced, setSynced] = useState(initialOrders);
+	const [message, setMessage] = useState<string | null>(null);
+	const [pending, setPending] = useState(false);
 	const urlFilters = orderFiltersFromParams(
 		Object.fromEntries(searchParams.entries()),
 	);
 	const urlHref = orderFilterHref(urlFilters);
 	const [view, setView] = useState({ filters: urlFilters, href: urlHref });
 	const [expanded, setExpanded] = useState<string | null>(null);
+
+	if (synced !== initialOrders) {
+		setSynced(initialOrders);
+		setOrders(initialOrders);
+	}
 
 	if (view.href !== urlHref) {
 		setView({ filters: urlFilters, href: urlHref });
@@ -49,8 +65,24 @@ export function OrdersInbox({ initialOrders }: { initialOrders: readonly Order[]
 		router.replace(href, { scroll: false });
 	};
 
-	const changeStatus = (number: string, status: OrderStatus) => {
-		commitOrders(updateOrderStatus(orders, number, status));
+	const submit = (number: string, status: OrderStatus) => {
+		if (pending) {
+			return;
+		}
+
+		setPending(true);
+		setMessage(null);
+
+		void (async () => {
+			const result = await changeStatus(number, status).catch(() => null);
+
+			setPending(false);
+			setMessage(result === null ? UNREACHABLE_MESSAGE : inboxMessage(result));
+
+			if (result?.ok) {
+				setOrders((current) => updateOrderStatus(current, number, status));
+			}
+		})();
 	};
 
 	return (
@@ -58,8 +90,9 @@ export function OrdersInbox({ initialOrders }: { initialOrders: readonly Order[]
 			counts={orderStatusCounts(orders)}
 			expanded={expanded}
 			filters={filters}
+			message={message}
 			onClear={() => apply(DEFAULT_ORDER_FILTERS)}
-			onOrderStatus={changeStatus}
+			onOrderStatus={submit}
 			onQueryChange={(query) => apply({ ...filters, query })}
 			onStatusFilter={(status) => apply({ ...filters, status })}
 			onToggleOrder={(number) =>

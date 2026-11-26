@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 
 import { SiteFooter } from "@/app/_components/site-footer";
 import { SiteHeader } from "@/app/_components/site-header";
-import { OrderReceiptView } from "@/features/checkout/ui/receipt";
+import { ORDER_PROOF_COOKIE, parseOrderProofs } from "@/features/checkout/server/order-proof";
+import { readOrderReceipt } from "@/features/checkout/server/order-receipt";
+import { OrderProofGate, OrderReceipt } from "@/features/checkout/ui/receipt";
 
 export const instant = false;
 
@@ -13,8 +16,19 @@ export const metadata: Metadata = {
 	robots: { index: false, follow: true },
 };
 
-export default async function PedidoPage({ params }: PageProps<"/pedido/[codigo]">) {
+export default async function PedidoPage({
+	params,
+	searchParams,
+}: PageProps<"/pedido/[codigo]">) {
 	const { codigo } = await params;
+	const { email } = await searchParams;
+	const proof = (await cookies()).get(ORDER_PROOF_COOKIE)?.value;
+
+	const result = await readOrderReceipt({
+		codigo,
+		email: typeof email === "string" ? email : null,
+		proofs: parseOrderProofs(proof),
+	});
 
 	return (
 		<>
@@ -26,7 +40,11 @@ export default async function PedidoPage({ params }: PageProps<"/pedido/[codigo]
 
 			<main id="main">
 				<div className="wrap">
-					<OrderReceiptView codigo={codigo} />
+					{result.state === "visible" ? (
+						<OrderReceipt order={result.order} />
+					) : (
+						<OrderProofGate attempted={result.attempted} codigo={codigo} />
+					)}
 				</div>
 			</main>
 

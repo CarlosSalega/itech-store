@@ -1,4 +1,8 @@
-import type { Order, OrderStatus } from "@/features/checkout/domain/order";
+import {
+	ORDER_STATUSES,
+	type Order,
+	type OrderStatus,
+} from "@/features/checkout/domain/order";
 
 export type OrderStatusFilter =
 	| "todos"
@@ -54,6 +58,10 @@ const TONE_OF_STATUS: Record<OrderStatus, OrderTone> = {
 
 export function orderStatusTone(status: OrderStatus): OrderTone {
 	return TONE_OF_STATUS[status];
+}
+
+export function isOrderStatus(value: unknown): value is OrderStatus {
+	return ORDER_STATUSES.some((status) => status === value);
 }
 
 export type OrderFilters = {
