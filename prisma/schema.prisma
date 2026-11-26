@@ -34,12 +34,26 @@ model Product {
   specs       Json?
   /// Editorial flag for the landing: no admin panel exists yet to toggle it.
   featured    Boolean   @default(false)
+  /// Every catalogue row is live today, so the default preserves the public catalogue.
+  published   Boolean   @default(true)
   variants    Variant[]
+  gallery     ProductImage[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   @@index([category])
   @@index([featured])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  position  Int
+  alt       String
+  url       String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, position])
 }
 
 model Variant {

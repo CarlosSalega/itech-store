@@ -81,6 +81,18 @@ Each phase is a branch, a chain of work-unit commits and one PR. The order is a 
 | P7 | Cleanup | The three fixture stores and their tests go; fixtures survive only as seed input; documents updated | Deleting them earlier would leave the demo unwalkable between phases |
 | P8 | Passwordless access | Magic link through a transactional provider, plus "mis pedidos" for a signed-in customer | Needs an email channel the store does not have yet; it must not block P5 |
 
+## Tasks — P2, the catalogue write model
+
+Branch `feat/catalogue-write-model`. Additive first, as `docs/database.md` requires: the new table and column arrive in one migration with a backfill and `Product.images` survives until nothing reads or writes it, then a second migration drops it. Every commit leaves the tree green.
+
+- T1 — Schema: `Product.published Boolean @default(true)` (every catalogue row is live today, so the default preserves the current public catalogue) and `ProductImage` (`id`, `productId`, `position`, `alt`, `url`) with `@@unique([productId, position])` and cascade delete. `Product.images` stays in the model for now. The migration is created with `prisma migrate dev --create-only --name add_product_gallery` and then hand-edited around the generated part: create the table and the column, insert one row per element of `images` with its index as `position` (`unnest ... with ordinality`), and stop there. `rollback.sql` drops the two new things and deletes the migration's own row. Specs: S3, S5, S6.
+- T2 — The seed writes the gallery: `resolveImages` keeps producing the paths; each product's images become `ProductImage` rows with `position` and `alt`, idempotently, and `images` keeps being written so the column stays truthful until T7 drops it. Specs: S6, S7.
+- T3 — The rehearsal, run by the parent and recorded in the Log: `migrate reset --force` proves the chain from zero, `migrate deploy` against the database that already holds 194 images proves the backfill on real rows, then `rollback.sql` and `migrate deploy` again. Specs: S5, S7.
+- T4 — The public side reads the gallery and the published state: `src/app/(store)/page.tsx` and `src/app/(store)/catalogo/[slug]/page.tsx` take the first image by `position`, carry its `alt`, and only show `published` products; the cart and the checkout keep the `imageUrl` they already snapshot. Specs: S3. Commit: `refactor(catalog): read the gallery and the published state`.
+- T5 — The admin reads the same shape: domain, fixtures, storage and the three product screens carry `published` and the gallery, with the screens, copy and behaviour unchanged. Specs: S3, S10. Commit: `refactor(admin): carry the gallery and the published state`.
+- T6 — The second migration drops `Product.images`, with a `rollback.sql` that recreates the array in `position` order. Rehearsed the same way as T3. Names risk item 1, so it gets its own commit and its own verification. Specs: S5, S7. Commit: `refactor(catalog): drop the string array once nothing reads it`.
+- T7 — Documents: `docs/seed-pipeline.md` and the README stop describing `String[]`. Specs: S8. Commit: `docs(catalog): describe the gallery and the publication state`.
+
 ## Verification per phase
 
 - P0: author a migration, prove the chain from zero (`reset` plus `db seed`), and roll it back once — both runs shown.

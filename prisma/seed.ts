@@ -8,6 +8,7 @@ import { Category, PrismaClient } from "../src/generated/prisma/client";
 import { alreadyRegistered } from "../src/lib/auth-errors";
 import { getAuth } from "../src/lib/auth";
 import { buildSeedCatalog, resolveImages, type SeedProduct, type SeedVariant } from "../src/features/catalog/seed/catalog";
+import { buildGallery } from "../src/features/catalog/seed/gallery";
 
 const SEED_DIR = path.join(process.cwd(), "prisma", "seed");
 
@@ -101,6 +102,7 @@ async function main() {
 
 	let productsUpserted = 0;
 	let variantsUpserted = 0;
+	let galleryWritten = 0;
 	let imagesKept = 0;
 	let imagesDropped = 0;
 	let minPrice = Number.POSITIVE_INFINITY;
@@ -129,6 +131,21 @@ async function main() {
 				update: productData,
 			});
 			productsUpserted += 1;
+
+			const gallery = buildGallery(product.name, images);
+
+			await prisma.productImage.deleteMany({
+				where: { productId: record.id, position: { gte: gallery.length } },
+			});
+
+			for (const image of gallery) {
+				await prisma.productImage.upsert({
+					where: { productId_position: { productId: record.id, position: image.position } },
+					create: { productId: record.id, ...image },
+					update: { alt: image.alt, url: image.url },
+				});
+				galleryWritten += 1;
+			}
 
 			for (const variant of product.variants) {
 				const price = priceInCents(product, variant);
@@ -174,6 +191,7 @@ async function main() {
 					? `, dropped ${imagesDropped} whose file is missing (the UI falls back to /placeholder.webp)`
 					: ""),
 		);
+		console.log(`Gallery rows written: ${galleryWritten}`);
 	} finally {
 		await prisma.$disconnect();
 	}
