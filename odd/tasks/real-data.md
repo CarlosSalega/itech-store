@@ -93,6 +93,18 @@ Branch `feat/catalogue-write-model`. Additive first, as `docs/database.md` requi
 - T6 — The second migration drops `Product.images`, with a `rollback.sql` that recreates the array in `position` order. Rehearsed the same way as T3. Names risk item 1, so it gets its own commit and its own verification. Specs: S5, S7. Commit: `refactor(catalog): drop the string array once nothing reads it`.
 - T7 — Documents: `docs/seed-pipeline.md` and the README stop describing `String[]`. Specs: S8. Commit: `docs(catalog): describe the gallery and the publication state`.
 
+## Tasks — P3, image uploads
+
+Branch `feat/image-uploads`. The module is replicated from `/home/charly06arg/Desktop/Dev/work/car-agency-app` (read-only; the owner authorised reading it) with its internal layout preserved, so its own documentation still applies. Signed from the server: `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` in the browser, `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET` only on the server. `CLOUDINARY_UPLOAD_PRESET`, `NEXT_PUBLIC_IMAGE_PROVIDER` and `NEXT_PUBLIC_IMAGE_CDN` are in `.env` and used by nothing: this flow does not need them.
+
+- T1 — `src/modules/image-uploads/core/`: the `ImageProvider` port, the `ImageError` codes, validation (type before size, checked before and after parsing), URL building, concurrency and the code-to-Spanish-copy mapper. Limits are one exported constant — 5 MB and jpeg/png/webp/avif by default — configurable in a single place. No transport, no configuration read at import time. Tests ported from the reference, in our runner. Risk: item 3 (the copy is a contract).
+- T2 — `src/modules/image-uploads/guards/`: the pure policies — authenticate → validate the file → authorize the delete — with delete failing closed when no authorizer is supplied, and a rejected request never reaching the provider. Tests ported.
+- T3 — `ImageUpload` table (unique `key`, `userId`, `createdAt`, index on `userId`, FK cascade) with an additive migration and its `rollback.sql`, rehearsed like P2's. Risk: item 1.
+- T4 — The Cloudinary provider in the composition root: built once per process, every parameter injected, `cloudinary` pinned exactly as the only new runtime dependency, signing done server-side. `delete` reports a result with a code instead of throwing.
+- T5 — The transport: the upload handler and the delete path as Web standards only, with no `next/server` import inside the module; every accepted upload records its `ImageUpload` row and its `ProductImage` row with `position` and `alt`.
+- T6 — The client gallery in the admin product form: move up/down and remove as buttons rather than `@dnd-kit`, inline messages rather than `sonner`, this project's tokens rather than `lucide-react`. Copy stays Spanish and inside the message lanes.
+- T7 — Documents, the phase gate and the PR: `docs/database.md` if the table changes the workflow, a short `docs/image-uploads.md` for the wiring, this file's Log, `pnpm test`, `lint`, `tsc`, `build`.
+
 ## Verification per phase
 
 - P0: author a migration, prove the chain from zero (`reset` plus `db seed`), and roll it back once — both runs shown.
