@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Pantalla de ingreso del panel de iTech Store: una tarjeta centrada con el correo, la contraseña y el aviso de que la demo no tiene sesión real.">
+<meta name="description" content="Pantalla de ingreso del panel de iTech Store: una tarjeta centrada con el correo, la contraseña y las dos notas del acceso real.">
 <title>Entrá al panel · Tarjeta flotante — iTech Store</title>
 <!--
   Direction 01 · Tarjeta flotante — screen 04 of 7, the only one outside the shell.
@@ -15,8 +15,8 @@
   `--t-caption` line tall, with `aria-live` and `aria-describedby` on the field, so nothing moves
   when a message arrives. The standing notes live under the form, outside every lane, because a note
   that is always true cannot fit a one-line reservation. Copy is the implemented /login copy
-  (`src/app/login/page.tsx`); the demo note is verbatim, because this demo really checks no password
-  and stores nothing.
+  (`src/app/login/copy.ts`): both notes are verbatim, and this screen is the real one — Better Auth
+  checks the password on the server and the session guards `/admin`.
   Tokens come from design/system.md; no new values.
 -->
 <style>
@@ -167,8 +167,8 @@
     <div class="notes">
       <p class="note">Esta base todavía no tiene otras cuentas: solo entra el administrador que se
         crea desde el seed.</p>
-      <p class="note">Esta demo no tiene sesión real: no se revisa ninguna contraseña y no se guarda lo
-        que escribís acá.</p>
+      <p class="note">No hay recuperación de contraseña: si la perdés, se vuelve a crear el
+        administrador desde el seed.</p>
     </div>
   </div>
 </main>
