@@ -24,7 +24,7 @@ The seed creates the user through Better Auth's own sign-up API, so the password
 pnpm exec prisma db seed
 ```
 
-With both variables present it prints `Admin user ready: <email> (role ADMIN)`. Running it again does not fail: an existing user is found and only its role is set back to `ADMIN`.
+With both variables present it prints `Admin user ready: <email> (role ADMIN)`. Running it again does not fail: `signUpEmail` answers `422` with `USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL`, `alreadyRegistered` in `src/lib/auth-errors.ts` matches the `USER_ALREADY_EXISTS` prefix without swallowing any other API failure or a non-API throw, and only the role is set back to `ADMIN`. That idempotency is load-bearing: `prisma db seed` is meant to be re-runnable against a database that already has the account, and until this was fixed the second run exited 1.
 
 With either variable missing the seed prints one line — for example `Admin user skipped: ADMIN_EMAIL and ADMIN_PASSWORD are not set.` — leaves every other account alone, and still exits successfully. It never invents credentials. The catalogue part of the seed is unchanged.
 
