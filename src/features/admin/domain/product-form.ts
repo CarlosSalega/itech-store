@@ -6,7 +6,9 @@ import {
 	parsePricePesos,
 	productSlug,
 	type AdminProduct,
+	type AdminProductImage,
 } from "./product";
+import { blankAltIndex } from "./product-gallery";
 import {
 	PRODUCT_DRAFT_MESSAGES,
 	PRODUCT_DRAFT_SCHEMA,
@@ -28,6 +30,7 @@ export type ProductDraft = {
 	description: string;
 	published: boolean;
 	destacado: boolean;
+	gallery: readonly AdminProductImage[];
 	variants: readonly VariantDraft[];
 };
 
@@ -41,6 +44,7 @@ export type ProductDraftErrors = {
 	name?: string;
 	category?: string;
 	slug?: string;
+	gallery?: string;
 	variants?: string;
 	variantRows?: readonly (VariantDraftErrors | null)[];
 };
@@ -60,6 +64,7 @@ export function blankDraft(): ProductDraft {
 		description: "",
 		published: true,
 		destacado: false,
+		gallery: [],
 		variants: [EMPTY_VARIANT_DRAFT],
 	};
 }
@@ -123,6 +128,12 @@ export function validateProductDraft(
 		errors.slug = "Ya hay un producto con ese slug.";
 	}
 
+	const blankAlt = blankAltIndex(draft.gallery);
+
+	if (blankAlt !== null) {
+		errors.gallery = `Para guardar falta el texto alternativo de la foto ${blankAlt + 1}.`;
+	}
+
 	if (draft.variants.length === 0) {
 		return errors;
 	}
@@ -184,7 +195,7 @@ export function saveNote(
 		}
 	}
 
-	return null;
+	return errors.gallery ?? null;
 }
 
 export function draftToProduct(draft: ProductDraft, createdAt: string): AdminProduct {
@@ -198,6 +209,7 @@ export function draftToProduct(draft: ProductDraft, createdAt: string): AdminPro
 		category: draft.category,
 		published: draft.published,
 		destacado: draft.destacado,
+		gallery: draft.gallery,
 		createdAt,
 		variants: draft.variants.map((variant) => {
 			const priceCents = parsePricePesos(variant.price);

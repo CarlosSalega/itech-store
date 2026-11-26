@@ -15,6 +15,7 @@ const draft = (overrides: Partial<ProductDraft> = {}): ProductDraft => ({
 	description: "",
 	published: true,
 	destacado: false,
+	gallery: [],
 	variants: [{ label: "128 GB", price: "1.200.000", stock: "6" }],
 	...overrides,
 });
@@ -147,6 +148,32 @@ describe("the reason the save is off", () => {
 	});
 });
 
+describe("the photographs the draft carries", () => {
+	it("stops the save when a photo has no alt text", () => {
+		const withBlankAlt = draft({
+			gallery: [
+				{ position: 0, url: "/fotos/frente.webp", alt: "iPad Pro, frente" },
+				{ position: 1, url: "/fotos/dorso.webp", alt: "   " },
+			],
+		});
+		const errors = validateProductDraft(withBlankAlt, []);
+
+		expect(errors.gallery).toBe("Para guardar falta el texto alternativo de la foto 2.");
+		expect(saveNote(errors, withBlankAlt)).toBe(
+			"Para guardar falta el texto alternativo de la foto 2.",
+		);
+	});
+
+	it("saves a gallery whose photos all name their content", () => {
+		const named = draft({
+			gallery: [{ position: 0, url: "/fotos/frente.webp", alt: "iPad Pro, frente" }],
+		});
+
+		expect(validateProductDraft(named, []).gallery).toBeUndefined();
+		expect(saveNote(validateProductDraft(named, []), named)).toBeNull();
+	});
+});
+
 describe("turning the draft into a product", () => {
 	it("parses the prices into cents and derives the SKUs", () => {
 		const product = draftToProduct(
@@ -184,5 +211,22 @@ describe("turning the draft into a product", () => {
 
 	it("carries no photographs, so the catalogue keeps its own until the ficha adds one", () => {
 		expect(draftToProduct(draft(), "2026-11-24T10:00:00.000Z").gallery).toEqual([]);
+	});
+
+	it("writes the gallery in the order the list shows, with each photo's own alt", () => {
+		const product = draftToProduct(
+			draft({
+				gallery: [
+					{ position: 1, url: "/fotos/dorso.webp", alt: "iPad Pro, dorso" },
+					{ position: 0, url: "/fotos/frente.webp", alt: "iPad Pro, frente" },
+				],
+			}),
+			"2026-11-24T10:00:00.000Z",
+		);
+
+		expect(product.gallery).toEqual([
+			{ position: 0, url: "/fotos/frente.webp", alt: "iPad Pro, frente" },
+			{ position: 1, url: "/fotos/dorso.webp", alt: "iPad Pro, dorso" },
+		]);
 	});
 });
