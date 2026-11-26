@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import type { AdminProductRow } from "./product-repository";
-import { findAdminProduct, listAdminProducts, toAdminProduct } from "./product-repository";
+import type {
+	AdminProductClient,
+	AdminProductIdClient,
+	AdminProductRow,
+} from "./product-repository";
+import {
+	findAdminProduct,
+	findAdminProductId,
+	listAdminProducts,
+	toAdminProduct,
+} from "./product-repository";
 
 const row: AdminProductRow = {
 	slug: "apple-tv-4k-2022",
@@ -33,6 +42,40 @@ const row: AdminProductRow = {
 		},
 	],
 };
+
+const second: AdminProductRow = {
+	slug: "airpods-pro-3",
+	name: "Airpods Pro 3",
+	description: "Los auriculares.",
+	category: "AIRPODS",
+	published: true,
+	featured: false,
+	createdAt: new Date("2026-11-03T10:15:00.000Z"),
+	gallery: [],
+	variants: [],
+};
+
+function stubClient(rows: readonly AdminProductRow[]) {
+	const asked: string[] = [];
+	const client: AdminProductClient = {
+		product: {
+			findMany: async (args) => {
+				asked.push(
+					`findMany:${args.orderBy.createdAt}:${args.select.gallery.orderBy.position}`,
+				);
+
+				return rows;
+			},
+			findUnique: async (args) => {
+				asked.push(`findUnique:${args.where.slug}`);
+
+				return rows.find((candidate) => candidate.slug === args.where.slug) ?? null;
+			},
+		},
+	};
+
+	return { client, asked };
+}
 
 describe("the row the database returns, as the panel reads it", () => {
 	it("maps the gallery, the published state and the variants the panel shows", () => {
@@ -70,23 +113,58 @@ describe("the row the database returns, as the panel reads it", () => {
 	it("keeps a product without a gallery readable", () => {
 		expect(toAdminProduct({ ...row, gallery: [] }).gallery).toEqual([]);
 	});
+
+	it("reads a description the form emptied as no description", () => {
+		expect(toAdminProduct({ ...row, description: "" }).description).toBeNull();
+		expect(toAdminProduct({ ...row, description: "  " }).description).toBeNull();
+	});
 });
 
-describe("the catalogue the panel reads today", () => {
-	it("serves the fixture set", async () => {
-		const listed = await listAdminProducts();
+describe("the catalogue the panel reads from the client", () => {
+	it("maps every row the client returns", async () => {
+		const { client } = stubClient([row, second]);
 
-		expect(listed).toHaveLength(14);
-		expect(listed.every((product) => product.gallery.length === 1)).toBe(true);
+		expect(await listAdminProducts(client)).toEqual([
+			toAdminProduct(row),
+			toAdminProduct(second),
+		]);
+	});
+
+	it("asks the database for the gallery by position and the list oldest first", async () => {
+		const { client, asked } = stubClient([]);
+
+		await listAdminProducts(client);
+
+		expect(asked).toEqual(["findMany:asc:asc"]);
 	});
 
 	it("finds one product by its slug", async () => {
-		const found = await findAdminProduct("airpods-pro-3");
+		const { client, asked } = stubClient([row, second]);
 
-		expect(found?.name).toBe("Airpods Pro 3");
+		expect(await findAdminProduct("airpods-pro-3", client)).toEqual(
+			toAdminProduct(second),
+		);
+		expect(asked).toEqual(["findUnique:airpods-pro-3"]);
 	});
 
 	it("has no product for a slug that is not there", async () => {
-		expect(await findAdminProduct("no-existe")).toBeNull();
+		const { client } = stubClient([row]);
+
+		expect(await findAdminProduct("no-existe", client)).toBeNull();
+	});
+});
+
+function idSource(id: string | null): AdminProductIdClient {
+	return {
+		product: {
+			findUnique: async () => (id === null ? null : { id }),
+		},
+	};
+}
+
+describe("findAdminProductId", () => {
+	it("answers the row id, and null for a product the catalogue does not have", async () => {
+		expect(await findAdminProductId("ipad-pro", idSource("prod-1"))).toBe("prod-1");
+		expect(await findAdminProductId("nope", idSource(null))).toBeNull();
 	});
 });

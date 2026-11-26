@@ -8,7 +8,7 @@ import { SHIPPING_RULE } from "../domain/settings";
 import { SettingsScreen } from "./settings-screen";
 
 const markup = renderToStaticMarkup(
-	<SettingsScreen initialProducts={ADMIN_PRODUCTS} />,
+	<SettingsScreen products={ADMIN_PRODUCTS} />,
 );
 
 describe("the settings screen", () => {
@@ -63,7 +63,8 @@ describe("the settings screen", () => {
 		expect(markup).not.toContain("<select");
 	});
 
-	it("says the screen is sample data", () => {
-		expect(markup).toContain("Los datos de este panel son de ejemplo");
+	it("says where the data it shows comes from", () => {
+		expect(markup).not.toContain("Los datos de este panel son de ejemplo");
+		expect(markup).toContain("Las fotos salen del catálogo");
 	});
 });

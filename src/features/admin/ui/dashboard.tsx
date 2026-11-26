@@ -247,9 +247,9 @@ export function AdminDashboard({ metrics }: { metrics: DashboardMetrics }) {
 			<footer className={styles.foot}>
 				<span aria-hidden="true" className={styles.footRule} />
 				<p className={styles.notice}>
-					Los datos de este panel son de ejemplo: {metrics.productCount} productos
-					del catálogo de la tienda y los {metrics.orders.count} pedidos de la
-					demo. Los precios son de muestra y no son precios de venta.
+					Los {metrics.productCount} productos salen de la base de datos y los{" "}
+					{metrics.orders.count} pedidos son los de la demo. Los precios son los precios
+					de venta.
 				</p>
 			</footer>
 		</div>

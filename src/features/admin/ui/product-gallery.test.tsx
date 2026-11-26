@@ -6,8 +6,14 @@ import { describe, expect, it } from "vitest";
 import { imageErrorMessage } from "@/modules/image-uploads/core";
 
 import type { AdminProductImage } from "../domain/product";
-import { uploadProductImage } from "./image-upload";
-import { GalleryPhotos, GALLERY_FILE_ID, GALLERY_MESSAGE_ID, ProductGallery } from "./product-gallery";
+import { uploadProductImage, type SendRequest } from "./image-upload";
+import {
+	GalleryPhotos,
+	GALLERY_FILE_ID,
+	GALLERY_MESSAGE_ID,
+	ProductGallery,
+	uploadGalleryPhoto,
+} from "./product-gallery";
 import type { GalleryPhotosProps } from "./product-gallery";
 
 const noop = () => undefined;
@@ -198,5 +204,83 @@ describe("the gallery the screen mounts", () => {
 			"react-dom",
 			"zod",
 		]);
+	});
+});
+
+
+const SIGNED = {
+	signature: "c0ffee",
+	timestamp: 1_760_000_000,
+	apiKey: "123456789",
+	folder: "products/apple-ipad-pro",
+	publicId: "8c1c2b",
+	key: "products/apple-ipad-pro/8c1c2b",
+	uploadUrl: "https://api.cloudinary.com/v1_1/itech/image/upload",
+};
+
+const UPLOADED_URL =
+	"https://res.cloudinary.com/itech/image/upload/v1760000000/products/apple-ipad-pro/8c1c2b.webp";
+
+function uploadScript(): { bodies: unknown[]; send: SendRequest } {
+	const bodies: unknown[] = [];
+	const responses = [
+		Response.json(SIGNED),
+		Response.json({ secure_url: UPLOADED_URL }),
+		Response.json({ success: true }, { status: 201 }),
+	];
+
+	const send: SendRequest = async (_url, init) => {
+		if (init?.body !== undefined && typeof init.body === "string") {
+			bodies.push(JSON.parse(init.body));
+		}
+
+		return responses.shift() ?? Response.json({}, { status: 500 });
+	};
+
+	return { bodies, send };
+}
+
+function galleryFile(): File {
+	return new File([new Uint8Array([1])], "foto.webp", { type: "image/webp" });
+}
+
+describe("the id an upload records", () => {
+	it("carries the real product id while editing an existing product", async () => {
+		const { bodies, send } = uploadScript();
+
+		await uploadGalleryPhoto({
+			file: galleryFile(),
+			name: "iPad Pro",
+			scope: "apple-ipad-pro",
+			productId: "product-1",
+			index: 0,
+			send,
+		});
+
+		expect(bodies[1]).toEqual({
+			key: SIGNED.key,
+			url: UPLOADED_URL,
+			productId: "product-1",
+			alt: "iPad Pro — foto principal",
+		});
+	});
+
+	it("records only the asset while the product has no row", async () => {
+		const { bodies, send } = uploadScript();
+
+		await uploadGalleryPhoto({
+			file: galleryFile(),
+			name: "iPad Pro",
+			scope: "apple-ipad-pro",
+			productId: null,
+			index: 0,
+			send,
+		});
+
+		expect(bodies[1]).toEqual({
+			key: SIGNED.key,
+			url: UPLOADED_URL,
+			alt: "iPad Pro — foto principal",
+		});
 	});
 });

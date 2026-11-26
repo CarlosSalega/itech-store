@@ -4,5 +4,5 @@ import { SettingsScreen } from "@/features/admin/ui/settings-screen";
 export default async function AdminAjustesPage() {
 	const products = await listAdminProducts();
 
-	return <SettingsScreen initialProducts={products} />;
+	return <SettingsScreen products={products} />;
 }

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import {
 	useRef,
 	useState,
-	useSyncExternalStore,
 	type CSSProperties,
 } from "react";
 
@@ -21,7 +20,6 @@ import { formatArsPrice } from "@/features/catalog/domain/format-price";
 
 import {
 	LOW_STOCK_THRESHOLD,
-	deleteProduct,
 	lowestStockVariant,
 	parsePricePesos,
 	pesosInputValue,
@@ -31,18 +29,22 @@ import {
 	setPublished,
 	updateProduct,
 	type AdminProduct,
+	type AdminProductImage,
 } from "../domain/product";
-import {
-	commitProducts,
-	getProductsServerSnapshot,
-	getProductsSnapshot,
-	subscribeProducts,
-} from "../storage/product-store";
+import { appendGalleryImage, blankAltIndex } from "../domain/product-gallery";
 import { AlertIcon } from "./icons";
 import { Money } from "./money";
+import { ProductGallery } from "./product-gallery";
 import { AdminScreen, ScreenFoot } from "./screen";
+import {
+	IDLE_FEEDBACK,
+	PENDING_FEEDBACK,
+	feedbackOf,
+	runAction,
+	type ActionFeedback,
+	type ProductDetailActions,
+} from "./screen-actions";
 import { Toggle } from "./toggle";
-import { useHydrated } from "./use-hydrated";
 
 import styles from "./product-detail.module.css";
 
@@ -57,30 +59,27 @@ function variantCount(count: number): string {
 }
 
 export function ProductDetailScreen({
-	slug,
 	initialProduct,
+	productId,
+	actions,
+	initialFeedback = IDLE_FEEDBACK,
 }: {
-	slug: string;
 	initialProduct: AdminProduct | null;
+	productId: string | null;
+	actions: ProductDetailActions;
+	initialFeedback?: ActionFeedback;
 }) {
-	const hydrated = useHydrated();
-	const products = useSyncExternalStore(
-		subscribeProducts,
-		getProductsSnapshot,
-		getProductsServerSnapshot,
-	);
-	const stored = products.find((product) => product.slug === slug) ?? null;
-	const product = hydrated ? stored : (stored ?? initialProduct);
-
-	if (product === null) {
+	if (initialProduct === null) {
 		return <MissingProduct />;
 	}
 
 	return (
 		<ProductDetail
-			key={`${product.slug}-${product.createdAt}`}
-			products={products}
-			product={product}
+			key={`${initialProduct.slug}-${initialProduct.createdAt}`}
+			actions={actions}
+			initialFeedback={initialFeedback}
+			initialProduct={initialProduct}
+			productId={productId}
 		/>
 	);
 }
@@ -95,8 +94,7 @@ function MissingProduct() {
 				</Link>
 				<h1 className={styles.title}>No encontramos ese producto</h1>
 				<p className={styles.deck}>
-					El producto que buscás no está en el catálogo de la demo. Puede que se haya
-					eliminado en este navegador.
+					El producto que buscás no está en el catálogo. Puede que se haya eliminado.
 				</p>
 			</div>
 		</AdminScreen>
@@ -104,21 +102,34 @@ function MissingProduct() {
 }
 
 function ProductDetail({
-	products,
-	product,
+	actions,
+	initialFeedback,
+	initialProduct,
+	productId,
 }: {
-	products: readonly AdminProduct[];
-	product: AdminProduct;
+	actions: ProductDetailActions;
+	initialFeedback: ActionFeedback;
+	initialProduct: AdminProduct;
+	productId: string | null;
 }) {
 	const router = useRouter();
 	const dialog = useRef<HTMLDialogElement | null>(null);
+	const [current, setCurrent] = useState(initialProduct);
 	const [editing, setEditing] = useState<Editing | null>(null);
+	const [feedback, setFeedback] = useState<ActionFeedback>(initialFeedback);
 
-	const price = productPriceFrom(product);
-	const units = productStockTotal(product);
-	const scarcest = lowestStockVariant(product);
-	const photos = product.gallery;
-	const editingProduct = product;
+	const product = current;
+	const price = productPriceFrom(current);
+	const units = productStockTotal(current);
+	const scarcest = lowestStockVariant(current);
+	const photos = current.gallery;
+	const editingProduct = current;
+	const galleryIndex = blankAltIndex(photos);
+	const galleryError =
+		galleryIndex === null
+			? undefined
+			: `Para guardar falta el texto alternativo de la foto ${galleryIndex + 1}.`;
+	const blocked = feedback.pending;
 
 	const editPrice = editing === null ? null : parsePricePesos(editing.price);
 	const editStock =
@@ -143,7 +154,7 @@ function ProductDetail({
 	};
 
 	const saveEditing = () => {
-		if (editing === null || editPrice === null || editStock === null) {
+		if (editing === null || editPrice === null || editStock === null || blocked) {
 			return;
 		}
 
@@ -153,13 +164,115 @@ function ProductDetail({
 				: variant,
 		);
 
-		commitProducts(updateProduct(products, editingProduct.slug, { variants }));
-		setEditing(null);
+		setFeedback(PENDING_FEEDBACK);
+
+		void (async () => {
+			const result = await runAction(() =>
+				actions.update(current.slug, { variants }),
+			);
+
+			if (!result.ok) {
+				setFeedback(feedbackOf(result));
+				return;
+			}
+
+			setCurrent((value) => updateProduct([value], value.slug, { variants })[0] as AdminProduct);
+			setFeedback(IDLE_FEEDBACK);
+			setEditing(null);
+		})();
+	};
+
+	const changePublication = (published: boolean) => {
+		if (blocked) {
+			return;
+		}
+
+		setFeedback(PENDING_FEEDBACK);
+
+		void (async () => {
+			const result = await runAction(() =>
+				published
+					? actions.publish(current.slug)
+					: actions.unpublish(current.slug),
+			);
+
+			if (!result.ok) {
+				setFeedback(feedbackOf(result));
+				return;
+			}
+
+			setCurrent((value) => setPublished([value], value.slug, published)[0] as AdminProduct);
+			setFeedback(IDLE_FEEDBACK);
+		})();
+	};
+
+	const changeFeatured = (destacado: boolean) => {
+		if (blocked) {
+			return;
+		}
+
+		setFeedback(PENDING_FEEDBACK);
+
+		void (async () => {
+			const result = await runAction(() =>
+				actions.update(current.slug, { destacado }),
+			);
+
+			if (!result.ok) {
+				setFeedback(feedbackOf(result));
+				return;
+			}
+
+			setCurrent((value) => updateProduct([value], value.slug, { destacado })[0] as AdminProduct);
+			setFeedback(IDLE_FEEDBACK);
+		})();
+	};
+
+	const changeGallery = (gallery: readonly AdminProductImage[]) => {
+		setCurrent((value) => ({ ...value, gallery }));
+	};
+
+	const addPhoto = (photo: { readonly alt: string; readonly url: string }) => {
+		setCurrent((value) => ({
+			...value,
+			gallery: appendGalleryImage(value.gallery, photo),
+		}));
+	};
+
+	const saveGallery = () => {
+		if (galleryError !== undefined || blocked) {
+			return;
+		}
+
+		setFeedback(PENDING_FEEDBACK);
+
+		void (async () => {
+			const result = await runAction(() =>
+				actions.update(current.slug, { gallery: current.gallery }),
+			);
+
+			setFeedback(feedbackOf(result));
+		})();
 	};
 
 	const remove = () => {
-		commitProducts(deleteProduct(products, editingProduct.slug));
-		router.push("/admin/productos");
+		if (blocked) {
+			return;
+		}
+
+		setFeedback(PENDING_FEEDBACK);
+
+		void (async () => {
+			const result = await runAction(() => actions.remove(current.slug));
+
+			if (!result.ok) {
+				setFeedback(feedbackOf(result));
+				dialog.current?.close();
+				return;
+			}
+
+			router.push("/admin/productos");
+		})();
 	};
 
 	return (
@@ -207,9 +320,7 @@ function ProductDetail({
 									? "Se ve en la tienda."
 									: "No se ve en la tienda."
 							}
-							onChange={(published) =>
-								commitProducts(setPublished(products, product.slug, published))
-							}
+							onChange={changePublication}
 						/>
 						<Link className={styles.shopLink} href={`/catalogo/${product.slug}`}>
 							Ver en la tienda
@@ -217,6 +328,16 @@ function ProductDetail({
 						</Link>
 					</div>
 				</div>
+				<p aria-live="polite" className={styles.error} id="accion-message">
+					{feedback.message === null ? (
+						feedback.pending ? "Guardando los cambios…" : null
+					) : (
+						<>
+							<AlertIcon className={styles.errorIcon} />
+							{feedback.message}
+						</>
+					)}
+				</p>
 			</div>
 
 			<div className={`${styles.grid} ${styles.enter}`} style={{ "--i": 1 } as CSSProperties}>
@@ -333,7 +454,7 @@ function ProductDetail({
 													<span className={styles.rowActions}>
 														<button
 															className={styles.iconButton}
-															disabled={editError !== null}
+															disabled={editError !== null || blocked}
 															onClick={saveEditing}
 															type="button"
 														>
@@ -435,56 +556,26 @@ function ProductDetail({
 						)}
 					</section>
 
-					<section aria-labelledby="fotos" className={styles.section}>
-						<div className={styles.sectionHead}>
-							<h2 className={styles.sectionTitle} id="fotos">
-								Fotos
-							</h2>
-							<span className={styles.secCount}>
-								{photos.length === 1 ? "1 foto" : `${photos.length} fotos`} · la
-								primera es la portada
-							</span>
-						</div>
-						<p className={styles.secDeck}>El orden de esta lista es el orden del catálogo.</p>
-
-						{photos.length === 0 ? (
-							<p className={styles.photoEmpty}>
-								Este producto no tiene fotos cargadas: el catálogo usa la imagen de
-								muestra.
-							</p>
-						) : (
-							<ol className={styles.photos}>
-								{photos.map((photo, index) => (
-									<li className={styles.photo} key={photo.url}>
-										<span aria-hidden="true" className={styles.photoIndex}>
-											{index + 1}
-										</span>
-										{/* eslint-disable-next-line @next/next/no-img-element */}
-										<img
-											alt={`${product.name}, foto ${index + 1}`}
-											className={styles.photoThumb}
-											height={56}
-											src={photo.url}
-											width={56}
-										/>
-										<span className={styles.photoText}>
-											<span className={styles.photoName}>{`Foto ${index + 1}`}</span>
-											<span className={styles.photoMeta}>
-												{index === 0
-													? "La portada del catálogo"
-													: "Se ve después de la portada"}
-											</span>
-										</span>
-										{index === 0 ? (
-											<span className={styles.portada}>
-												<CheckIcon className={styles.portadaIcon} />
-												Portada
-											</span>
-										) : null}
-									</li>
-								))}
-							</ol>
-						)}
+					<section className={styles.section}>
+						<ProductGallery
+							error={galleryError}
+							images={photos}
+							name={product.name}
+							onAdd={addPhoto}
+							onChange={changeGallery}
+							productId={productId}
+							scope={product.slug}
+						/>
+						<p className={styles.galleryFoot}>
+							<button
+								className={styles.gallerySave}
+								disabled={galleryError !== undefined || blocked}
+								onClick={saveGallery}
+								type="button"
+							>
+								Guardar fotos
+							</button>
+						</p>
 					</section>
 				</div>
 
@@ -531,11 +622,7 @@ function ProductDetail({
 									? "Se muestra con la estrella del catálogo."
 									: "No tiene la estrella del catálogo."
 							}
-							onChange={(destacado) =>
-								commitProducts(
-									updateProduct(products, product.slug, { destacado }),
-								)
-							}
+							onChange={changeFeatured}
 						/>
 					</section>
 
@@ -592,7 +679,7 @@ function ProductDetail({
 			</div>
 
 			<ScreenFoot
-				notice="Los datos de este panel son de ejemplo: el producto, sus precios y sus fotos son los del catálogo de la demo, y los cambios se guardan en este navegador. Los precios son de muestra y no son precios de venta."
+				notice="El producto, sus precios y sus fotos se guardan en la base de datos. Las fotos que subís se guardan en la nube y los precios son los precios de venta."
 				routes={`/admin/productos/${product.slug} · /catalogo/${product.slug}`}
 			/>
 		</AdminScreen>

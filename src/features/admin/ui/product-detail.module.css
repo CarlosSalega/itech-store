@@ -827,3 +827,31 @@
 		filter: none;
 	}
 }
+
+.galleryFoot {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: var(--s-3);
+}
+
+.gallerySave {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	padding: 0 var(--s-4);
+	border: 0;
+	border-radius: var(--r-pill);
+	background: var(--ink);
+	color: var(--white);
+	font-family: var(--font-sans);
+	font-size: var(--t-label);
+	font-weight: 500;
+	cursor: pointer;
+	transition: opacity var(--dur-1) linear;
+}
+
+.gallerySave:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}

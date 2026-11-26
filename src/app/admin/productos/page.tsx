@@ -9,7 +9,7 @@ export default async function AdminProductosPage() {
 
 	return (
 		<Suspense fallback={<ScreenPending label="Cargando los productos…" />}>
-			<ProductsList initialProducts={products} />
+			<ProductsList products={products} />
 		</Suspense>
 	);
 }

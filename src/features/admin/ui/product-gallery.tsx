@@ -16,7 +16,11 @@ import {
 	removeGalleryImage,
 } from "../domain/product-gallery";
 import { AlertIcon, ArrowDownIcon, ArrowUpIcon, ImageIcon } from "./icons";
-import { ImageUploadError, uploadProductImage } from "./image-upload";
+import {
+	ImageUploadError,
+	uploadProductImage,
+	type SendRequest,
+} from "./image-upload";
 
 import styles from "./product-form.module.css";
 
@@ -175,6 +179,29 @@ export type ProductGalleryProps = {
 	readonly scope: string;
 };
 
+export type GalleryUploadInput = {
+	readonly file: File;
+	readonly name: string;
+	readonly scope: string;
+	readonly productId: string | null;
+	readonly index: number;
+	readonly send?: SendRequest;
+};
+
+export async function uploadGalleryPhoto({
+	file,
+	name,
+	scope,
+	productId,
+	index,
+	send,
+}: GalleryUploadInput): Promise<{ readonly alt: string; readonly url: string }> {
+	const alt = galleryAlt(name.trim() === "" ? scope : name.trim(), index);
+	const uploaded = await uploadProductImage({ file, scope, productId, alt, send });
+
+	return { alt, url: uploaded.url };
+}
+
 export function ProductGallery({
 	error,
 	images,
@@ -188,14 +215,18 @@ export function ProductGallery({
 	const [refusal, setRefusal] = useState<string | undefined>(undefined);
 
 	const upload = async (file: File) => {
-		const alt = galleryAlt(name.trim() === "" ? scope : name.trim(), images.length);
-
 		setUploading(true);
 
 		try {
-			const uploaded = await uploadProductImage({ file, scope, productId, alt });
+			const uploaded = await uploadGalleryPhoto({
+				file,
+				name,
+				scope,
+				productId,
+				index: images.length,
+			});
 
-			onAdd({ alt, url: uploaded.url });
+			onAdd(uploaded);
 		} catch (failure) {
 			setRefusal(
 				failure instanceof ImageUploadError
