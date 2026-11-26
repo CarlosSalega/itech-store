@@ -1,41 +1,41 @@
 # Database workflow
 
-The app has one database and one migration path. A migration is authored, rehearsed against a **scratch database**, and only then applied to the app's database — by the owner, never as a side effect of starting the app.
+The app has one database. Migrations are authored and applied against that same database, and the seed rebuilds it from zero. There is no separate rehearsal database: what a migration still cannot do is destroy data the seed cannot rebuild, so the rollback contract below stays.
 
-## Environments
+## Environment
 
 | Variable | Holds | Who sets it |
 |---|---|---|
 | `DATABASE_URL` | the app's database | the owner, in `.env` |
-| `SCRATCH_DATABASE_URL` | a second database used only to author and rehearse migrations | the owner, in `.env` |
 
-Both are required to work on the schema. The rehearsal script refuses to run when `SCRATCH_DATABASE_URL` is missing, is not a `postgres://` URL, or points at the same host and database as `DATABASE_URL` — compared with the host lowercased and the default port `5432` ignored, so `host` and `host:5432` are the same database. If `DATABASE_URL` itself cannot be parsed, every command refuses rather than skipping the comparison: the guard fails closed.
+One variable, read in three places: `prisma.config.ts` (migrations and `prisma db seed`), `prisma/seed.ts`, and `src/lib/prisma.ts` at runtime through `@prisma/adapter-pg`.
 
-## Authoring and rehearsing a migration
+Prisma Postgres reaches the same database on two hosts. The pooled host (`pooled.db.prisma.io:5432`) is what the app uses and what `pnpm exec prisma migrate status` reads; if a migration command refuses the pooler, Prisma Postgres also exposes the direct host (`db.prisma.io:5432`) for the same database, and that is the one to put in `DATABASE_URL` for that command.
+
+## Authoring a migration
 
 ```bash
-pnpm db:scratch:dev --name <name>   # authors the migration against the SCRATCH database
-pnpm db:scratch                     # deploys every migration to the scratch database
-pnpm db:scratch:reset               # drops and re-applies from zero, proving the chain
-pnpm db:scratch:status              # what the scratch database believes it has applied
-pnpm db:scratch:seed                # seeds the SCRATCH database
+pnpm exec prisma migrate dev --name <name>
 ```
 
-Every one of those commands loads `.env` itself and runs Prisma with `SCRATCH_DATABASE_URL` in place, so a stray `pnpm exec prisma db seed` is the only way to seed the app database by accident. The wrapper refuses extra arguments on `deploy`, `status`, `reset` and `seed` instead of dropping them, so a mistyped flag fails loudly.
+It writes `prisma/migrations/<timestamp>_<name>/migration.sql` and applies it to `DATABASE_URL`. `prisma db push` is never used: it skips the migration history and leaves the schema and `prisma/migrations` describing different things.
 
-`prisma migrate dev` is never run directly: without a `DATABASE_URL` override it targets the app's database and applies the migration there before any rehearsal. `db:scratch:dev` runs it with the scratch URL in place, which is the only authoring path this project allows.
+## Proving the chain from zero
 
-A migration is only ready when `db:scratch` and `db:scratch:reset` both succeed twice in a row. The second run matters: the first proves the change, the second proves it is idempotent against an existing database.
+```bash
+pnpm exec prisma migrate reset --force   # drops the schema, re-applies every migration in order
+pnpm exec prisma db seed                 # rebuilds the catalogue and the admin account
+```
 
-## Applying it to the app's database
+`reset` destroys everything in the database, and that is acceptable only because `prisma db seed` rebuilds it: `prisma/seed.ts` loads every file in `prisma/seed`, and the catalogue pipeline is deterministic. Run both after any migration that changes existing rows. It is the only proof that a fresh install works, and the only place a `rollback.sql` gets exercised.
 
-The owner runs it, with a backup taken first:
+## Applying it
 
 ```bash
 pnpm exec prisma migrate deploy
 ```
 
-`prisma migrate reset` and `prisma db push` are never run against `DATABASE_URL`. `reset` destroys data; `push` skips the migration history and leaves the schema and `prisma/migrations` describing different things.
+The owner runs it. Take a backup first when the migration touches rows the seed cannot rebuild — which, while the only stored data is the seeded catalogue and fixtures, is none of them.
 
 ## Rollback
 
@@ -46,11 +46,12 @@ prisma/migrations/20270101000000_add_order/migration.sql
 prisma/migrations/20270101000000_add_order/rollback.sql
 ```
 
-`rollback.sql` is the exact inverse: drops what the migration created, restores what it altered, and deletes the row it inserted into `_prisma_migrations`. A destructive-looking statement in a migration — a `DROP`, a `NOT NULL` without a default, a column rename — is a review blocker unless its `rollback.sql` exists and has been run once against the scratch database.
+`rollback.sql` is the exact inverse: drops what the migration created, restores what it altered, and deletes the row it inserted into `_prisma_migrations`. A destructive-looking statement in a migration — a `DROP`, a `NOT NULL` without a default, a column rename — is a review blocker unless its `rollback.sql` exists and has been run once, after a `reset`, against the database.
 
 ## Rules
 
 - Additive first: add the new column or table, backfill it, drop the old one in a later migration. One migration never does all three.
 - A `NOT NULL` column arrives with a default or after a backfill, never as a bare constraint on a populated table.
 - Integer cents and `String[]` → relation changes get their own migration and their own backfill script, tested against the seeded catalogue.
-- The seed stays runnable from zero: `pnpm db:scratch:reset` followed by `pnpm db:scratch:seed` must rebuild a working catalogue. Pointing the seed at the app database is never part of this workflow.
+- The seed stays runnable from zero: `prisma migrate reset --force` followed by `prisma db seed` must rebuild a working catalogue.
+- The moment the database stores something the seed cannot rebuild — a real order, an uploaded image — a rehearsal database stops being a convenience and becomes a requirement again. This workflow assumes nothing like that exists yet.

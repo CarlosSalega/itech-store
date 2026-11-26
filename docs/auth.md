@@ -21,7 +21,7 @@ The admin panel is guarded by a real Better Auth session. The rest of the app st
 The seed creates the user through Better Auth's own sign-up API, so the password is hashed by Better Auth and stored on the `account` row, never in plain text:
 
 ```bash
-pnpm db:scratch:seed
+pnpm exec prisma db seed
 ```
 
 With both variables present it prints `Admin user ready: <email> (role ADMIN)`. Running it again does not fail: an existing user is found and only its role is set back to `ADMIN`.
@@ -133,4 +133,4 @@ Two links of that chain stay unproven here, and both need the database or a Next
 
 The statements were produced with `prisma migrate diff` between the previous datamodel and the new one, so they match what Prisma would generate.
 
-**The migration has not been rehearsed.** This machine has no scratch database and no docker, and `SCRATCH_DATABASE_URL` is not set, so `pnpm db:scratch`, `pnpm db:scratch:reset` and the rollback could not be run. Per `docs/database.md` the migration is not ready to apply to the app's database until the owner runs both rehearsal passes twice, plus the rollback, against a scratch database with a backup taken first.
+**The migration has never been run.** `pnpm exec prisma migrate status` reports `20261112100000_add_auth` as not applied, so the four tables do not exist in the app's database yet and every auth path that reaches Postgres is untested against it. Per `docs/database.md` (one database, L7 of `odd/tasks/real-data.md`) the way to prove it is `pnpm exec prisma migrate reset --force` followed by `pnpm exec prisma db seed`, which rebuilds the seeded catalogue and this admin account, and then `rollback.sql` once against the same database. Until that runs, the migration is authored, not verified.
