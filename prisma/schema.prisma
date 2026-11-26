@@ -81,6 +81,20 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  imageUploads  ImageUpload[]
+}
+
+/// Every asset the app owns, recorded by the image-upload module so an
+/// orphaned asset stays findable after its owner is gone.
+model ImageUpload {
+  id        String   @id @default(cuid())
+  /// Provider key. Unique, so one row per stored asset.
+  key       String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Session {
