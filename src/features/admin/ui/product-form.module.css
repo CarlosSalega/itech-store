@@ -256,7 +256,7 @@ select.input {
 }
 
 .remove {
-	grid-row: 1;
+	grid-area: 1 / 4;
 }
 
 .variantSku {

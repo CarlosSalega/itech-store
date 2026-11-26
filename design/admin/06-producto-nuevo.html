@@ -12,6 +12,9 @@
   one of the fourteen fixture products, so nothing in the table is contradicted. The second
   variant has no price yet, which is the shown error, and it is also why the save button is
   disabled with its reason next to it instead of failing on submit.
+  A variant row is the compact-repeater exception in design/system.md: its three narrow columns
+  cannot each hold one caption line, so the row owns ONE lane spanning every column and all three
+  controls are described by it, exactly as `variantSlot` in product-form.module.css draws it.
   The photo candidates are real files under public/products; the drop area says plainly that this
   demo cannot upload anything (S7: it does not pretend to have a storage it does not have).
   Tokens come from design/system.md; run `pnpm design:photos admin` to inline the photos.
@@ -201,11 +204,17 @@
   .variant{padding:var(--s-4) 0;border-bottom:1px solid var(--hairline)}
   .variant-fields{display:grid;grid-template-columns:120px minmax(0,1fr) 96px 44px;
     gap:var(--s-3);align-items:start}
+  /* the row's one lane: it spans every column, so no narrow field can grow it */
+  .variant-slot{display:flex;grid-column:1 / -1;align-items:flex-start;gap:var(--s-2);margin:0;
+    min-height:calc(var(--t-caption) * 1.35 + var(--s-1));
+    font-size:var(--t-caption);line-height:1.35;letter-spacing:.015em;color:var(--danger)}
+  .variant-slot .ico{width:14px;height:14px;margin-top:2px;stroke-width:2}
+  .variant-fields .remove{grid-area:1 / 4}
   .variant-sku{margin-top:var(--s-2);font:400 var(--t-caption)/1.4 var(--mono);
     color:var(--muted);overflow-wrap:anywhere}
   .variant-sku b{font-weight:500;color:var(--ink);margin-right:6px;white-space:nowrap}
   .remove{display:inline-flex;align-items:center;justify-content:center;width:44px;min-height:44px;
-    border:0;background:none;border-radius:var(--r-sm);color:var(--muted);cursor:pointer;
+    margin-top:22px;border:0;background:none;border-radius:var(--r-sm);color:var(--muted);cursor:pointer;
     transition:background var(--dur-1) linear,color var(--dur-1) linear}
   .remove:hover{background:var(--surface);color:var(--ink)}
   .btn-2{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0;border:0;
@@ -329,7 +338,8 @@
     .variant-fields .field:nth-child(1){grid-column:1 / -1;grid-row:1}
     .variant-fields .field:nth-child(2){grid-column:1;grid-row:2}
     .variant-fields .field:nth-child(3){grid-column:2;grid-row:2}
-    .remove{grid-column:3;grid-row:2;justify-self:end}
+    .variant-fields .remove{grid-area:2 / 3;justify-self:end}
+    .variant-slot{grid-row:3}
     .action-actions{width:100%;justify-content:space-between;margin-inline-start:0}
   }
   @media (max-width:479px){
@@ -536,8 +546,7 @@
                   <div class="field">
                     <label for="cap-1">Capacidad</label>
                     <input class="input" id="cap-1" name="capacidad-1" type="text" value="128 GB"
-                      aria-describedby="cap-1-message">
-                    <p class="slot" id="cap-1-message" aria-live="polite"></p>
+                      aria-describedby="var-1-message">
                   </div>
                   <div class="field field--error">
                     <label for="precio-1">Precio en pesos</label>
@@ -545,22 +554,21 @@
                       <span class="cur">$</span>
                       <input class="input" id="precio-1" name="precio-1" type="text" inputmode="numeric"
                         value="" aria-invalid="true"
-                        aria-describedby="precio-help-1 precio-1-message">
+                        aria-describedby="precio-help-1 var-1-message">
                     </span>
                     <p class="help" id="precio-help-1">En pesos, sin centavos.</p>
-                    <p class="slot" id="precio-1-message" aria-live="polite">
-                      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path d="M12 3.8 21 20H3L12 3.8z"/><path d="M12 10v4.6"/><path d="M12 17.4v.4"/>
-                      </svg>
-                      Poné el precio de esta variante.
-                    </p>
                   </div>
                   <div class="field">
                     <label for="stock-1">Stock</label>
                     <input class="input" id="stock-1" name="stock-1" type="text" inputmode="numeric"
-                      value="6" aria-describedby="stock-1-message">
-                    <p class="slot" id="stock-1-message" aria-live="polite"></p>
+                      value="6" aria-describedby="var-1-message">
                   </div>
+                  <p class="variant-slot" id="var-1-message" aria-live="polite">
+                    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M12 3.8 21 20H3L12 3.8z"/><path d="M12 10v4.6"/><path d="M12 17.4v.4"/>
+                    </svg>
+                    Poné el precio de esta variante.
+                  </p>
                   <button class="remove" type="button">
                     <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                       <path d="M5 7h14"/><path d="M9.5 7V4.8h5V7"/>
@@ -577,25 +585,23 @@
                   <div class="field">
                     <label for="cap-2">Capacidad</label>
                     <input class="input" id="cap-2" name="capacidad-2" type="text" value="256 GB"
-                      aria-describedby="cap-2-message">
-                    <p class="slot" id="cap-2-message" aria-live="polite"></p>
+                      aria-describedby="var-2-message">
                   </div>
                   <div class="field">
                     <label for="precio-2">Precio en pesos</label>
                     <span class="money">
                       <span class="cur">$</span>
                       <input class="input" id="precio-2" name="precio-2" type="text" inputmode="numeric"
-                        value="1.499.000" aria-describedby="precio-help-2 precio-2-message">
+                        value="1.499.000" aria-describedby="precio-help-2 var-2-message">
                     </span>
                     <p class="help" id="precio-help-2">En pesos, sin centavos.</p>
-                    <p class="slot" id="precio-2-message" aria-live="polite"></p>
                   </div>
                   <div class="field">
                     <label for="stock-2">Stock</label>
                     <input class="input" id="stock-2" name="stock-2" type="text" inputmode="numeric"
-                      value="4" aria-describedby="stock-2-message">
-                    <p class="slot" id="stock-2-message" aria-live="polite"></p>
+                      value="4" aria-describedby="var-2-message">
                   </div>
+                  <p class="variant-slot" id="var-2-message" aria-live="polite"></p>
                   <button class="remove" type="button">
                     <svg class="ico ico-18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                       <path d="M5 7h14"/><path d="M9.5 7V4.8h5V7"/>
