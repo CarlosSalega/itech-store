@@ -4,13 +4,15 @@ Apple products e-commerce for Argentina. The UI is in Spanish (`es-AR`) and ever
 ARS, stored as integer cents.
 
 **Implemented today:** the public catalogue — landing page, listing with URL pagination and
-family filter, product detail with a capacity selector, and a contact page — backed by seeded
-Prisma Postgres data, plus the shopping cart: a 480px side drawer whose prices are revalidated
-against the catalogue every time it opens. `/finalizar-compra` is an honest placeholder because
-online payment does not exist yet.
+family filter, and product detail with a capacity selector — backed by seeded Prisma Postgres
+data, plus the shopping cart (a 480px side drawer; a guest cart lives in `localStorage` and a
+signed-in cart reads and writes the database), a real checkout that writes orders to the
+database with a proof-gated receipt, the admin panel reading and writing Postgres behind a
+Better Auth session, signed image uploads to Cloudinary, sign-in by magic link (Resend), and
+`/mis-pedidos` for the signed-in customer.
 
-**Not implemented yet:** MercadoPago Checkout Pro, authentication, the admin panel, and an external
-image host for product photography. Nothing in this repository charges a card.
+**Not implemented yet:** MercadoPago Checkout Pro — online payment does not exist and nothing in
+this repository charges a card.
 
 > ## Warning: sample prices and stock
 >
@@ -28,6 +30,7 @@ image host for product photography. Nothing in this repository charges a card.
 | Prisma | `7.10.0` | `prisma` CLI + `@prisma/client`, generated into `src/generated/prisma` |
 | Prisma driver adapter | `@prisma/adapter-pg` `7.10.1` | Prisma 7 requires an adapter; the app connects directly with `DATABASE_URL` |
 | Database | Prisma Postgres | consumed through `DATABASE_URL` (`postgresql` provider) |
+| Better Auth | `1.7.27` | sessions in the database (`Session`, `Account`, `Verification`); magic-link plugin for the customer |
 | TypeScript | `5.9.3` | `pnpm typecheck` runs `tsc --noEmit` |
 | Vitest | `3.2.7` | unit tests over pure logic (`vitest.config.ts`) |
 | ESLint | `9.39.2` | with `eslint-config-next` `16.4.6` |
@@ -118,6 +121,11 @@ Node.js is required and no `engines` field is declared yet.
 | `DATABASE_URL` | Yes | Prisma Postgres connection string. Read by `prisma.config.ts` (migrations), `prisma/seed.ts`, and `src/lib/prisma.ts` at runtime through `@prisma/adapter-pg`. |
 | `CATALOG_SOURCE_URL` | Only for `pnpm catalog:extract` | Base URL the catalog extraction reads from. Never committed; the script exits with an error when it is missing. |
 | `APPLE_SOURCE_URL` | Only for `pnpm catalog:extract:apple` | Base URL the Apple catalogue extension reads from. Never committed, never defaulted; the script exits with an error when it is missing. |
+| `BETTER_AUTH_SECRET` / `BETTER_AUTH_URL` | Yes | The session secret and the origin Better Auth builds its URLs (and the magic links) from. See `docs/auth.md`. |
+| `BETTER_AUTH_TRUSTED_ORIGINS` | No | Comma-separated extra origins allowed to call `/api/auth/*`. |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Yes | The admin account the seed creates. |
+| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | Yes | Signed uploads from the server. See `docs/image-uploads.md`. The unsigned preset and the two `NEXT_PUBLIC_IMAGE_*` placeholders in `.env` are unused. |
+| `RESEND_API_KEY` / `RESEND_FROM_EMAIL` | Yes | The transactional email channel for magic links; the sender must belong to a verified domain in Resend. |
 
 `.env` is loaded with `dotenv/config` in `prisma.config.ts`, the seed and the scripts. `next`
 loads it on its own.
@@ -132,7 +140,10 @@ loads it on its own.
 | `/catalogo` | Full catalogue, 12 products per page, family filter |
 | `/catalogo/[slug]` | Product detail with gallery and capacity selector; the price follows the selected variant. Unknown slug → 404 |
 | `/contacto` | Contact page. It publishes no phone number and no email, because the store has not confirmed either yet |
-| `/finalizar-compra` | Checkout placeholder: it lists what the cart holds, says online payment does not exist yet, and points at `/contacto`. `noindex` |
+| `/finalizar-compra` | Real checkout: the server recomputes prices from the catalogue, refuses an empty cart or an invalid buyer, and writes an `Order` with its lines. Payment is transfer or cash — no card is charged. `noindex` |
+| `/pedido/[codigo]` | The receipt of one order, resolved only with proof: an httpOnly cookie listing the orders this browser created, or the buyer's email. Anything else answers the same nothing |
+| `/mis-pedidos` | The signed-in customer's orders — by user id or buyer email, so orders placed as a guest are claimed by claiming the email. Without a session it offers sign-in by magic link. `noindex` |
+| `/admin` | The panel: dashboard, products (with ordered gallery, publish state and variants), orders inbox with status changes, uploads. Requires an `ADMIN` session; an anonymous request is redirected to `/login`. `noindex` |
 
 `/catalogo` accepts two query parameters, and they compose:
 
@@ -144,10 +155,11 @@ loads it on its own.
 Example: `/catalogo?familia=mac&page=2`. Page 1 omits `?page`, so `/catalogo` is the canonical
 first page.
 
-Pages are dynamic by design (`connection()` in each route), so the build does not prerender them
-and `pnpm build` is not meant to need the database. That matters here because the cloud database
-has been intermittently unreachable (Prisma `P1001`), and a build failure caused by network
-weather would be indistinguishable from a code failure.
+Pages read the database at request time (`connection()` in each data access), so the build does
+not need the database — it renders the static shells and the data streams into the dynamic holes
+(Partial Prerender). That matters here because the cloud database has been intermittently
+unreachable (Prisma `P1001`), and a build failure caused by network weather would be
+indistinguishable from a code failure.
 
 ### Private routes
 
@@ -184,8 +196,15 @@ pnpm exec prisma db seed
 ```
 
 The extraction writes `public/products/<family>/*.webp` and `prisma/seed/products.json` (local
-`/products/...` paths only, no source URLs and no provenance). Production will need an external
-image host; Cloudinary is the plan for a later phase.
+`/products/...` paths only, no source URLs and no provenance).
+
+### Uploading to the cloud
+
+Since P3 the panel uploads product photography to Cloudinary, **signed from the server**: the
+browser asks a server handler for the signature, the asset goes to a per-product namespace, and
+every accepted upload records an `ImageUpload` row and, for an existing product, its
+`ProductImage` row. The full contract — limits, error codes, ownership, delete authorisation —
+lives in `docs/image-uploads.md`.
 
 The Apple catalogue extension is a second run with the same shape. Its list of products is fixed
 in `scripts/extract-apple-catalogue.ts`: it imports only the models this store does not already
@@ -236,18 +255,22 @@ references a file is never written, so this class of silent breakage fails loudl
 
 ## Current state
 
-- **Done:** seeded Prisma Postgres schema (`Product` + `Variant`), landing, catalogue with URL
-  pagination and family filter, product detail with variant selection, contact page, ARS price
-  formatting, the shopping cart as a 480px side drawer over `localStorage` with prices revalidated
-  on open, the `/finalizar-compra` placeholder, and the Galería direction implemented in the real
-  stack.
+- **Done:** the whole real-data plan (`odd/tasks/real-data.md`, P0-P8): a Prisma Postgres schema
+  with the product's ordered gallery and publish state, Better Auth sessions with the admin guard,
+  the panel reading and writing Postgres (products, gallery, variants, orders inbox, dashboard),
+  a server-side checkout that recomputes prices and writes orders with a proof-gated receipt,
+  signed Cloudinary uploads, the cart of a signed-in user on the server with the guest cart
+  merging on sign-in (summed, clamped by stock and `MAX_LINE_QUANTITY`), sign-in by magic link
+  through Resend, and `/mis-pedidos`.
 - **Blocked:** `/contacto` publishes no channel — the store's WhatsApp number and email address are
   not confirmed. `WHATSAPP_NUMBER` and `CONTACT_EMAIL` in
   `src/features/contact/contact-channels.ts` hold `null` for both, the page says so instead of
   inventing a number or an address, and `docs/contact-channels.md` records the rule and the one
   change that turns both on.
-- **Next:** MercadoPago Checkout Pro, authentication (Better Auth), admin panel, and an
-  external image host for product photography. Real prices and stock replace the sample rules in
-  `prisma/seed.ts`.
+- **Sample prices and stock:** every price and stock value is still the seed's deterministic
+  sample data — see the warning above. Accounts created by magic link have no password yet.
+- **Next:** MercadoPago Checkout Pro, real prices and stock, passwords for magic-link accounts,
+  and deployment documentation.
 
-The decisions behind this milestone are recorded in `odd/tasks/public-catalog-mvp.md`.
+The decisions behind the real-data plan are recorded in `odd/tasks/real-data.md`; the ones behind
+the first milestone, in `odd/tasks/public-catalog-mvp.md`.
