@@ -4,6 +4,8 @@ import { listAdminProducts } from "@/features/admin/server/product-repository";
 import { ProductsList } from "@/features/admin/ui/products-list";
 import { ScreenPending } from "@/features/admin/ui/screen";
 
+export const instant = false;
+
 export default async function AdminProductosPage() {
 	const products = await listAdminProducts();
 
