@@ -25,6 +25,7 @@ type LoginFieldsProps = {
 	error: string | null;
 	messages?: LoginMessages;
 	next: string;
+	pending?: boolean;
 };
 
 type LoginFieldProps = {
@@ -89,6 +90,7 @@ export function LoginFields({
 	error,
 	messages = NO_MESSAGES,
 	next,
+	pending = false,
 }: LoginFieldsProps) {
 	const [payload, setPayload] = useState<LoginPayload>(EMPTY_LOGIN);
 	const [hasFailedSubmit, setHasFailedSubmit] = useState(false);
@@ -159,8 +161,13 @@ export function LoginFields({
 				)}
 			</div>
 
-			<button className={styles.primary} type="submit">
-				Entrar
+			<button
+				aria-busy={pending || undefined}
+				className={styles.primary}
+				disabled={pending}
+				type="submit"
+			>
+				{pending ? "Verificando…" : "Entrar"}
 			</button>
 		</form>
 	);

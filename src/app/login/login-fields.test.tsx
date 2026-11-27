@@ -8,12 +8,27 @@ import { LoginFields } from "./login-fields";
 
 const signIn = () => undefined;
 
-const fields = (error: string | null) =>
+const fields = (error: string | null, pending = false) =>
 	renderToStaticMarkup(
-		<LoginFields action={signIn} error={error} next="/admin" />,
+		<LoginFields action={signIn} error={error} next="/admin" pending={pending} />,
 	);
 
 describe("the sign-in form", () => {
+	it("shows the wait and disables the submit while the sign-in is pending", () => {
+		const markup = fields(null, true);
+
+		expect(markup).toContain("Verificando");
+		expect(markup).toContain('aria-busy="true"');
+		expect(markup).toContain("disabled");
+		expect(markup).not.toContain(">Entrar<");
+	});
+
+	it("keeps the submit enabled with its plain label while idle", () => {
+		const markup = fields(null);
+
+		expect(markup).toContain(">Entrar<");
+		expect(markup).not.toContain("aria-busy");
+	});
 	it("shows no failure while nothing has failed", () => {
 		const markup = fields(null);
 
