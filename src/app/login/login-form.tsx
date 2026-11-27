@@ -17,7 +17,7 @@ import {
 const EMPTY: SignInState = { error: null };
 
 export function LoginForm({ next }: { next: string }) {
-	const [state, action] = useActionState(signIn, EMPTY);
+	const [state, action, isPending] = useActionState(signIn, EMPTY);
 	const backup = useRef<string | null>(null);
 
 	const submit = (formData: FormData) => {
@@ -54,6 +54,7 @@ export function LoginForm({ next }: { next: string }) {
 			error={state.error}
 			messages={state.messages}
 			next={next}
+			pending={isPending}
 		/>
 	);
 }
