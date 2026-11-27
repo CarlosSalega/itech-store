@@ -12,7 +12,7 @@ import styles from "./magic-link.module.css";
 const EMPTY: MagicLinkState = { error: null, message: null, fieldError: null };
 
 export function MagicLinkForm() {
-	const [state, action] = useActionState(requestMagicLink, EMPTY);
+	const [state, action, isPending] = useActionState(requestMagicLink, EMPTY);
 
 	return (
 		<div className={styles.card}>
@@ -37,8 +37,13 @@ export function MagicLinkForm() {
 					</p>
 				) : null}
 
-				<button className={styles.submit} type="submit">
-					Enviarme el enlace
+				<button
+					aria-busy={isPending || undefined}
+					className={styles.submit}
+					disabled={isPending}
+					type="submit"
+				>
+					{isPending ? "Enviando…" : "Enviarme el enlace"}
 				</button>
 
 				{state.message !== null ? (
